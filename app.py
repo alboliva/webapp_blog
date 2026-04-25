@@ -3,6 +3,15 @@ import os, re
 from datetime import datetime, date
 import calendar
 
+# Configurazione pagina (deve essere la prima cosa)
+st.set_page_config(
+    page_title="Reporter",  
+    page_icon="📚",                       # ← Qui metti l'icona
+    layout="wide",                        # o "centered"
+    initial_sidebar_state="expanded"
+)
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # COSTANTI
 # ─────────────────────────────────────────────────────────────────────────────

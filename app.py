@@ -57,7 +57,7 @@ hr {
 .bnav-date {
     padding: 0 14px;
     font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
-    color: #38bdf8; white-space: nowrap; flex-shrink: 0;
+    color: #000000; white-space: nowrap; flex-shrink: 0;
 }
 .bnav-cat {
     padding: 0 10px;

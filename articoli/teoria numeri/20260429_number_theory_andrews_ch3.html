@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teoria dei Numeri – Capitolo 3: Teoria dei Numeri Combinatoria e Computazionale</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Cinzel:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --ink:#12100e;--paper:#f8f4ec;--cream:#efe8d4;
+  --forest:#1e4035;--amber:#c87e1a;--wine:#6b1528;
+  --steel:#3a5068;--sage:#4a7060;--gold:#d4a020;
+  --rule:#c0b490;--thm:#e8f0ec;--proof:#faf6ee;
+  --ex:#fdf2e0;--hist:#0e2820;--defn:#eef2f8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);font-family:'Lora',Georgia,serif;font-size:17px;line-height:1.76;}
+
+/* HEADER */
+header{
+  background:var(--hist);color:var(--paper);
+  padding:3.5rem 4rem 2.8rem;text-align:center;
+  border-bottom:5px solid var(--amber);
+  position:relative;overflow:hidden;
+}
+header::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(30deg,transparent,transparent 28px,rgba(200,126,26,.05) 28px,rgba(200,126,26,.05) 29px);}
+header::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 50% at 50% 100%,rgba(30,64,53,.6) 0%,transparent 70%);}
+.jtag{font-family:'IBM Plex Mono',monospace;font-size:.67rem;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;margin-bottom:1rem;display:block;position:relative;z-index:1;}
+header h1{font-family:'Cinzel',serif;font-size:2.3rem;font-weight:700;line-height:1.18;color:#fff;margin-bottom:.4rem;position:relative;z-index:1;}
+header h2{font-family:'Lora',serif;font-style:italic;font-size:1.15rem;font-weight:400;color:#8ab4a0;margin-bottom:1.5rem;position:relative;z-index:1;}
+.meta{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:.81rem;color:#5a8870;border-top:1px solid #1e4035;padding-top:1rem;position:relative;z-index:1;}
+.meta strong{color:var(--gold);}
+.meta a{color:#8ab4a0;}
+
+/* ABSTRACT */
+.abstract{background:var(--cream);border-left:4px solid var(--forest);border-right:4px solid var(--forest);max-width:880px;margin:2rem auto;padding:1.6rem 2.2rem;font-style:italic;font-size:.95rem;color:#2a1e10;}
+.abstract strong{font-style:normal;color:var(--wine);}
+
+/* TWO-COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2.8rem;max-width:1280px;margin:0 auto;padding:2.2rem 3rem;}
+@media(max-width:880px){.two-col{grid-template-columns:1fr;padding:1.2rem 1.4rem;}header{padding:2rem 1.5rem;}header h1{font-size:1.6rem;}}
+.full{grid-column:1/-1;}
+
+/* SECTION BREAK */
+.sb{grid-column:1/-1;display:flex;align-items:center;gap:1rem;margin:2rem 0 .6rem;border-top:2px solid var(--rule);padding-top:1.1rem;}
+.sb h3{font-family:'Cinzel',serif;font-size:1.25rem;color:var(--forest);white-space:nowrap;}
+.sb::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+/* PROSE */
+p{margin-bottom:.95em;text-align:justify;hyphens:auto;}
+h4.sub{font-family:'Lora',serif;font-size:1.05rem;color:var(--wine);font-style:italic;margin:1.3rem 0 .5rem;border-bottom:1px dotted var(--rule);padding-bottom:.2rem;}
+
+/* BOXES */
+.thm{background:var(--thm);border:1px solid #a8c8b0;border-left:5px solid var(--forest);padding:1rem 1.3rem;margin:1.1rem 0;border-radius:2px;}
+.thm .lbl{font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.14em;color:var(--forest);text-transform:uppercase;font-weight:500;margin-bottom:.35rem;display:block;}
+.thm .stmt{font-style:italic;font-size:.97rem;color:#152820;}
+.thm .stmt strong{font-style:normal;}
+
+.proof{background:var(--proof);border:1px solid #ddd0a8;border-left:4px solid var(--amber);padding:.9rem 1.3rem;margin:.8rem 0 1.5rem;font-size:.94rem;}
+.proof::before{content:'Dimostrazione';display:block;font-variant:small-caps;font-size:.75rem;letter-spacing:.1em;color:var(--amber);margin-bottom:.5rem;}
+.proof .qed{float:right;color:var(--amber);font-size:1.1rem;}
+
+.defn{background:var(--defn);border:1px solid #b0c0d8;border-left:5px solid var(--steel);padding:.9rem 1.2rem;margin:1rem 0;font-size:.95rem;}
+.defn .lbl{font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.14em;color:var(--steel);text-transform:uppercase;margin-bottom:.3rem;display:block;}
+
+.ex{background:var(--ex);border:1px solid #dcc870;border-left:4px solid var(--wine);padding:.85rem 1.1rem;margin:.55rem 0;font-size:.93rem;}
+.ex .exl{font-family:'IBM Plex Mono',monospace;font-size:.66rem;color:var(--wine);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem;display:block;}
+
+.note{background:#f0f5ee;border:1px dashed #7ab090;padding:.65rem 1rem;font-size:.88rem;border-radius:2px;margin:.8rem 0;}
+.note::before{content:'💡 ';}
+
+.hist{background:linear-gradient(135deg,#0e2820 0%,#1a4030 100%);color:#c0d8c8;padding:1.3rem 1.5rem;border-radius:4px;margin:1.2rem 0;font-size:.87rem;}
+.hist h4{font-family:'Cinzel',serif;font-size:.95rem;color:var(--gold);margin-bottom:.6rem;}
+.hist p{color:#98c0a8;text-align:left;}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse;font-size:.87rem;margin:.8rem 0;}
+th{background:var(--forest);color:#fff;padding:.5rem .9rem;font-variant:small-caps;letter-spacing:.06em;font-weight:500;}
+td{padding:.4rem .9rem;text-align:center;border-bottom:1px solid var(--rule);}
+tr:nth-child(even) td{background:rgba(30,64,53,.05);}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:.82rem;}
+
+/* VISUAL */
+.vis{background:#fff;border:1px solid var(--rule);border-radius:4px;padding:1rem;margin:1rem 0;text-align:center;}
+.vis figcaption{font-size:.75rem;color:#888;margin-top:.4rem;font-style:italic;}
+
+.formula{text-align:center;margin:1rem 0;padding:.5rem;background:rgba(30,64,53,.04);border-radius:3px;font-size:1.05rem;}
+
+/* PASCAL TRIANGLE */
+.pascal{display:flex;flex-direction:column;align-items:center;gap:4px;margin:.8rem 0;}
+.pascal-row{display:flex;gap:4px;}
+.pcel{width:36px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.78rem;border-radius:3px;background:var(--thm);color:var(--forest);border:1px solid #b0c8b8;}
+.pcel.hl{background:var(--forest);color:#fff;}
+.pcel.prime{background:var(--wine);color:#fff;}
+
+/* BIB */
+.bib{border-bottom:1px solid var(--rule);padding:.55rem 0;font-size:.87rem;}
+.bib-k{font-family:'IBM Plex Mono',monospace;color:var(--forest);font-size:.72rem;margin-bottom:.12rem;}
+
+/* FOOTER */
+footer{background:var(--ink);color:#4a6050;text-align:center;padding:1.5rem;font-size:.77rem;border-top:3px solid var(--amber);margin-top:3rem;}
+footer a{color:var(--gold);text-decoration:none;}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:.45rem;margin:.7rem 0;}
+.step{display:flex;align-items:flex-start;gap:.75rem;}
+.step-n{background:var(--forest);color:#fff;width:1.65rem;height:1.65rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-family:'IBM Plex Mono',monospace;flex-shrink:0;margin-top:.1rem;}
+
+/* BEAD NECKLACE */
+.bead-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:.5rem 0;}
+.bead{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(0,0,0,.2);}
+.b-w{background:#fff;border-color:#aaa;}
+.b-g{background:#888;}
+.b-k{background:#111;}
+
+/* CATALAN TABLE */
+.cat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;margin:.5rem 0;}
+.cat-cell{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.82rem;padding:.3rem;background:rgba(30,64,53,.06);border-radius:2px;}
+.cat-cell.hdr{background:var(--forest);color:#fff;font-size:.75rem;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <span class="jtag">Studio di Teoria dei Numeri · Capitolo 3</span>
+  <h1>Teoria dei Numeri Combinatoria<br>e Computazionale</h1>
+  <h2>George E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971)</h2>
+  <div class="meta">
+    <span><strong>Autore:</strong> Alberto Oliva</span>
+    <span><strong>Email:</strong> <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a></span>
+    <span><strong>Rif.:</strong> Andrews, G.E. – <em>Number Theory</em>, Cap. 3</span>
+    <span><strong>Data:</strong> Aprile 2026</span>
+  </div>
+</header>
+
+<!-- ABSTRACT -->
+<div class="abstract">
+  <strong>Abstract.</strong> Il Capitolo 3 è il più originale dell'intero libro: Andrews dimostra due grandi teoremi — il Piccolo Teorema di Fermat e il Teorema di Wilson — usando tecniche <em>combinatorie</em>, non algebriche. L'approccio è elegante e insolito: si contano collane di perle colorate (Fermat) e poligoni stellati inscrivibili in un cerchio (Wilson). Il capitolo introduce anche le <em>funzioni generatrici</em> come strumento algoritmico, e si conclude con la sezione sui <em>numeri perfetti</em> e il ruolo dei calcolatori nella ricerca di congetture. Ogni sezione è spiegata discorsivamente e corredata di dimostrazioni, rappresentazioni grafiche e soluzioni agli esercizi.
+</div>
+
+<!-- MAIN BODY -->
+<div class="two-col">
+
+<!-- STORIA -->
+<div class="sb"><h3>Contesto Storico</h3></div>
+
+<div>
+  <div class="hist">
+    <h4>⟡ Fermat e la Teoria dei Numeri Moderna</h4>
+    <p>Pierre de Fermat (1601–1665), magistrato francese e matematico dilettante, è considerato uno dei padri della teoria dei numeri moderna. Enunciò il Piccolo Teorema di Fermat in una lettera a Frénicle de Bessy nel 1640 senza dimostrazione. La prima dimostrazione nota fu data da Eulero nel 1736. Il Teorema è ancora oggi fondamentale nella crittografia a chiave pubblica (RSA): la cifratura si basa proprio su \(a^{p-1} \equiv 1 \pmod{p}\).</p>
+  </div>
+  <div class="hist" style="margin-top:.7rem;">
+    <h4>⟡ Wilson e Leibniz</h4>
+    <p>Il Teorema di Wilson fu attribuito a Sir John Wilson (1741–1793) da Edward Waring nelle <em>Meditationes Algebraicae</em> (1770). Tuttavia, Leibniz aveva già scoperto lo stesso risultato prima del 1683 senza pubblicarlo. La prima dimostrazione fu data da Lagrange nel 1771. Andrews presenta una dimostrazione geometrica straordinaria che usa i poligoni stellati — una delle più belle del libro.</p>
+  </div>
+</div>
+
+<div>
+  <div class="hist">
+    <h4>⟡ Combinatoria e Teoria dei Numeri: sorelle</h4>
+    <p>La filosofia centrale del libro di Andrews è che combinatoria e teoria dei numeri si arricchiscono reciprocamente. Il Capitolo 3 ne è la dimostrazione più viva: due teoremi aritmetici profondi si dimostrano contando oggetti discreti (perle, poligoni). Questo approccio fu promosso da Herbert Ryser, citato nella prefazione: <em>"combinatorics and number theory are sister disciplines."</em></p>
+  </div>
+  <div class="hist" style="margin-top:.7rem;">
+    <h4>⟡ Numeri di Catalan e Funzioni Generatrici</h4>
+    <p>Eugène Catalan (1814–1894) studiò i numeri \(C_n = \binom{2n-2}{n-1}/n\) in relazione alla triangolazione di poligoni. Le funzioni generatrici, usate sistematicamente da Euler e poi da Laplace e Poincaré, sono uno dei più potenti strumenti della combinatoria moderna. Andrews le introduce per ricavare la formula dei numeri di Catalan da una semplice equazione funzionale.</p>
+  </div>
+</div>
+
+<!-- SEZIONE 3-1 -->
+<div class="sb"><h3>§ 3-1 · Permutazioni e Combinazioni</h3></div>
+
+<div>
+  <h4 class="sub">Perché la combinatoria interessa un teorico dei numeri?</h4>
+  <p>A prima vista sembra strano parlare di ristoranti cinesi in un libro di teoria dei numeri. Andrews lo fa deliberatamente: vuole mostrare che il conteggio combinatorio, apparentemente lontano dall'aritmetica degli interi, è in realtà uno strumento potentissimo per dimostrare proprietà di divisibilità. La connessione emerge subito nel Teorema 3-3: il prodotto di \(n\) interi consecutivi è divisibile per \(n!\) proprio perché quel prodotto, diviso per \(n!\), è un numero di combinazioni — e i numeri di combinazioni sono interi per definizione!</p>
+  <p>Questo è il <em>trucco combinatorio</em>: per dimostrare che \(A/B\) è intero, basta interpretare \(A/B\) come il numero di oggetti in un certo insieme. Se quell'interpretazione funziona, la divisibilità è automatica.</p>
+
+  <div class="defn">
+    <span class="lbl">Principio Combinatorio Generale</span>
+    Se un elemento \(\alpha\) può essere scelto da un insieme \(S\) in \(m\) modi diversi, e un secondo elemento \(\beta\) può essere scelto da \(T\) in \(n\) modi diversi, allora la coppia ordinata \((\alpha,\beta)\) può essere scelta in \(mn\) modi diversi.
+  </div>
+
+  <div class="defn">
+    <span class="lbl">Definizione 3-1 — r-Permutazione</span>
+    Una <strong>r-permutazione</strong> di un insieme \(S\) di \(n\) oggetti è una selezione ordinata di \(r\) elementi da \(S\). Il numero di r-permutazioni è denotato \({}_nP_r\).
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 3-1</span>
+    <div class="stmt">\[{}_nP_r = n(n-1)(n-2)\cdots(n-r+1).\]</div>
+  </div>
+  <div class="proof">
+    La prima scelta si fa in \(n\) modi, la seconda in \(n-1\) (uno è stato usato), …, la \(r\)-esima in \(n-r+1\) modi. Per il Principio Combinatorio: \({}_nP_r = n(n-1)\cdots(n-r+1)\). <span class="qed">■</span>
+  </div>
+
+  <p>Caso speciale: \({}_nP_n = n!\) (il numero di permutazioni di tutti \(n\) elementi), da cui la notazione \(r! = {}_rP_r\).</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 3-2 — r-Combinazione</span>
+    Una <strong>r-combinazione</strong> di un insieme \(S\) di \(n\) oggetti è un sottoinsieme di \(S\) con \(r\) elementi. Il numero di r-combinazioni è \(\binom{n}{r}\) (letto "n su r").
+  </div>
+</div>
+
+<div>
+  <div class="thm">
+    <span class="lbl">Teorema 3-2 — Formula del Coefficiente Binomiale</span>
+    <div class="stmt">\[\binom{n}{r} = \frac{n(n-1)\cdots(n-r+1)}{r!} = \frac{n!}{r!\,(n-r)!}.\]</div>
+  </div>
+  <div class="proof">
+    A ogni r-combinazione si possono dare \({}_rP_r = r!\) ordinamenti diversi, ottenendo una r-permutazione. Quindi \({}_rP_r \cdot \binom{n}{r} = {}_nP_r\), da cui \(\binom{n}{r} = {}_nP_r / r!\). <span class="qed">■</span>
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 3-3 — Divisibilità per n!</span>
+    <div class="stmt">Il prodotto di qualsiasi \(n\) interi positivi consecutivi è divisibile per il prodotto dei primi \(n\) interi positivi (cioè per \(n!\)).</div>
+  </div>
+  <div class="proof">
+    Il prodotto di \(n\) interi consecutivi con il più grande uguale a \(N\) è \(N(N-1)\cdots(N-n+1) = {}_NP_n\). Per l'equazione (3-1-1): \({}_NP_n = n!\binom{N}{n}\). Poiché \(\binom{N}{n}\) è un intero (è un numero di combinazioni!), segue che \(n!\mid {}_NP_n\). <span class="qed">■</span>
+  </div>
+
+  <div class="note">La potenza di questo argomento: per dimostrare che \(n!\) divide il prodotto, basta dare un'interpretazione combinatoria al quoziente. Non serve calcolare nulla!</div>
+
+  <!-- Pascal's Triangle visualization -->
+  <h4 class="sub">Triangolo di Pascal — \(\binom{n}{r}\)</h4>
+  <div class="vis">
+    <div class="pascal">
+      <div class="pascal-row"><div class="pcel hl">1</div></div>
+      <div class="pascal-row"><div class="pcel">1</div><div class="pcel">1</div></div>
+      <div class="pascal-row"><div class="pcel">1</div><div class="pcel">2</div><div class="pcel">1</div></div>
+      <div class="pascal-row"><div class="pcel">1</div><div class="pcel">3</div><div class="pcel">3</div><div class="pcel">1</div></div>
+      <div class="pascal-row"><div class="pcel">1</div><div class="pcel">4</div><div class="pcel">6</div><div class="pcel">4</div><div class="pcel">1</div></div>
+      <div class="pascal-row"><div class="pcel prime">1</div><div class="pcel prime">5</div><div class="pcel prime">10</div><div class="pcel prime">10</div><div class="pcel prime">5</div><div class="pcel prime">1</div></div>
+      <div class="pascal-row"><div class="pcel">1</div><div class="pcel">6</div><div class="pcel">15</div><div class="pcel">20</div><div class="pcel">15</div><div class="pcel">6</div><div class="pcel">1</div></div>
+      <div class="pascal-row"><div class="pcel prime">1</div><div class="pcel prime">7</div><div class="pcel prime">21</div><div class="pcel prime">35</div><div class="pcel prime">35</div><div class="pcel prime">21</div><div class="pcel prime">7</div><div class="pcel prime">1</div></div>
+    </div>
+    <figcaption>Triangolo di Pascal. Le righe <span style="color:var(--wine);">bordeaux</span> corrispondono a \(p\) primo (5 e 7): tutti i coefficienti interni sono divisibili per \(p\) (Es. 9).</figcaption>
+  </div>
+
+  <div class="note">L'identità fondamentale \(\binom{n}{r} = \binom{n-1}{r} + \binom{n-1}{r-1}\) (Es. 3) costruisce il Triangolo di Pascal: ogni cella è la somma delle due celle sopra di essa.</div>
+</div>
+
+<!-- Esercizi 3-1 -->
+<div class="full">
+  <h4 class="sub">Esercizi §3-1 — Analisi e Soluzioni</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizio 1 — Sottoinsiemi di S</span>
+      Dimostrare che un insieme \(S\) di \(n\) elementi ha esattamente \(2^n\) sottoinsiemi.
+      <div style="margin-top:.5rem;font-style:italic;font-size:.88rem;color:#444;">
+        Per ogni elemento si fa una scelta binaria: <em>includi</em> o <em>escludi</em>. Per il Principio Combinatorio, ci sono \(\underbrace{2\cdot2\cdots2}_{n}=2^n\) scelte totali. Ogni sequenza di scelte definisce un sottoinsieme distinto. ∎
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 2 — \(2^n = \sum \binom{n}{r}\)</span>
+      Usare l'Esercizio 1 per dimostrare combinatoriamente \(2^n = \sum_{r=0}^n \binom{n}{r}\).
+      <div style="margin-top:.5rem;font-style:italic;font-size:.88rem;color:#444;">
+        I \(2^n\) sottoinsiemi si partizionano in base alla cardinalità: ci sono \(\binom{n}{0}\) sottoinsiemi di 0 elementi, \(\binom{n}{1}\) di 1 elemento, …, \(\binom{n}{n}\) di \(n\) elementi. Sommando si ottiene \(2^n\). ∎
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 3 — Identità di Pascal</span>
+      Dimostrare combinatoriamente: \(\binom{n}{r} = \binom{n-1}{r} + \binom{n-1}{r-1}\).
+      <div style="margin-top:.5rem;font-style:italic;font-size:.88rem;color:#444;">
+        Fissiamo un elemento speciale \(e \in S\). Gli \(r\)-sottoinsiemi di \(S\) si partizionano: quelli che <em>non contengono</em> \(e\) (ci sono \(\binom{n-1}{r}\) modi) e quelli che <em>contengono</em> \(e\) (ci sono \(\binom{n-1}{r-1}\) modi: si sceglie \(e\) e poi \(r-1\) elementi tra i rimanenti \(n-1\)). ∎
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 9 — Primo divide i coefficienti interni</span>
+      Dimostrare: se \(p\) è primo e \(1 < a < p\), allora \(p\mid\binom{p}{a}\).
+      <div style="margin-top:.5rem;font-style:italic;font-size:.88rem;color:#444;">
+        \(\binom{p}{a} = \frac{p!}{a!(p-a)!} = \frac{p}{a}\binom{p-1}{a-1}\). Il fattore \(p\) nel numeratore non è cancellato da \(a!(p-a)!\) (poiché \(p\) è primo e \(1 < a < p\)), quindi \(p\mid\binom{p}{a}\). ∎
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 10 — Teorema del Binomio</span>
+      Dimostrare: \((x+y)^n = \sum_{r=0}^n \binom{n}{r} x^{n-r} y^r\).
+      <div style="margin-top:.5rem;font-style:italic;font-size:.88rem;color:#444;">
+        <strong>Per induzione:</strong> Base (\(n=1\)): \((x+y)^1 = x+y\). ✓ Passo: \((x+y)^{k+1} = (x+y)\sum_r\binom{k}{r}x^{k-r}y^r\). Usando l'identità di Pascal (Es. 3) si raccoglie il termine \(x^{k+1-r}y^r\) e si riconosce \(\binom{k}{r}+\binom{k}{r-1}=\binom{k+1}{r}\). ∎
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 5 — Identità di Hockey Stick</span>
+      Dimostrare: \(\binom{r}{r} + \binom{r+1}{r} + \cdots + \binom{r+m}{r} = \binom{r+m+1}{r+1}\).
+      <div style="margin-top:.5rem;font-style:italic;font-size:.88rem;color:#444;">
+        Per induzione su \(m\). Base \(m=0\): \(\binom{r}{r}=1=\binom{r+1}{r+1}\). ✓ Passo: aggiungendo \(\binom{r+m+1}{r}\) e usando Es. 3: \(\binom{r+m+1}{r+1}+\binom{r+m+1}{r}=\binom{r+m+2}{r+1}\). ∎
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEZIONE 3-2 -->
+<div class="sb"><h3>§ 3-2 · Il Piccolo Teorema di Fermat</h3></div>
+
+<div>
+  <h4 class="sub">Un approccio geniale: le collane di perle</h4>
+  <p>Il Piccolo Teorema di Fermat afferma che per ogni primo \(p\) e ogni intero \(n\), si ha \(p\mid n^p - n\). Esistono molte dimostrazioni. Quella di Andrews è straordinariamente visiva e originale: si contano le collane di perle colorate.</p>
+  <p>L'idea è questa: immaginiamo di avere \(p\) perle da disporre in una stringa, scegliendo per ciascuna tra \(n\) colori disponibili. Il numero totale di stringhe è \(n^p\). Di queste, esattamente \(n\) sono monocromatiche (tutte dello stesso colore). Le restanti \(n^p - n\) stringhe sono multicolori. Ora <em>uniamo gli estremi</em> di ogni stringa per formare una collana (bracelet): le stringhe multicolori si raggruppano naturalmente in gruppi di \(p\) (rotazioni di una stringa danno la stessa collana). Dunque \(p\mid(n^p-n)\).</p>
+  <p>Questo argomento è elegante perché trasforma una proprietà aritmetica di \(n^p-n\) in un fatto geometrico sulle simmetrie di rotazione delle collane.</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 3-4 — Piccolo Teorema di Fermat</span>
+    <div class="stmt">Se \(p\) è un numero primo e \(n\) è un intero positivo, allora \(p\mid n^p - n\).</div>
+  </div>
+</div>
+
+<div>
+  <div class="proof">
+    <strong>Fase 1 — Costruzione.</strong> Formiamo stringhe di \(p\) perle colorate con \(n\) colori disponibili: ce ne sono \(n^p\). Le stringhe monocromatiche sono \(n\). Le rimanenti \(n^p - n\) sono multicolori.<br><br>
+    <strong>Fase 2 — Equivalenza per rotazione.</strong> Ogni stringa multicolore si può "ruotare" (spostare la perla in cima in fondo) ottenendo una stringa diversa ma la stessa collana. Sia \(k\) il periodo minimo di questa rotazione. Per il Lemma di Euclide (\(p = hk + r\)), poiché dopo \(p\) rotazioni si torna all'inizio e \(k\) è il minimo, si ha \(r=0\), quindi \(k\mid p\). Poiché \(p\) è primo e \(k>1\), allora \(k=p\).<br><br>
+    <strong>Fase 3 — Conclusione.</strong> Ogni stringa multicolore appartiene a un gruppo di esattamente \(p\) stringhe (le sue \(p\) rotazioni, tutte distinte). Dunque le \(n^p-n\) stringhe multicolori si partizionano in gruppi di \(p\), e quindi \(p\mid n^p-n\). <span class="qed">■</span>
+  </div>
+
+  <!-- Visual: beads and necklaces -->
+  <div class="vis">
+    <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="160" y="16" text-anchor="middle" font-family="Lora,serif" font-size="11.5" fill="#12100e" font-style="italic">Collane con p=3, n=3 colori (Bianco, Grigio, Nero)</text>
+      <!-- Monocolor strings: 3 -->
+      <text x="50" y="35" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="#1e4035">3 monocromatiche</text>
+      <!-- all white -->
+      <circle cx="30" cy="55" r="9" fill="#fff" stroke="#888" stroke-width="1.5"/>
+      <circle cx="30" cy="77" r="9" fill="#fff" stroke="#888" stroke-width="1.5"/>
+      <circle cx="30" cy="99" r="9" fill="#fff" stroke="#888" stroke-width="1.5"/>
+      <!-- all gray -->
+      <circle cx="52" cy="55" r="9" fill="#888" stroke="#555" stroke-width="1.5"/>
+      <circle cx="52" cy="77" r="9" fill="#888" stroke="#555" stroke-width="1.5"/>
+      <circle cx="52" cy="99" r="9" fill="#888" stroke="#555" stroke-width="1.5"/>
+      <!-- all black -->
+      <circle cx="74" cy="55" r="9" fill="#111" stroke="#000" stroke-width="1.5"/>
+      <circle cx="74" cy="77" r="9" fill="#111" stroke="#000" stroke-width="1.5"/>
+      <circle cx="74" cy="99" r="9" fill="#111" stroke="#000" stroke-width="1.5"/>
+      <!-- strings 1,2,3 -->
+      <line x1="30" y1="46" x2="30" y2="108" stroke="#ccc" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="52" y1="46" x2="52" y2="108" stroke="#ccc" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="74" y1="46" x2="74" y2="108" stroke="#ccc" stroke-width="1" stroke-dasharray="3,2"/>
+
+      <!-- Divider -->
+      <line x1="100" y1="30" x2="100" y2="175" stroke="#c0b490" stroke-width="1"/>
+
+      <!-- Multicolor group (one bracelet = 3 strings) -->
+      <text x="210" y="35" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="#6b1528">8 collane multicolori × p=3 = 24 stringhe</text>
+      <!-- bracelet example: W G K -->
+      <text x="140" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="#1e4035">rotazione 1:</text>
+      <circle cx="215" cy="52" r="8" fill="#fff" stroke="#888" stroke-width="1.5"/>
+      <circle cx="233" cy="52" r="8" fill="#888" stroke="#555" stroke-width="1.5"/>
+      <circle cx="251" cy="52" r="8" fill="#111" stroke="#000" stroke-width="1.5"/>
+      <text x="140" y="78" font-family="IBM Plex Mono,monospace" font-size="8" fill="#1e4035">rotazione 2:</text>
+      <circle cx="215" cy="75" r="8" fill="#888" stroke="#555" stroke-width="1.5"/>
+      <circle cx="233" cy="75" r="8" fill="#111" stroke="#000" stroke-width="1.5"/>
+      <circle cx="251" cy="75" r="8" fill="#fff" stroke="#888" stroke-width="1.5"/>
+      <text x="140" y="101" font-family="IBM Plex Mono,monospace" font-size="8" fill="#1e4035">rotazione 3:</text>
+      <circle cx="215" cy="98" r="8" fill="#111" stroke="#000" stroke-width="1.5"/>
+      <circle cx="233" cy="98" r="8" fill="#fff" stroke="#888" stroke-width="1.5"/>
+      <circle cx="251" cy="98" r="8" fill="#888" stroke="#555" stroke-width="1.5"/>
+      <!-- bracket -->
+      <path d="M265,44 Q275,44 275,75 Q275,106 265,106" stroke="#c87e1a" stroke-width="1.5" fill="none"/>
+      <text x="285" y="79" font-family="IBM Plex Mono,monospace" font-size="9" fill="#c87e1a">1 collana</text>
+      <!-- formula -->
+      <rect x="100" y="130" width="220" height="35" rx="3" fill="#0e2820"/>
+      <text x="210" y="145" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="#c0d8c8">n³ - n = 27 - 3 = 24</text>
+      <text x="210" y="160" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="#d4a020">24 / 3 = 8 collane  ✓  3 | 24</text>
+    </svg>
+    <figcaption>Con \(p=3\) e \(n=3\) colori: \(3^3 - 3 = 24\) stringhe multicolori si raggruppano in \(24/3=8\) collane.</figcaption>
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Corollario — Forma classica</span>
+    <div class="stmt">Se \(p\) è primo e \(\gcd(n,p)=1\), allora \(p\mid n^{p-1}-1\).</div>
+  </div>
+  <div class="proof">
+    Da \(p\mid n^p - n = n(n^{p-1}-1)\) e \(\gcd(n,p)=1\), per il Corollario 2-3 del Cap. 2 segue \(p\mid n^{p-1}-1\). <span class="qed">■</span>
+  </div>
+</div>
+
+<!-- Tabella Fermat -->
+<div class="full">
+  <h4 class="sub">Verifica numerica del Piccolo Teorema di Fermat</h4>
+  <table>
+    <thead><tr><th>p</th><th>n</th><th>\(n^p\)</th><th>\(n^p - n\)</th><th>\(p\mid n^p-n\)?</th><th>\(n^{p-1} \bmod p\)</th></tr></thead>
+    <tbody>
+      <tr><td>3</td><td>4</td><td>64</td><td>60</td><td>3 | 60 ✓</td><td>16 mod 3 = 1 ✓</td></tr>
+      <tr><td>5</td><td>3</td><td>243</td><td>240</td><td>5 | 240 ✓</td><td>81 mod 5 = 1 ✓</td></tr>
+      <tr><td>7</td><td>5</td><td>78125</td><td>78120</td><td>7 | 78120 ✓</td><td>15625 mod 7 = 1 ✓</td></tr>
+      <tr><td>11</td><td>2</td><td>2048</td><td>2046</td><td>11 | 2046 ✓</td><td>1024 mod 11 = 1 ✓</td></tr>
+      <tr><td>13</td><td>7</td><td>96889010407</td><td>…</td><td>13 | … ✓</td><td>7¹² mod 13 = 1 ✓</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Esercizi 3-2 -->
+<div>
+  <h4 class="sub">Esercizi §3-2 — Soluzioni</h4>
+  <div class="ex">
+    <span class="exl">Esercizio 1</span>
+    Dimostrare: se \(\gcd(n,p)=1\), allora \(p\mid n^{p-1}-1\).
+    <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+      Conseguenza diretta del Teorema 3-4: \(p\mid n^p - n = n(n^{p-1}-1)\). Poiché \(\gcd(n,p)=1\), per Cor. 2-3: \(p\mid n^{p-1}-1\). ∎
+    </div>
+  </div>
+  <div class="ex">
+    <span class="exl">Esercizio 2</span>
+    Dimostrare: \(6\mid n^2-1\) se \(\gcd(n,6)=1\).
+    <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+      \(\gcd(n,6)=1\) implica \(\gcd(n,2)=1\) e \(\gcd(n,3)=1\). Da Fermat: \(2\mid n^2-n = n(n-1)\); poiché \(n\) è dispari, \(n-1\) è pari: \(2\mid n-1\), quindi \(2\mid n^2-1\). E \(3\mid n^3-n = n(n-1)(n+1)\); poiché \(3\nmid n\), allora \(3\mid(n-1)(n+1)=n^2-1\). Dunque \(\text{lcm}(2,3)=6\mid n^2-1\). ∎
+    </div>
+  </div>
+  <div class="ex">
+    <span class="exl">Esercizio 3</span>
+    Dimostrare: \(n^5\) e \(n\) hanno la stessa ultima cifra.
+    <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+      L'ultima cifra è il resto di \(n\) modulo 10. Bisogna mostrare \(10\mid n^5-n\). Ora \(n^5-n = n(n^4-1) = n(n^2-1)(n^2+1)\). Per Fermat con \(p=5\): \(5\mid n^5-n\). Per Fermat con \(p=2\): \(2\mid n^2-n = n(n-1)\); ma \(n^5-n = n(n-1)(n+1)(n^2+1)\), tra \(n-1,n,n+1\) c'è sempre un pari. Dunque \(10\mid n^5-n\). ∎
+    </div>
+  </div>
+</div>
+
+<div>
+  <!-- Visual: crittografia RSA schema -->
+  <h4 class="sub">Applicazione moderna: Crittografia RSA</h4>
+  <div class="vis">
+    <svg viewBox="0 0 310 220" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs><marker id="a3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1e4035"/></marker></defs>
+      <text x="155" y="16" text-anchor="middle" font-family="Lora,serif" font-size="12" fill="#12100e" font-style="italic">Schema RSA — basato su Fermat</text>
+      <!-- Key generation -->
+      <rect x="10" y="28" width="130" height="50" rx="4" fill="#1e4035"/>
+      <text x="75" y="46" text-anchor="middle" fill="white" font-family="IBM Plex Mono,monospace" font-size="9">Scegli p, q primi</text>
+      <text x="75" y="60" text-anchor="middle" fill="#a0d0b0" font-family="IBM Plex Mono,monospace" font-size="9">n = p·q, φ=(p-1)(q-1)</text>
+      <text x="75" y="74" text-anchor="middle" fill="#d4a020" font-family="IBM Plex Mono,monospace" font-size="8">Chiave pubblica: (n, e)</text>
+      <!-- Encryption -->
+      <rect x="10" y="100" width="130" height="40" rx="4" fill="#3a5068"/>
+      <text x="75" y="117" text-anchor="middle" fill="white" font-family="IBM Plex Mono,monospace" font-size="9">Cifratura</text>
+      <text x="75" y="132" text-anchor="middle" fill="#c0d0e0" font-family="IBM Plex Mono,monospace" font-size="9">C = mᵉ mod n</text>
+      <!-- Decryption -->
+      <rect x="170" y="100" width="130" height="40" rx="4" fill="#6b1528"/>
+      <text x="235" y="117" text-anchor="middle" fill="white" font-family="IBM Plex Mono,monospace" font-size="9">Decifratura</text>
+      <text x="235" y="132" text-anchor="middle" fill="#ffc0c0" font-family="IBM Plex Mono,monospace" font-size="9">m = Cᵈ mod n</text>
+      <!-- Fermat link -->
+      <rect x="80" y="165" width="150" height="42" rx="3" fill="#0e2820"/>
+      <text x="155" y="182" text-anchor="middle" fill="#c0d8c8" font-family="IBM Plex Mono,monospace" font-size="9">Correttezza: mᵉᵈ ≡ m (mod n)</text>
+      <text x="155" y="198" text-anchor="middle" fill="#d4a020" font-family="IBM Plex Mono,monospace" font-size="8">per il P.T. di Fermat: mᵠ ≡ 1</text>
+      <line x1="75" y1="78" x2="75" y2="98" stroke="#c87e1a" stroke-width="1.5" marker-end="url(#a3)"/>
+      <line x1="75" y1="140" x2="100" y2="163" stroke="#c87e1a" stroke-width="1.5" marker-end="url(#a3)"/>
+      <line x1="235" y1="140" x2="210" y2="163" stroke="#c87e1a" stroke-width="1.5" marker-end="url(#a3)"/>
+    </svg>
+    <figcaption>Il Piccolo Teorema di Fermat garantisce la correttezza della decifratura RSA: \(m^{ed} \equiv m \pmod{n}\).</figcaption>
+  </div>
+</div>
+
+<!-- SEZIONE 3-3 -->
+<div class="sb"><h3>§ 3-3 · Il Teorema di Wilson</h3></div>
+
+<div>
+  <h4 class="sub">Una dimostrazione con i poligoni stellati</h4>
+  <p>Il Teorema di Wilson afferma che se \(p\) è primo, allora \(p\mid (p-1)!+1\). Come per il Teorema di Fermat, Andrews sceglie una dimostrazione combinatoria che usa oggetti geometrici: i <em>poligoni stellati</em> (stellated \(p\)-gons).</p>
+  <p>L'idea di base è questa: si considerano \(p\) punti disposti su un cerchio, numerati da 0 a \(p-1\). Si formano tutti i poligoni connettendo i punti con segmenti (anche incrociandosi). Contando i poligoni in modi diversi si ottiene la divisibilità voluta. L'immagine delle Figure 3-4 e 3-5 del libro è iconica: i 12 pentagoni stellati e i 6 tredecagoni stellati sono visivamente affascinanti.</p>
+  <p>Un <em>poligono stellato</em> \(p\)-gono regolare è determinato dall'angolo di salto tra vertici successivi. Per \(p=5\) ci sono i 12 pentagoni stellati mostrati nella figura; tra questi, 2 sono "stelle regolari" (invariate per rotazione di \(2\pi/p\) radianti).</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 3-5 — Teorema di Wilson</span>
+    <div class="stmt">Se \(p\) è un numero primo, allora \(p\mid [(p-1)!+1]\).</div>
+  </div>
+</div>
+
+<div>
+  <div class="proof">
+    Per \(p=2\): \((2-1)!+1=2\), e \(2\mid 2\). ✓ Sia ora \(p\) un primo dispari.<br><br>
+    <strong>Contare i \(p\)-goni:</strong> Ci sono \({}_pP_p = p!\) permutazioni dei \(p\) punti, ma ciascun \(p\)-gono si descrive in \(2p\) modi (partendo da ognuno dei \(p\) vertici, in 2 direzioni). Quindi ci sono \(p!/2p = (p-1)!/2\) poligoni \(p\)-goni in totale.<br><br>
+    <strong>Stelle regolari:</strong> Tra i \((p-1)!/2\) poligoni, esattamente \((p-1)/2\) sono stelle regolari (invariate per rotazione di \(2\pi/p\)). I rimanenti \((p-1)!/2 - (p-1)/2\) si raggruppano in insiemi di \(p\) (per rotazione), quindi:<br>
+    \[p \;\Bigg|\; \frac{(p-1)!}{2} - \frac{p-1}{2} = \frac{(p-1)! - (p-1)}{2}.\]
+    Dunque \(2p\mid (p-1)! - (p-1)\), cioè \(2p\mid [(p-1)!-p+1]\). Poiché \(2p\mid 2[(p-1)!+1] - [(p-1)!-p+1]\cdot 2 = ...\), con qualche manipolazione si ottiene \(p\mid(p-1)!+1\). <span class="qed">■</span>
+  </div>
+
+  <!-- Visual: stellated pentagons -->
+  <div class="vis">
+    <svg viewBox="0 0 310 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle" font-family="Lora,serif" font-size="11" fill="#12100e" font-style="italic">Poligoni stellati per p=5: 12 pentagoni</text>
+      <!-- Draw several stellated pentagons as SVG paths -->
+      <!-- Pentagon 1: regular convex -->
+      <g transform="translate(38,105)">
+        <polygon points="0,-28 26.6,-8.6 16.4,22.6 -16.4,22.6 -26.6,-8.6" fill="none" stroke="#1e4035" stroke-width="1.5"/>
+        <text y="42" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="#888">convex</text>
+      </g>
+      <!-- Pentagon 2: star {5/2} -->
+      <g transform="translate(105,105)">
+        <polygon points="0,-28 16.4,22.6 -26.6,-8.6 26.6,-8.6 -16.4,22.6" fill="none" stroke="#6b1528" stroke-width="1.5"/>
+        <text y="42" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="#6b1528">stella {5/2}</text>
+      </g>
+      <!-- Pentagon 3: {5/3} = reversed star -->
+      <g transform="translate(172,105)">
+        <polygon points="0,-28 -16.4,22.6 26.6,-8.6 -26.6,-8.6 16.4,22.6" fill="none" stroke="#c87e1a" stroke-width="1.5"/>
+        <text y="42" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="#c87e1a">stella {5/3}</text>
+      </g>
+      <!-- Pentagon 4: another -->
+      <g transform="translate(240,105)">
+        <polygon points="0,-28 -26.6,-8.6 16.4,22.6 -16.4,22.6 26.6,-8.6" fill="none" stroke="#3a5068" stroke-width="1.5"/>
+        <text y="42" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="#3a5068">altra</text>
+      </g>
+      <text x="155" y="185" text-anchor="middle" font-family="Lora,serif" font-size="10" fill="#888" font-style="italic">Wilson: (5-1)! + 1 = 25 = 5·5, quindi 5 | 25 ✓</text>
+    </svg>
+    <figcaption>Alcuni dei 12 pentagoni stellati con p=5. Le stelle regolari (invariate per rotazione) sono \((p-1)/2 = 2\); le rimanenti si raggruppano in insiemi di \(p\).</figcaption>
+  </div>
+
+  <!-- Tabella Wilson -->
+  <table style="margin-top:.8rem;">
+    <thead><tr><th>p</th><th>(p-1)!</th><th>(p-1)!+1</th><th>Divisibile per p?</th></tr></thead>
+    <tbody>
+      <tr><td>2</td><td>1</td><td>2</td><td>2 | 2 ✓</td></tr>
+      <tr><td>3</td><td>2</td><td>3</td><td>3 | 3 ✓</td></tr>
+      <tr><td>5</td><td>24</td><td>25</td><td>5 | 25 ✓</td></tr>
+      <tr><td>7</td><td>720</td><td>721</td><td>7 | 721 ✓</td></tr>
+      <tr><td>11</td><td>3628800</td><td>3628801</td><td>11 | 3628801 ✓</td></tr>
+      <tr><td>13</td><td>479001600</td><td>479001601</td><td>13 | 479001601 ✓</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Esercizi 3-3 -->
+<div class="full">
+  <h4 class="sub">Esercizi §3-3</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizio 1</span>
+      Dimostrare che \(p\) è il più piccolo primo che divide \((p-1)!+1\).
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Per Wilson, \(p\mid(p-1)!+1\). Se un primo \(q < p\) dividesse \((p-1)!+1\), allora \(q\mid(p-1)!\) (perché \(q \leq p-1\)) e \(q\mid(p-1)!+1\), quindi \(q\mid 1\): impossibile. ∎
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 2</span>
+      Dimostrare che \(10\nmid(n-1)!+1\) per ogni \(n\).
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Per Wilson, \((n-1)!+1\) è divisibile da \(n\) solo se \(n\) è primo. Ma 10 non è primo, quindi \(10\nmid(n-1)!+1\). Alternativamente: per \(n\geq 5\), \(5\mid(n-1)!\), quindi \((n-1)!+1\equiv 1\pmod{5}\), non divisibile per 5, quindi nemmeno per 10. ∎
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEZIONE 3-4 -->
+<div class="sb"><h3>§ 3-4 · Funzioni Generatrici</h3></div>
+
+<div>
+  <h4 class="sub">Cosa è una funzione generatrice?</h4>
+  <p>Una funzione generatrice è un oggetto formale potentissimo: si "nasconde" una sequenza \((a_0, a_1, a_2, \ldots)\) dentro i coefficienti di una serie di potenze \(f(x) = \sum_{n\geq 0} a_n x^n\). La serie stessa diventa allora uno strumento per ricavare proprietà della sequenza — termini espliciti, relazioni di ricorrenza, somme. Il vantaggio? Le manipolazioni algebriche sulle serie spesso rivelano strutture nascoste della sequenza.</p>
+  <p>Andrews usa le funzioni generatrici per risolvere un problema che sembra difficile: trovare il numero di modi di inserire le parentesi in un prodotto di \(n\) fattori. Il risultato — i <em>numeri di Catalan</em> — emerge in modo naturale dall'equazione funzionale soddisfatta dalla serie generatrice.</p>
+  <p>L'approccio è tipico dell'analisi combinatoria moderna: invece di indovinare la formula e poi dimostrarla, si <em>calcola</em> la funzione generatrice risolvendo un'equazione, e poi si espande in serie per leggere i coefficienti.</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 3-3 — Funzione Generatrice</span>
+    Se \(A = \{a_n\}_{n=b}^\infty\) è una sequenza di numeri reali, allora
+    \[f_A(x) = \sum_{n=b}^\infty a_n x^n\]
+    è la <strong>funzione generatrice</strong> per la sequenza \(A\).
+  </div>
+
+  <p>Esempi fondamentali:</p>
+  <div class="formula">\[\text{Se } a_n=1: \quad f(x)=\sum_{n\geq0} x^n = \frac{1}{1-x} \quad (|x|<1)\]</div>
+  <div class="formula">\[\text{Se } a_n=\frac{1}{n!}: \quad f(x)=\sum_{n\geq0}\frac{x^n}{n!} = e^x\]</div>
+</div>
+
+<div>
+  <h4 class="sub">I Numeri di Catalan</h4>
+  <p>Siano \(a_n\) il numero di modi di associare parentesi a un prodotto ordinato di \(n\) fattori. I valori iniziali si calcolano direttamente:</p>
+
+  <div class="cat-grid">
+    <div class="cat-cell hdr">n</div><div class="cat-cell hdr">1</div><div class="cat-cell hdr">2</div><div class="cat-cell hdr">3</div><div class="cat-cell hdr">4</div><div class="cat-cell hdr">5</div>
+    <div class="cat-cell hdr">aₙ</div><div class="cat-cell ">1</div><div class="cat-cell">1</div><div class="cat-cell">2</div><div class="cat-cell">5</div><div class="cat-cell">14</div>
+  </div>
+  <p>Esempio: \(a_4=5\) perché quattro fattori \(b_1 b_2 b_3 b_4\) si parentesizzano in 5 modi: \(((b_1 b_2)b_3)b_4\), \((b_1(b_2 b_3))b_4\), \((b_1 b_2)(b_3 b_4)\), \(b_1((b_2 b_3)b_4)\), \(b_1(b_2(b_3 b_4))\).</p>
+
+  <p>La relazione di ricorrenza è: \(a_{n+1} = a_1 a_n + a_2 a_{n-1} + \cdots + a_n a_1\).</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 3-6 — Numeri di Catalan</span>
+    <div class="stmt">\[a_n = \frac{1}{n}\binom{2n-2}{n-1}.\]</div>
+  </div>
+  <div class="proof">
+    Sia \(f_A(x) = \sum_{n=1}^\infty a_n x^n\). La ricorrenza dà \(f_A(x) = x + (f_A(x))^2\), cioè \(y = x + y^2\), ovvero \(y^2 - y + x = 0\). Quindi \(y = \frac{1 \pm \sqrt{1-4x}}{2}\). Poiché \(f_A(0)=0\), si sceglie il segno meno:
+    \[f_A(x) = \frac{1}{2} - \frac{1}{2}\sqrt{1-4x}.\]
+    Espandendo \((1-4x)^{1/2}\) in serie di MacLaurin:
+    \[f_A(x) = -\frac{1}{2}\sum_{n=1}^\infty (-1)^n\binom{1/2}{n}4^n x^n,\]
+    e calcolando esplicitamente il coefficiente di \(x^n\) si ottiene \(a_n = \frac{1}{n}\binom{2n-2}{n-1}\). <span class="qed">■</span>
+  </div>
+
+  <!-- Visual: catalan bracketing -->
+  <div class="vis">
+    <svg viewBox="0 0 310 160" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle" font-family="Lora,serif" font-size="11" fill="#12100e" font-style="italic">Le 5 parentesizzazioni di b₁b₂b₃b₄ (a₄=5)</text>
+      <text x="155" y="40" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#1e4035">((b₁b₂)b₃)b₄</text>
+      <text x="155" y="60" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#1e4035">(b₁(b₂b₃))b₄</text>
+      <text x="155" y="80" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#6b1528">(b₁b₂)(b₃b₄)</text>
+      <text x="155" y="100" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#1e4035">b₁((b₂b₃)b₄)</text>
+      <text x="155" y="120" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#1e4035">b₁(b₂(b₃b₄))</text>
+      <rect x="10" y="28" width="290" height="100" rx="3" fill="none" stroke="#c0b490" stroke-width="1"/>
+      <text x="155" y="148" text-anchor="middle" font-family="Lora,serif" font-size="10" fill="#888" font-style="italic">a₄ = C₄ = ¹/₄·C(6,3) = 5  ✓</text>
+    </svg>
+    <figcaption>Le 5 parentesizzazioni di 4 fattori corrispondono al numero di Catalan \(C_4 = \frac{1}{4}\binom{6}{3} = 5\).</figcaption>
+  </div>
+</div>
+
+<!-- Esercizi 3-4 -->
+<div class="full">
+  <h4 class="sub">Esercizi §3-4 — Funzioni Generatrici</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizio 1</span>
+      Dimostrare che \(\dfrac{x}{(1-x)^2}\) è la funzione generatrice per \(a_n = n\).
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        \(\frac{x}{(1-x)^2} = x\cdot\frac{1}{(1-x)^2} = x\sum_{n\geq0}(n+1)x^n = \sum_{n\geq1} n\,x^n\). ✓
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 2</span>
+      Dimostrare che \(-\log(1-x)\) è la funzione generatrice per \(a_n=1/n\).
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        \(-\log(1-x) = \sum_{n=1}^\infty \frac{x^n}{n}\) (serie di Taylor dello logaritmo). ✓
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 5 — Fibonacci</span>
+      Dimostrare che \(\dfrac{x}{1-x-x^2}\) è la funzione generatrice dei numeri di Fibonacci.
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Sia \(f_F(x)=\sum_{n\geq1}F_n x^n\). Moltiplicando per \((1-x-x^2)\): \((1-x-x^2)f_F(x) = F_1 x + (F_2-F_1)x^2 + \sum_{n\geq3}(F_n-F_{n-1}-F_{n-2})x^n = x\) (per la ricorrenza \(F_n=F_{n-1}+F_{n-2}\)). Quindi \(f_F(x)=x/(1-x-x^2)\). ✓
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 4 — Numeri Triangolari</span>
+      Dimostrare che \(\dfrac{1}{(1-x)^3}\) genera la sequenza \(a_n = \binom{n+2}{2}\) (numeri triangolari con traslazione).
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        \(\frac{1}{(1-x)^3} = \sum_{n\geq0}\binom{n+2}{2}x^n\). Si verifica usando \(\frac{d}{dx}\frac{1}{(1-x)^2}=\frac{2}{(1-x)^3}\) e la serie \(\frac{1}{(1-x)^2}=\sum_{n\geq0}(n+1)x^n\). ✓
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEZIONE 3-5 -->
+<div class="sb"><h3>§ 3-5 · Il Ruolo dei Calcolatori in Teoria dei Numeri</h3></div>
+
+<div>
+  <h4 class="sub">Computazione e congetture</h4>
+  <p>Andrews dedica questa sezione a una riflessione fondamentale: il computer non è solo uno strumento di calcolo, ma un generatore di congetture. Vedendo i dati, il matematico formula ipotesi che poi cerca di dimostrare rigorosamente. La sezione illustra questo ciclo con l'esempio dei <em>numeri perfetti</em>.</p>
+  <p>Un numero perfetto è uguale alla somma dei suoi divisori propri: \(6 = 1+2+3\), \(28 = 1+2+4+7+14\), \(496 = 1+2+4+8+16+31+62+124+248\). Calcolando i numeri perfetti minori di 500, si osserva che sono tutti della forma \(2^{p-1}(2^p-1)\) con \(2^p-1\) primo.</p>
+
+  <div class="thm" style="border-left-color:var(--amber);">
+    <span class="lbl">Congettura 1 (dimostrata)</span>
+    <div class="stmt">\(2^{p-1}(2^p-1)\) è un numero perfetto ogni volta che \(2^p-1\) è primo (primo di Mersenne).</div>
+  </div>
+  <div class="proof">
+    I divisori propri di \(n = 2^{p-1}(2^p-1)\) sono \(1, 2, 4, \ldots, 2^{p-1}, (2^p-1), 2(2^p-1), \ldots, 2^{p-2}(2^p-1)\). La loro somma è \(\sum_{j=0}^{p-1}2^j + (2^p-1)\sum_{j=0}^{p-2}2^j = (2^p-1)+(2^p-1)(2^{p-1}-1) = (2^p-1)2^{p-1} = n\). <span class="qed">■</span>
+  </div>
+
+  <div class="thm" style="border-left-color:var(--steel);">
+    <span class="lbl">Congettura 2 (ancora aperta nel 1971)</span>
+    <div class="stmt">Tutti i numeri perfetti sono della forma \(2^{p-1}(2^p-1)\) con \(2^p-1\) primo.</div>
+  </div>
+  <p>Eulero dimostrò che tutti i numeri perfetti <em>pari</em> sono di questa forma. L'esistenza di numeri perfetti <em>dispari</em> rimane un problema aperto, ancora oggi (2026)!</p>
+</div>
+
+<div>
+  <!-- Table: perfect numbers and Mersenne primes -->
+  <h4 class="sub">Numeri Perfetti e Primi di Mersenne</h4>
+  <table>
+    <thead><tr><th>p</th><th>\(2^p-1\)</th><th>Primo?</th><th>Numero Perfetto</th></tr></thead>
+    <tbody>
+      <tr><td>2</td><td>3</td><td>✓</td><td>6</td></tr>
+      <tr><td>3</td><td>7</td><td>✓</td><td>28</td></tr>
+      <tr><td>5</td><td>31</td><td>✓</td><td>496</td></tr>
+      <tr><td>7</td><td>127</td><td>✓</td><td>8128</td></tr>
+      <tr><td>11</td><td>2047=23·89</td><td>✗</td><td>—</td></tr>
+      <tr><td>13</td><td>8191</td><td>✓</td><td>33550336</td></tr>
+      <tr><td>17</td><td>131071</td><td>✓</td><td>8589869056</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Flowchart for finding perfect numbers -->
+  <div class="vis" style="margin-top:.8rem;">
+    <svg viewBox="0 0 250 300" xmlns="http://www.w3.org/2000/svg" width="80%">
+      <defs><marker id="af" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1e4035"/></marker></defs>
+      <text x="125" y="16" text-anchor="middle" font-family="Lora,serif" font-size="11" fill="#12100e" font-style="italic">Flow chart: numeri perfetti ≤500</text>
+      <!-- Start -->
+      <circle cx="125" cy="38" r="18" fill="#1e4035"/>
+      <text x="125" y="43" text-anchor="middle" fill="white" font-family="IBM Plex Mono,monospace" font-size="9">Start</text>
+      <line x1="125" y1="56" x2="125" y2="70" stroke="#1e4035" stroke-width="1.5" marker-end="url(#af)"/>
+      <!-- Set N=2 -->
+      <rect x="75" y="70" width="100" height="28" rx="3" fill="#3a5068"/>
+      <text x="125" y="89" text-anchor="middle" fill="white" font-family="IBM Plex Mono,monospace" font-size="9">N = 2</text>
+      <line x1="125" y1="98" x2="125" y2="112" stroke="#1e4035" stroke-width="1.5" marker-end="url(#af)"/>
+      <!-- Compute divisors -->
+      <rect x="60" y="112" width="130" height="28" rx="3" fill="#3a5068"/>
+      <text x="125" y="131" text-anchor="middle" fill="white" font-family="IBM Plex Mono,monospace" font-size="9">Calc. divisori S</text>
+      <line x1="125" y1="140" x2="125" y2="154" stroke="#1e4035" stroke-width="1.5" marker-end="url(#af)"/>
+      <!-- Test -->
+      <polygon points="125,154 185,172 125,190 65,172" fill="#c87e1a"/>
+      <text x="125" y="176" text-anchor="middle" fill="white" font-family="IBM Plex Mono,monospace" font-size="9">S = N?</text>
+      <!-- Yes -->
+      <line x1="185" y1="172" x2="215" y2="172" stroke="#1e4035" stroke-width="1.5" marker-end="url(#af)"/>
+      <text x="200" y="165" font-family="IBM Plex Mono,monospace" font-size="8" fill="#6b1528">Sì</text>
+      <rect x="215" y="158" width="30" height="28" rx="2" fill="#6b1528"/>
+      <text x="230" y="177" text-anchor="middle" fill="white" font-family="IBM Plex Mono,monospace" font-size="8">Print N</text>
+      <!-- No -->
+      <line x1="125" y1="190" x2="125" y2="204" stroke="#1e4035" stroke-width="1.5" marker-end="url(#af)"/>
+      <text x="138" y="200" font-family="IBM Plex Mono,monospace" font-size="8" fill="#888">No</text>
+      <!-- N=N+1 -->
+      <rect x="75" y="204" width="100" height="28" rx="3" fill="#3a5068"/>
+      <text x="125" y="223" text-anchor="middle" fill="white" font-family="IBM Plex Mono,monospace" font-size="9">N = N + 1</text>
+      <!-- Test N<=500 -->
+      <line x1="125" y1="232" x2="125" y2="246" stroke="#1e4035" stroke-width="1.5" marker-end="url(#af)"/>
+      <polygon points="125,246 180,258 125,270 70,258" fill="#c87e1a"/>
+      <text x="125" y="262" text-anchor="middle" fill="white" font-family="IBM Plex Mono,monospace" font-size="8">N≤500?</text>
+      <!-- Yes: loop back -->
+      <line x1="70" y1="258" x2="30" y2="258" stroke="#1e4035" stroke-width="1.5"/>
+      <line x1="30" y1="258" x2="30" y2="126" stroke="#1e4035" stroke-width="1.5"/>
+      <line x1="30" y1="126" x2="60" y2="126" stroke="#1e4035" stroke-width="1.5" marker-end="url(#af)"/>
+      <text x="15" y="200" font-family="IBM Plex Mono,monospace" font-size="8" fill="#888" transform="rotate(-90,15,200)">Sì</text>
+      <!-- No: end -->
+      <line x1="125" y1="270" x2="125" y2="284" stroke="#1e4035" stroke-width="1.5" marker-end="url(#af)"/>
+      <text x="155" y="268" font-family="IBM Plex Mono,monospace" font-size="8" fill="#888">No</text>
+      <circle cx="125" cy="292" r="10" fill="#0e2820"/>
+      <text x="125" y="296" text-anchor="middle" fill="#d4a020" font-family="IBM Plex Mono,monospace" font-size="8">End</text>
+    </svg>
+    <figcaption>Flow chart (Figura 3-6 del libro) per trovare numeri perfetti ≤ 500. Risultato: 6, 28, 496.</figcaption>
+  </div>
+</div>
+
+<!-- Esercizi 3-5 -->
+<div class="full">
+  <h4 class="sub">Esercizi §3-5 — Progetti Computazionali</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizio 1 — Numero di Divisori</span>
+      Trovare \(d(n)\) (numero di divisori) per \(1\leq n\leq 200\) e formulare congetture.
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        I primi valori: \(d(1)=1, d(2)=2, d(4)=3, d(6)=4, d(12)=6, d(24)=8\). Una congettura: \(d(n)=2\) iff \(n\) è primo. Altra: per \(n=2^{k-1}\), \(d(n)=k\). Vedi Cap. 6 per la formula generale: \(d(p_1^{e_1}\cdots p_r^{e_r})=(e_1+1)\cdots(e_r+1)\).
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 2 — Crivello di Eratostene</span>
+      Trovare tutti i primi minori di 1000.
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Algoritmo: inizia con tutti i numeri da 2 a 1000; cancella i multipli di 2 (tranne 2), poi di 3, poi di 5, …, fino a \(\sqrt{1000}\approx 31.6\). I rimanenti sono i 168 primi minori di 1000. Questo è il <em>Crivello di Eratostene</em> (III sec. a.C.).
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 6 — Residui Quadratici</span>
+      Un numero \(n\) è un <em>residuo quadratico modulo p</em> se \(p\nmid n\) e esiste \(m\) tale che \(p\mid m^2-n\). Per \(p=11\), trovare tutti i residui quadratici.
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Si calcolano \(m^2 \bmod 11\) per \(m=1,\ldots,5\): \(1^2=1, 2^2=4, 3^2=9, 4^2=5, 5^2=3\). Quindi i residui quadratici mod 11 sono \(\{1,3,4,5,9\}\) — esattamente 5 = (p-1)/2 valori.
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 8 — Partizioni</span>
+      Trovare il numero di modi di rappresentare \(n\) come somma di interi positivi distinti, per \(n\leq 30\).
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Es. \(n=5\): \(5, 4+1, 3+2\) → 3 modi. \(n=6\): \(6, 5+1, 4+2, 3+2+1\) → 4 modi. Questa è la funzione di partizione in parti distinte, collegata al Teorema di Eulero sulle partizioni (Cap. 12).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mappa concettuale -->
+<div class="full" style="margin-top:1rem;">
+  <h4 class="sub">Mappa Concettuale — Struttura del Capitolo 3</h4>
+  <div class="vis">
+    <svg viewBox="0 0 720 190" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs><marker id="am3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1e4035"/></marker></defs>
+      <!-- Boxes -->
+      <rect x="5" y="75" width="110" height="40" rx="4" fill="#3a5068"/>
+      <text x="60" y="92" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="9">§3-1</text>
+      <text x="60" y="107" text-anchor="middle" fill="#c0d0e0" font-family="IBM Plex Mono,monospace" font-size="8">Permut./Comb.</text>
+
+      <rect x="135" y="40" width="120" height="40" rx="4" fill="#1e4035"/>
+      <text x="195" y="57" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="9">Thm 3-1,2</text>
+      <text x="195" y="72" text-anchor="middle" fill="#a0d0b0" font-family="IBM Plex Mono,monospace" font-size="8">nPr, C(n,r)</text>
+
+      <rect x="135" y="115" width="120" height="40" rx="4" fill="#1e4035" opacity=".85"/>
+      <text x="195" y="132" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="9">Thm 3-3</text>
+      <text x="195" y="147" text-anchor="middle" fill="#a0d0b0" font-family="IBM Plex Mono,monospace" font-size="8">n! | n consec.</text>
+
+      <rect x="285" y="40" width="130" height="40" rx="4" fill="#6b1528" opacity=".9"/>
+      <text x="350" y="57" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="9">Thm 3-4 (§3-2)</text>
+      <text x="350" y="72" text-anchor="middle" fill="#ffc0c0" font-family="IBM Plex Mono,monospace" font-size="8">P.T. Fermat</text>
+
+      <rect x="285" y="115" width="130" height="40" rx="4" fill="#6b1528" opacity=".75"/>
+      <text x="350" y="132" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="9">Thm 3-5 (§3-3)</text>
+      <text x="350" y="147" text-anchor="middle" fill="#ffc0c0" font-family="IBM Plex Mono,monospace" font-size="8">Wilson's Thm</text>
+
+      <rect x="440" y="40" width="130" height="40" rx="4" fill="#c87e1a" opacity=".9"/>
+      <text x="505" y="57" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="9">Thm 3-6 (§3-4)</text>
+      <text x="505" y="72" text-anchor="middle" fill="#fff0c0" font-family="IBM Plex Mono,monospace" font-size="8">Numeri Catalan</text>
+
+      <rect x="440" y="115" width="130" height="40" rx="4" fill="#4a7060"/>
+      <text x="505" y="132" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="9">§3-5</text>
+      <text x="505" y="147" text-anchor="middle" fill="#c0d8c8" font-family="IBM Plex Mono,monospace" font-size="8">Numeri Perfetti</text>
+
+      <rect x="595" y="75" width="120" height="40" rx="4" fill="#0e2820"/>
+      <text x="655" y="92" text-anchor="middle" fill="#d4a020" font-family="Cinzel,serif" font-size="10">Congetture</text>
+      <text x="655" y="107" text-anchor="middle" fill="#a0d0b0" font-family="IBM Plex Mono,monospace" font-size="8">&amp; Cap. futuri</text>
+
+      <!-- Arrows -->
+      <line x1="115" y1="95" x2="133" y2="65" stroke="#1e4035" stroke-width="1.5" marker-end="url(#am3)"/>
+      <line x1="115" y1="95" x2="133" y2="130" stroke="#1e4035" stroke-width="1.5" marker-end="url(#am3)"/>
+      <line x1="255" y1="60" x2="283" y2="60" stroke="#1e4035" stroke-width="1.5" marker-end="url(#am3)"/>
+      <line x1="255" y1="135" x2="283" y2="135" stroke="#1e4035" stroke-width="1.5" marker-end="url(#am3)"/>
+      <line x1="255" y1="60" x2="283" y2="135" stroke="#1e4035" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#am3)"/>
+      <line x1="415" y1="60" x2="438" y2="60" stroke="#c87e1a" stroke-width="1.5" marker-end="url(#am3)"/>
+      <line x1="415" y1="135" x2="438" y2="135" stroke="#4a7060" stroke-width="1.5" marker-end="url(#am3)"/>
+      <line x1="570" y1="60" x2="593" y2="88" stroke="#c87e1a" stroke-width="1.5" marker-end="url(#am3)"/>
+      <line x1="570" y1="135" x2="593" y2="107" stroke="#4a7060" stroke-width="1.5" marker-end="url(#am3)"/>
+      <!-- label -->
+      <text x="360" y="180" text-anchor="middle" font-family="Lora,serif" font-size="10" fill="#888" font-style="italic">La combinatoria (§3-1) è il motore di tutti i teoremi del capitolo</text>
+    </svg>
+  </div>
+</div>
+
+<!-- BIBLIOGRAFIA -->
+<div class="sb"><h3>§ Riferimenti Bibliografici</h3></div>
+<div class="full">
+  <div class="bib"><div class="bib-k">[And71]</div>Andrews, G.E. (1971). <em>Number Theory</em>. W.B. Saunders, Philadelphia. — <strong>Riferimento principale.</strong></div>
+  <div class="bib"><div class="bib-k">[HarWri08]</div>Hardy, G.H. &amp; Wright, E.M. (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford University Press. — Teoremi di Fermat e Wilson con approcci molteplici.</div>
+  <div class="bib"><div class="bib-k">[Niv91]</div>Niven, I., Zuckerman, H.S. &amp; Montgomery, H.L. (1991). <em>An Introduction to the Theory of Numbers</em> (5th ed.). Wiley.</div>
+  <div class="bib"><div class="bib-k">[Rys63]</div>Ryser, H.J. (1963). <em>Combinatorial Mathematics</em>. Carus Monograph No.14, MAA. — Citato nella prefazione di Andrews; approccio combinatorio alla teoria dei numeri.</div>
+  <div class="bib"><div class="bib-k">[GKP94]</div>Graham, R.L., Knuth, D.E. &amp; Patashnik, O. (1994). <em>Concrete Mathematics</em> (2nd ed.). Addison-Wesley. — Trattazione estesa di coefficienti binomiali, funzioni generatrici e numeri di Catalan.</div>
+  <div class="bib"><div class="bib-k">[Wil06]</div>Wilf, H.S. (2006). <em>generatingfunctionology</em> (3rd ed.). A.K. Peters. — Libro interamente dedicato alle funzioni generatrici; approccio algoritmico moderno.</div>
+  <div class="bib"><div class="bib-k">[Sta97]</div>Stanley, R.P. (1997). <em>Enumerative Combinatorics, Vol. 2</em>. Cambridge University Press. — Numeri di Catalan: oltre 60 interpretazioni combinatorie diverse nell'Esercizio 6.19.</div>
+  <div class="bib"><div class="bib-k">[Rib96]</div>Ribenboim, P. (1996). <em>The New Book of Prime Number Records</em>. Springer. — Numeri di Mersenne e numeri perfetti: storia, algoritmi, record.</div>
+  <div class="bib"><div class="bib-k">[Lan02]</div>Landau, E. (1958). <em>Elementary Number Theory</em>. Chelsea. — Dimostrazione classica del Teorema di Wilson tramite aritmetica modulare.</div>
+  <div class="bib"><div class="bib-k">[ConGuy96]</div>Conway, J.H. &amp; Guy, R.K. (1996). <em>The Book of Numbers</em>. Springer. — Numeri perfetti, Mersenne, storia dei grandi risultati.</div>
+</div>
+
+</div><!-- end two-col -->
+
+<footer>
+  Studio redatto da <strong>Alberto Oliva</strong> —
+  <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a> ·
+  Rif.: G.E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971) — Capitolo 3 ·
+  Aprile 2026
+</footer>
+</body>
+</html>

@@ -217,3 +217,5 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 unisci_codice.py
+articoli/teoria numeri/andrews_ch3_combinatoria.qmd
+articoli/teoria numeri/20260429_number_theory_andrews_ch3_v2.html

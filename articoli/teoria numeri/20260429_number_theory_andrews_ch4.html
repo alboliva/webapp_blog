@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compendio di Teoria dei Numeri – Alberto Oliva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Code+Pro:wght@400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --ink: #1a1410;
+    --ink-light: #4a3f35;
+    --ink-muted: #7a6e65;
+    --rule: #c8b89a;
+    --rule-light: #e8ddd0;
+    --accent: #8b2020;
+    --accent2: #1a3a6b;
+    --bg: #faf8f4;
+    --paper: #fffef9;
+    --col-gap: 2.4rem;
+    --sidebar: 11rem;
+    --max-w: 960px;
+    --font-body: 'EB Garamond', Georgia, serif;
+    --font-head: 'Libre Baskerville', Georgia, serif;
+    --font-mono: 'Source Code Pro', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 16px; background: var(--bg); }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    line-height: 1.65;
+    background: var(--bg);
+  }
+
+  /* PAGE WRAPPER */
+  .page {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    background: var(--paper);
+    box-shadow: 0 0 60px rgba(0,0,0,0.08);
+    padding: 3.5rem 3rem 5rem;
+  }
+
+  /* HEADER */
+  .journal-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 2px solid var(--ink);
+    border-bottom: 0.5px solid var(--rule);
+    padding: 0.35rem 0;
+    margin-bottom: 2.5rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    font-family: var(--font-head);
+  }
+
+  .paper-title {
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-head);
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .paper-subtitle {
+    text-align: center;
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--ink-light);
+    margin-bottom: 1.4rem;
+  }
+
+  .author-block {
+    text-align: center;
+    border-top: 0.5px solid var(--rule);
+    border-bottom: 0.5px solid var(--rule);
+    padding: 0.75rem 0;
+    margin: 0 auto 2rem;
+    max-width: 480px;
+  }
+
+  .author-name {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.03em;
+  }
+
+  .author-meta {
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    margin-top: 0.2rem;
+  }
+
+  .author-meta a {
+    color: var(--accent2);
+    text-decoration: none;
+  }
+
+  /* ABSTRACT */
+  .abstract-box {
+    border-left: 3px solid var(--accent);
+    padding: 0.9rem 1.1rem;
+    margin: 0 auto 2.5rem;
+    background: rgba(139,32,32,0.03);
+    max-width: 680px;
+  }
+
+  .abstract-label {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+
+  .abstract-text {
+    font-size: 0.88rem;
+    color: var(--ink-light);
+    line-height: 1.6;
+  }
+
+  .keywords {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+  }
+
+  .keywords strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* DIVIDER */
+  hr.section-rule {
+    border: none;
+    border-top: 0.5px solid var(--rule);
+    margin: 2rem 0;
+  }
+
+  /* TWO-COLUMN LAYOUT */
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--col-gap);
+    column-rule: 0.5px solid var(--rule-light);
+    align-items: start;
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  /* SECTIONS */
+  .section-head {
+    font-family: var(--font-head);
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent2);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.25rem;
+    margin: 1.6rem 0 0.7rem;
+  }
+
+  .section-head.major {
+    font-size: 1.05rem;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    border-bottom: 1.5px solid var(--ink);
+  }
+
+  .subsec {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--ink);
+    margin: 1rem 0 0.35rem;
+  }
+
+  /* BODY TEXT */
+  p {
+    font-size: 0.92rem;
+    margin-bottom: 0.6rem;
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+
+  /* DEFINITION / THEOREM BLOCKS */
+  .block {
+    border-left: 2.5px solid var(--rule);
+    padding: 0.55rem 0.8rem;
+    margin: 0.7rem 0;
+    background: rgba(200,184,154,0.06);
+    font-size: 0.88rem;
+  }
+
+  .block.theorem { border-color: var(--accent2); background: rgba(26,58,107,0.04); }
+  .block.definition { border-color: var(--accent); background: rgba(139,32,32,0.03); }
+  .block.corollary { border-color: #5a7a3a; background: rgba(90,122,58,0.04); }
+  .block.example { border-color: var(--rule); background: rgba(200,184,154,0.09); }
+
+  .block-label {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .theorem .block-label { color: var(--accent2); }
+  .definition .block-label { color: var(--accent); }
+  .corollary .block-label { color: #5a7a3a; }
+  .example .block-label { color: var(--ink-muted); }
+
+  /* FORMULA DISPLAY */
+  .formula-box {
+    background: rgba(200,184,154,0.08);
+    border: 0.5px solid var(--rule);
+    border-radius: 2px;
+    padding: 0.6rem 0.9rem;
+    margin: 0.7rem 0;
+    text-align: center;
+    overflow-x: auto;
+    font-size: 0.9rem;
+  }
+
+  /* TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin: 0.7rem 0;
+  }
+
+  .data-table th {
+    font-family: var(--font-head);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    border-bottom: 1.5px solid var(--ink);
+    border-top: 0.5px solid var(--ink);
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+    color: var(--ink);
+  }
+
+  .data-table td {
+    padding: 0.3rem 0.5rem;
+    border-bottom: 0.5px solid var(--rule-light);
+    color: var(--ink-light);
+    font-size: 0.82rem;
+  }
+
+  .data-table tr:last-child td { border-bottom: 0.5px solid var(--ink); }
+  .data-table td.num { font-family: var(--font-mono); font-size: 0.78rem; text-align: right; }
+  .data-table th.num { text-align: right; }
+
+  /* CHART CONTAINERS */
+  .chart-wrap {
+    margin: 0.9rem 0;
+    position: relative;
+  }
+
+  .chart-caption {
+    font-style: italic;
+    font-size: 0.76rem;
+    color: var(--ink-muted);
+    text-align: center;
+    margin-top: 0.3rem;
+  }
+
+  .chart-title-label {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--ink-muted);
+    text-align: center;
+    margin-bottom: 0.3rem;
+  }
+
+  /* FOOTNOTE */
+  .footnotes {
+    border-top: 0.5px solid var(--rule);
+    margin-top: 2.5rem;
+    padding-top: 0.8rem;
+    font-size: 0.76rem;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  .footnotes p { margin-bottom: 0.2rem; text-align: left; font-size: 0.76rem; }
+
+  /* REFERENCES */
+  .references { margin-top: 0.5rem; }
+  .references p {
+    text-align: left;
+    font-size: 0.8rem;
+    color: var(--ink-light);
+    margin-bottom: 0.35rem;
+  }
+
+  /* PAGE NUMBER SIMULATION */
+  .page-footer {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    font-family: var(--font-head);
+    border-top: 0.5px solid var(--rule);
+    padding-top: 0.5rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* INLINE CODE */
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    background: rgba(200,184,154,0.15);
+    padding: 0.05em 0.25em;
+    border-radius: 2px;
+    color: var(--ink);
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    font-family: var(--font-head);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.1em 0.45em;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-left: 0.3em;
+  }
+
+  .badge-blue { background: #dce6f7; color: var(--accent2); }
+  .badge-red { background: #f5e0e0; color: var(--accent); }
+  .badge-green { background: #e4f0da; color: #3a6020; }
+
+  /* COLUMN BREAK HELPER */
+  .col-break { break-after: column; }
+
+  /* PRIME GRID VIZ */
+  .prime-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 2px;
+    margin: 0.7rem 0;
+  }
+
+  .prime-cell {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.62rem;
+    font-family: var(--font-mono);
+    border-radius: 1px;
+    border: 0.5px solid transparent;
+  }
+
+  .prime-cell.is-prime {
+    background: var(--accent2);
+    color: #dce6f7;
+    border-color: var(--accent2);
+    font-weight: 500;
+  }
+
+  .prime-cell.not-prime {
+    background: rgba(200,184,154,0.12);
+    color: var(--ink-muted);
+    border-color: var(--rule-light);
+  }
+
+  .prime-cell.highlight {
+    background: var(--accent);
+    color: #f5e0e0;
+    border-color: var(--accent);
+  }
+
+  /* TIMELINE / MILESTONE */
+  .timeline {
+    margin: 0.7rem 0;
+    font-size: 0.82rem;
+  }
+
+  .timeline-row {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.3rem 0;
+    border-bottom: 0.5px solid var(--rule-light);
+    align-items: baseline;
+  }
+
+  .timeline-year {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent2);
+    min-width: 2.8rem;
+    font-weight: 500;
+  }
+
+  .timeline-text { color: var(--ink-light); line-height: 1.4; }
+
+  /* EULER PHI TABLE */
+  .phi-row { display: flex; gap: 4px; flex-wrap: wrap; margin: 0.4rem 0; }
+  .phi-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 2.1rem;
+    padding: 0.2rem 0;
+    border: 0.5px solid var(--rule-light);
+    border-radius: 2px;
+    font-size: 0.62rem;
+    background: rgba(200,184,154,0.06);
+  }
+  .phi-cell .phi-n { color: var(--ink-muted); }
+  .phi-cell .phi-v { font-family: var(--font-mono); font-weight: 500; color: var(--accent2); }
+
+  @media print {
+    .page { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- JOURNAL BAR -->
+  <div class="journal-bar">
+    <span>Teoria dei Numeri &nbsp;·&nbsp; Note di Studio</span>
+    <span>30 Aprile 2026</span>
+    <span>Edizione Personale</span>
+  </div>
+
+  <!-- TITLE -->
+  <h1 class="paper-title">Compendio di Teoria dei Numeri</h1>
+  <p class="paper-subtitle">Dall'Algoritmo di Euclide alla Reciprocità Quadratica — uno studio per diletto</p>
+
+  <!-- AUTHOR -->
+  <div class="author-block">
+    <div class="author-name">Alberto Oliva</div>
+    <div class="author-meta">
+      <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a> &nbsp;·&nbsp; 30 aprile 2026
+    </div>
+    <div class="author-meta" style="margin-top:0.3rem;font-style:italic;font-size:0.78rem;">Ricerca indipendente &amp; dilettantistica — senza affiliazione istituzionale</div>
+  </div>
+
+  <!-- ABSTRACT -->
+  <div class="abstract-box">
+    <div class="abstract-label">Abstract</div>
+    <p class="abstract-text">
+      Questo compendio raccoglie i risultati fondamentali della teoria elementare dei numeri: divisibilità, aritmetica modulare, funzioni moltiplicative e reciprocità quadratica. Il testo, redatto per puro diletto intellettuale, è sostanzialmente autocontenuto e si rivolge a chiunque desideri un riferimento preciso e conciso senza perdere il filo della matematica viva. Non si pretende originalità nei contenuti, bensì chiarezza nell'esposizione e cura nella selezione degli esempi numerici.
+    </p>
+    <p class="keywords"><strong>Parole chiave:</strong> divisibilità, MCD, congruenze, funzione di Eulero, simbolo di Legendre, reciprocità quadratica, equazione di Pell.</p>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- TWO-COLUMN BODY -->
+  <div class="columns">
+
+    <!-- ═══════════════════════════════ COL 1: §1 -->
+    <div>
+      <h2 class="section-head major">1. Divisibilità e Algoritmo di Euclide</h2>
+
+      <div class="block definition">
+        <div class="block-label">Definizione 1.1 — Divisibilità</div>
+        Dati \(a, b \in \mathbb{Z}\) con \(b \neq 0\), scriviamo \(b \mid a\) se esiste \(k \in \mathbb{Z}\) tale che \(a = b k\).
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 1.2 — Divisione Euclidea</div>
+        Per ogni \(a \in \mathbb{Z}\) e \(b \in \mathbb{Z}_{>0}\) esistono unici \(q, r \in \mathbb{Z}\) con
+        \[ a = bq + r, \qquad 0 \le r < b. \]
+      </div>
+
+      <p>
+        Il <em>massimo comune divisore</em> \(d = \gcd(a,b)\) è il più grande intero positivo che divide sia \(a\) che \(b\). L'algoritmo di Euclide calcola \(\gcd\) applicando iterativamente la divisione euclidea:
+      </p>
+
+      <div class="formula-box">
+        \(\gcd(a,b) = \gcd(b,\, a \bmod b)\)
+      </div>
+
+      <p>
+        Il processo termina quando il resto diventa zero; l'ultimo resto non nullo è il MCD. La complessità è \(O(\log \min(a,b))\) divisioni.
+      </p>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 1.3 — Identità di Bézout</div>
+        Esistono \(x, y \in \mathbb{Z}\) tali che \(\gcd(a,b) = ax + by\). I coefficienti si ottengono risalendo le equazioni dell'algoritmo esteso di Euclide.
+      </div>
+
+      <div class="block example">
+        <div class="block-label">Esempio — \(\gcd(252, 105)\)</div>
+        <p style="margin:0;font-size:0.82rem;">
+          \(252 = 2\cdot 105 + 42\)<br>
+          \(105 = 2\cdot 42 + 21\)<br>
+          \(42\phantom{0} = 2\cdot 21 + 0\)
+        </p>
+        <p style="margin:0.3rem 0 0;font-size:0.82rem;">Quindi \(\gcd(252,105)=21\). Risalendo: \(21 = 105 - 2\cdot42 = 3\cdot105 - 252\), ovvero \(x=-1,\,y=3\).</p>
+      </div>
+
+      <p>Vale la relazione fondamentale</p>
+      <div class="formula-box">
+        \(\gcd(a,b)\cdot\text{mcm}(a,b) = |ab|\)
+      </div>
+
+      <!-- Mini tabella gcd/lcm -->
+      <p class="chart-title-label" style="margin-top:1rem;">Tabella MCD e MCM — coppie selezionate</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>\(a\)</th>
+            <th>\(b\)</th>
+            <th class="num">MCD</th>
+            <th class="num">MCM</th>
+            <th class="num">Bézout \(x\)</th>
+            <th class="num">Bézout \(y\)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>48</td><td>18</td><td class="num">6</td><td class="num">144</td><td class="num">−1</td><td class="num">3</td></tr>
+          <tr><td>35</td><td>77</td><td class="num">7</td><td class="num">385</td><td class="num">11</td><td class="num">−5</td></tr>
+          <tr><td>100</td><td>75</td><td class="num">25</td><td class="num">300</td><td class="num">1</td><td class="num">−1</td></tr>
+          <tr><td>17</td><td>13</td><td class="num">1</td><td class="num">221</td><td class="num">−3</td><td class="num">4</td></tr>
+          <tr><td>360</td><td>84</td><td class="num">12</td><td class="num">2520</td><td class="num">−2</td><td class="num">9</td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="section-head major" style="margin-top:1.8rem;">2. Numeri Primi</h2>
+
+      <div class="block definition">
+        <div class="block-label">Definizione 2.1</div>
+        Un intero \(p > 1\) è <em>primo</em> se i suoi unici divisori positivi sono \(1\) e \(p\) stesso.
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 2.2 — Euclide (c. 300 a.C.)</div>
+        Esistono infiniti numeri primi.
+        <p style="margin-top:0.3rem;font-size:0.82rem;font-style:italic;">
+          <em>Dim.</em> Se \(p_1,\dots,p_n\) fossero tutti i primi, il numero \(N = p_1\cdots p_n + 1\) non è divisibile per alcun \(p_i\), contraddizione. \(\square\)
+        </p>
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 2.3 — Fondamentale dell'Aritmetica</div>
+        Ogni intero \(n > 1\) si scrive in modo unico (a meno dell'ordine) come prodotto di primi:
+        \[ n = p_1^{e_1} p_2^{e_2} \cdots p_k^{e_k}. \]
+      </div>
+
+      <p>
+        Il <strong>Crivello di Eratostene</strong> individua tutti i primi fino a \(N\) in tempo \(O(N \log \log N)\): si cancellano iterativamente i multipli di ogni primo trovato, partendo da 2.
+      </p>
+
+      <p style="margin-top:0.5rem;font-size:0.78rem;color:var(--ink-muted);font-style:italic;">
+        Primi 1–100 (in blu i primi, in rosso i quadrati di primi)
+      </p>
+
+      <!-- PRIME SIEVE GRID -->
+      <div class="prime-grid" id="sieveGrid"></div>
+
+      <p>
+        Il <strong>Teorema dei Numeri Primi</strong> (Hadamard e de la Vallée Poussin, 1896) afferma che la funzione contatore \(\pi(x)\) soddisfa
+      </p>
+      <div class="formula-box">
+        \(\displaystyle \pi(x) \sim \frac{x}{\ln x} \qquad (x \to \infty)\)
+      </div>
+      <p>Un'approssimazione ancora più accurata utilizza il <em>logaritmo integrale</em> \(\operatorname{Li}(x) = \int_2^x \frac{dt}{\ln t}\).</p>
+    </div>
+
+    <!-- ═══════════════════════════════ COL 2: §1 cont. + charts -->
+    <div>
+
+      <!-- CHART: π(x) vs x/ln x -->
+      <h2 class="section-head" style="margin-top:0;">&nbsp;</h2>
+      <p class="chart-title-label" style="margin-top:0.2rem;">\(\pi(x)\) confrontato con \(x / \ln x\)</p>
+      <div class="chart-wrap" style="height:190px;">
+        <canvas id="primeChart" role="img" aria-label="Grafico della funzione pi(x) e dell'approssimazione x/ln x per x da 10 a 1000"></canvas>
+      </div>
+      <p class="chart-caption">Fig. 1 — La funzione \(\pi(x)\) (linea continua) cresce leggermente più in fretta dell'approssimazione \(x/\ln x\) (tratteggio).</p>
+
+      <h2 class="section-head major" style="margin-top:1.6rem;">3. Aritmetica Modulare</h2>
+
+      <div class="block definition">
+        <div class="block-label">Definizione 3.1 — Congruenza</div>
+        \(a \equiv b \pmod{m}\) se e solo se \(m \mid (a - b)\). Le classi di resto formano l'anello \(\mathbb{Z}/m\mathbb{Z}\).
+      </div>
+
+      <p>
+        L'anello \(\mathbb{Z}/m\mathbb{Z}\) è un campo se e solo se \(m\) è primo. L'inverso di \(a\) modulo \(m\) esiste se e solo se \(\gcd(a,m)=1\), e si calcola con l'algoritmo esteso di Euclide.
+      </p>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 3.2 — Resto Cinese (CRT)</div>
+        Se \(m_1,\dots,m_k\) sono a due a due coprimi e \(M = \prod m_i\), il sistema
+        \[ x \equiv a_i \pmod{m_i}, \quad i=1,\dots,k \]
+        ha soluzione unica modulo \(M\):
+        \[ x \equiv \sum_{i=1}^k a_i M_i y_i \pmod{M} \]
+        dove \(M_i = M/m_i\) e \(y_i \equiv M_i^{-1} \pmod{m_i}\).
+      </div>
+
+      <div class="block example">
+        <div class="block-label">Esempio CRT</div>
+        <p style="font-size:0.82rem;margin:0;">Risolvere \(x\equiv 2\pmod{3}\), \(x\equiv 3\pmod{5}\), \(x\equiv 2\pmod{7}\).</p>
+        <p style="font-size:0.82rem;margin:0.3rem 0 0;">\(M=105\), \(M_1=35,\,M_2=21,\,M_3=15\).<br>
+        \(y_1=2,\;y_2=1,\;y_3=1\).<br>
+        \(x \equiv 2\cdot35\cdot2 + 3\cdot21\cdot1 + 2\cdot15\cdot1 = 140+63+30 = 233 \equiv 23 \pmod{105}\).</p>
+      </div>
+
+      <!-- CHART: residui quadratici mod 13 -->
+      <p class="chart-title-label" style="margin-top:1rem;">Residui mod 13 — \(n^2 \bmod 13\)</p>
+      <div class="chart-wrap" style="height:160px;">
+        <canvas id="residueChart" role="img" aria-label="Grafico a barre dei residui quadratici modulo 13"></canvas>
+      </div>
+      <p class="chart-caption">Fig. 2 — Solo 6 dei 12 valori non nulli in \(\mathbb{Z}/13\mathbb{Z}\) sono residui quadratici.</p>
+
+      <h2 class="section-head major" style="margin-top:1.6rem;">4. Teoremi di Fermat ed Eulero</h2>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 4.1 — Piccolo Teorema di Fermat (1640)</div>
+        Sia \(p\) primo e \(p \nmid a\). Allora
+        \[ a^{p-1} \equiv 1 \pmod{p}. \]
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 4.2 — Eulero (1763)</div>
+        Per \(\gcd(a,n)=1\):
+        \[ a^{\varphi(n)} \equiv 1 \pmod{n}, \]
+        dove \(\varphi(n) = n\prod_{p\mid n}(1-1/p)\) è la funzione di Eulero.
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 4.3 — Wilson (1770)</div>
+        \(p\) è primo \(\iff (p-1)! \equiv -1 \pmod{p}\).
+      </div>
+
+      <p>
+        Il Piccolo Teorema di Fermat è alla base del test di primalità probabilistico di Fermat: dato \(n\) da testare, se per qualche \(a\) risulta \(a^{n-1}\not\equiv 1\pmod{n}\), allora \(n\) è composto. (Attenzione ai numeri di Carmichael, che superano il test per ogni \(a\) coprimo con \(n\).)
+      </p>
+
+      <div class="block example">
+        <div class="block-label">Applicazione — RSA (cenno)</div>
+        <p style="font-size:0.82rem;margin:0;">In RSA si scelgono primi \(p,q\), si pone \(n=pq\) e \(\varphi(n)=(p-1)(q-1)\). La chiave pubblica è \((n,e)\) con \(\gcd(e,\varphi(n))=1\); la chiave privata \(d\) soddisfa \(ed \equiv 1 \pmod{\varphi(n)}\). La sicurezza si basa sulla difficoltà della fattorizzazione.</p>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ FULL WIDTH: tabella φ(n) + chart -->
+    <div class="full-width">
+      <hr class="section-rule">
+      <h2 class="section-head major">5. Funzione di Eulero \(\varphi(n)\) e Funzioni Aritmetiche</h2>
+    </div>
+
+    <div>
+      <p>
+        La funzione \(\varphi\) è <em>moltiplicativa</em>: se \(\gcd(m,n)=1\) allora \(\varphi(mn)=\varphi(m)\varphi(n)\). Per una potenza di primo:
+      </p>
+      <div class="formula-box">
+        \(\varphi(p^k) = p^k - p^{k-1} = p^{k-1}(p-1)\)
+      </div>
+
+      <p>Vale l'identità notevole \(\displaystyle\sum_{d \mid n} \varphi(d) = n\).</p>
+
+      <p class="chart-title-label" style="margin-top:0.8rem;">\(\varphi(n)\) per \(n = 1, \dots, 20\)</p>
+      <div class="phi-row" id="phiGrid"></div>
+
+      <div class="block definition">
+        <div class="block-label">Definizione 5.1 — Funzione di Möbius</div>
+        \[
+          \mu(n) = \begin{cases} 1 & n=1 \\ (-1)^k & n=p_1\cdots p_k\;\text{(squarefree)} \\ 0 & \text{se }p^2 \mid n \end{cases}
+        \]
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 5.2 — Inversione di Möbius</div>
+        Se \(f(n) = \displaystyle\sum_{d\mid n} g(d)\), allora
+        \[ g(n) = \sum_{d\mid n} \mu(d)\, f\!\left(\frac{n}{d}\right). \]
+      </div>
+
+      <p>La funzione \(\sigma_k(n) = \sum_{d\mid n} d^k\) somma le \(k\)-esime potenze dei divisori; in particolare \(\sigma_0(n) = \tau(n)\) è il numero dei divisori e \(\sigma_1(n) = \sigma(n)\) la loro somma.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>\(n\)</th>
+            <th class="num">\(\varphi(n)\)</th>
+            <th class="num">\(\mu(n)\)</th>
+            <th class="num">\(\tau(n)\)</th>
+            <th class="num">\(\sigma(n)\)</th>
+          </tr>
+        </thead>
+        <tbody id="arithmeticTable"></tbody>
+      </table>
+    </div>
+
+    <div>
+      <!-- CHART: φ(n) bar chart -->
+      <p class="chart-title-label">\(\varphi(n)\) per \(n=1,\dots,30\)</p>
+      <div class="chart-wrap" style="height:200px;">
+        <canvas id="eulerChart" role="img" aria-label="Grafico a barre della funzione di Eulero phi(n) per n da 1 a 30"></canvas>
+      </div>
+      <p class="chart-caption">Fig. 3 — Valori di \(\varphi(n)\). I picchi corrispondono ai primi \(n\) (dove \(\varphi(n)=n-1\)).</p>
+
+      <p class="chart-title-label" style="margin-top:1rem;">\(\sigma(n) / n\) per \(n=1,\dots,30\) (abbondanza relativa)</p>
+      <div class="chart-wrap" style="height:175px;">
+        <canvas id="sigmaChart" role="img" aria-label="Grafico a linee del rapporto sigma(n)/n per n da 1 a 30"></canvas>
+      </div>
+      <p class="chart-caption">Fig. 4 — Il rapporto \(\sigma(n)/n > 2\) identifica i numeri abbondanti (\(n=12,18,20,\dots\)).</p>
+
+      <div class="block corollary">
+        <div class="block-label">Nota — Numeri Perfetti</div>
+        \(n\) è <em>perfetto</em> se \(\sigma(n) = 2n\), ovvero \(\sigma(n)/n = 2\). Euclide–Eulero: \(n = 2^{p-1}(2^p-1)\) è pari perfetto sse \(2^p-1\) è primo di Mersenne.
+      </div>
+    </div>
+
+    <!-- ═══════════════════ §6 RADICI PRIMITIVE -->
+    <div class="full-width"><hr class="section-rule">
+      <h2 class="section-head major">6. Radici Primitive e Ordine</h2>
+    </div>
+
+    <div>
+      <div class="block definition">
+        <div class="block-label">Definizione 6.1 — Ordine</div>
+        L'<em>ordine</em> di \(a\) modulo \(n\) (con \(\gcd(a,n)=1\)) è il minimo \(d > 0\) tale che \(a^d \equiv 1 \pmod{n}\). Per il Teorema di Eulero, \(\text{ord}_n(a) \mid \varphi(n)\).
+      </div>
+
+      <div class="block definition">
+        <div class="block-label">Definizione 6.2 — Radice Primitiva</div>
+        \(g\) è radice primitiva modulo \(n\) se \(\text{ord}_n(g) = \varphi(n)\), ovvero se le potenze di \(g\) generano tutto \((\mathbb{Z}/n\mathbb{Z})^*\).
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 6.3 — Esistenza</div>
+        Le radici primitive modulo \(n\) esistono se e solo se \(n \in \{1, 2, 4, p^k, 2p^k\}\) con \(p\) primo dispari. Quando esistono, ve ne sono esattamente \(\varphi(\varphi(n))\).
+      </div>
+    </div>
+
+    <div>
+      <p class="chart-title-label">Potenze di \(g=2\) mod 13 — generazione di \((\mathbb{Z}/13\mathbb{Z})^*\)</p>
+      <div class="chart-wrap" style="height:175px;">
+        <canvas id="rootChart" role="img" aria-label="Grafico delle potenze di 2 modulo 13 che mostrano la generazione del gruppo moltiplicativo"></canvas>
+      </div>
+      <p class="chart-caption">Fig. 5 — \(g=2\) è radice primitiva mod 13: le 12 potenze coprono tutti i valori \(1,\dots,12\).</p>
+
+      <p>
+        Le radici primitive permettono di trasformare il gruppo moltiplicativo \((\mathbb{Z}/p\mathbb{Z})^*\) in un gruppo ciclico isomorfo a \(\mathbb{Z}/(p-1)\mathbb{Z}\), semplificando enormemente i calcoli di logaritmo discreto — alla base dei crittosistemi El Gamal e Diffie–Hellman.
+      </p>
+    </div>
+
+    <!-- ═══════════════════ §7 LEGGE DI RECIPROCITÀ -->
+    <div class="full-width"><hr class="section-rule">
+      <h2 class="section-head major">7. Simbolo di Legendre e Legge di Reciprocità Quadratica</h2>
+    </div>
+
+    <div>
+      <div class="block definition">
+        <div class="block-label">Definizione 7.1 — Simbolo di Legendre</div>
+        Per \(p\) primo dispari e \(a \in \mathbb{Z}\):
+        \[
+          \left(\frac{a}{p}\right) = \begin{cases} 1 & a \text{ residuo quadr. mod }p,\; p\nmid a \\ -1 & a \text{ non residuo} \\ 0 & p \mid a \end{cases}
+        \]
+        Si ha \(\left(\frac{a}{p}\right) \equiv a^{(p-1)/2} \pmod{p}\) (<em>Criterio di Eulero</em>).
+      </div>
+
+      <p>Proprietà fondamentali:</p>
+      <div class="formula-box">
+        \(\displaystyle\left(\frac{ab}{p}\right) = \left(\frac{a}{p}\right)\!\left(\frac{b}{p}\right)\), \quad
+        \left(\frac{-1}{p}\right) = (-1)^{(p-1)/2}\), \quad
+        \left(\frac{2}{p}\right) = (-1)^{(p^2-1)/8}\)
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 7.2 — Reciprocità Quadratica (Gauss, 1796)</div>
+        Per primi dispari distinti \(p \neq q\):
+        \[
+          \left(\frac{p}{q}\right)\!\left(\frac{q}{p}\right) = (-1)^{\frac{p-1}{2}\cdot\frac{q-1}{2}}.
+        \]
+        In pratica: il prodotto è \(-1\) solo se <em>entrambi</em> \(p,q \equiv 3 \pmod{4}\); altrimenti è \(+1\).
+      </div>
+
+      <div class="block example">
+        <div class="block-label">Esempio — \(\left(\tfrac{7}{11}\right)\)</div>
+        <p style="font-size:0.82rem;margin:0;">
+          \(7 \equiv 3 \pmod 4\), \(11 \equiv 3 \pmod 4\) → prodotto \(= -1\).<br>
+          \(\left(\frac{11}{7}\right) = \left(\frac{4}{7}\right) = 1\).<br>
+          Quindi \(\left(\frac{7}{11}\right) = (-1)\cdot 1 = -1\): 7 non è residuo quadratico mod 11.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <p class="chart-title-label">Simbolo di Legendre \(\left(\tfrac{a}{p}\right)\) per \(p=11,\,a=1,\dots,10\)</p>
+      <div class="chart-wrap" style="height:170px;">
+        <canvas id="legendreChart" role="img" aria-label="Grafico del simbolo di Legendre per p=11 e a da 1 a 10, che mostra +1 e -1"></canvas>
+      </div>
+      <p class="chart-caption">Fig. 6 — Residui (blu, +1) e non-residui (rosso, −1) quadratici modulo 11. I residui sono \(\{1,3,4,5,9\}\).</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>\(a\)</th>
+            <th class="num">1</th><th class="num">2</th><th class="num">3</th><th class="num">4</th><th class="num">5</th>
+            <th class="num">6</th><th class="num">7</th><th class="num">8</th><th class="num">9</th><th class="num">10</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-family:var(--font-mono);font-size:0.75rem;">\(\left(\tfrac{a}{11}\right)\)</td>
+            <td class="num" style="color:#1a3a6b;font-weight:600;">+1</td>
+            <td class="num" style="color:#8b2020;">−1</td>
+            <td class="num" style="color:#1a3a6b;font-weight:600;">+1</td>
+            <td class="num" style="color:#1a3a6b;font-weight:600;">+1</td>
+            <td class="num" style="color:#1a3a6b;font-weight:600;">+1</td>
+            <td class="num" style="color:#8b2020;">−1</td>
+            <td class="num" style="color:#8b2020;">−1</td>
+            <td class="num" style="color:#8b2020;">−1</td>
+            <td class="num" style="color:#1a3a6b;font-weight:600;">+1</td>
+            <td class="num" style="color:#8b2020;">−1</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 class="section-head major" style="margin-top:1.4rem;">8. Equazioni Diofantee</h2>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 8.1 — Equazione Lineare</div>
+        \(ax + by = c\) ha soluzioni intere \(\iff \gcd(a,b) \mid c\). Se \((x_0,y_0)\) è una soluzione particolare e \(d=\gcd(a,b)\):
+        \[ x = x_0 + \frac{b}{d}\,t, \quad y = y_0 - \frac{a}{d}\,t, \quad t \in \mathbb{Z}. \]
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 8.2 — Equazione di Pell</div>
+        Per \(d > 0\) non quadrato perfetto, \(x^2 - d\,y^2 = 1\) ha infinite soluzioni intere. La soluzione fondamentale \((x_1,y_1)\) genera tutte le soluzioni:
+        \[ x_k + y_k\sqrt{d} = (x_1 + y_1\sqrt{d})^k. \]
+      </div>
+
+      <div class="block example">
+        <div class="block-label">Esempio — \(x^2 - 2y^2 = 1\)</div>
+        <p style="font-size:0.82rem;margin:0;">Sol. fondamentale: \((x_1,y_1)=(3,2)\). Successivamente: \((17,12)\), \((99,70)\), \((577,408),\dots\)</p>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ §9 FRAZIONI CONTINUE -->
+    <div class="full-width"><hr class="section-rule">
+      <h2 class="section-head major">9. Frazioni Continue</h2>
+    </div>
+
+    <div>
+      <p>
+        Ogni numero reale \(\alpha\) si sviluppa in frazione continua \([a_0; a_1, a_2, \dots]\) dove \(a_0 = \lfloor\alpha\rfloor\) e \(a_i \ge 1\) per \(i\ge 1\). I <em>convergenti</em> \(p_n/q_n\) sono definiti dalla ricorrenza:
+      </p>
+      <div class="formula-box">
+        \(p_n = a_n p_{n-1} + p_{n-2}, \qquad q_n = a_n q_{n-1} + q_{n-2}\)
+      </div>
+      <p>con condizioni iniziali \(p_{-1}=1,\,p_{-2}=0,\,q_{-1}=0,\,q_{-2}=1\).</p>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 9.1 — Approssimazione ottimale</div>
+        \(\displaystyle\left|\alpha - \frac{p_n}{q_n}\right| < \frac{1}{q_n q_{n+1}} < \frac{1}{q_n^2}\).
+        I convergenti forniscono le migliori approssimazioni razionali di \(\alpha\) con denominatore \(\le q_n\).
+      </div>
+
+      <div class="block example">
+        <div class="block-label">Esempio — \(\sqrt{2} = [1; 2, 2, 2, \dots]\)</div>
+        <p style="font-size:0.82rem;margin:0;">
+          \(p_0/q_0 = 1/1\), \(p_1/q_1 = 3/2\), \(p_2/q_2 = 7/5\), \(p_3/q_3 = 17/12\), \(p_4/q_4 = 41/29,\dots\)<br>
+          La frazione continua periodica di \(\sqrt{d}\) fornisce la soluzione fondamentale dell'equazione di Pell.
+        </p>
+      </div>
+
+      <p>Il <strong>Teorema di Dirichlet</strong> sulle approssimazioni garantisce che per ogni irrazionale \(\alpha\) esistono infiniti \(p/q\) con \(|\alpha - p/q| < 1/q^2\). I convergenti soddisfano questo bound, e ne esiste sempre uno entro distanza \(1/(2q^2)\).</p>
+    </div>
+
+    <div>
+      <p class="chart-title-label">Convergenti di \(\sqrt{2}\): errore \(\left|\sqrt{2} - p_n/q_n\right|\)</p>
+      <div class="chart-wrap" style="height:190px;">
+        <canvas id="cfChart" role="img" aria-label="Grafico semilogaritmico dell'errore dei convergenti di radice di 2"></canvas>
+      </div>
+      <p class="chart-caption">Fig. 7 — L'errore di approssimazione decade geometricamente ad ogni passo, scala logaritmica.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>\(n\)</th>
+            <th>\(p_n/q_n\)</th>
+            <th class="num">\(\left|\sqrt{2}-p_n/q_n\right|\)</th>
+            <th class="num">\(1/q_n^2\)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>0</td><td>1/1</td><td class="num">4.14 × 10⁻¹</td><td class="num">1.00</td></tr>
+          <tr><td>1</td><td>3/2</td><td class="num">8.58 × 10⁻²</td><td class="num">2.50 × 10⁻¹</td></tr>
+          <tr><td>2</td><td>7/5</td><td class="num">1.42 × 10⁻²</td><td class="num">4.00 × 10⁻²</td></tr>
+          <tr><td>3</td><td>17/12</td><td class="num">2.45 × 10⁻³</td><td class="num">6.94 × 10⁻³</td></tr>
+          <tr><td>4</td><td>41/29</td><td class="num">4.24 × 10⁻⁴</td><td class="num">1.19 × 10⁻³</td></tr>
+          <tr><td>5</td><td>99/70</td><td class="num">7.28 × 10⁻⁵</td><td class="num">2.04 × 10⁻⁴</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════════ §10 TEOREMI AVANZATI -->
+    <div class="full-width"><hr class="section-rule">
+      <h2 class="section-head major">10. Risultati Avanzati e Prospettive</h2>
+    </div>
+
+    <div>
+      <div class="block theorem">
+        <div class="block-label">Teorema 10.1 — Dirichlet (1837)</div>
+        Se \(\gcd(a,d)=1\), esistono infiniti primi \(p \equiv a \pmod{d}\). La dimostrazione usa le <em>serie di Dirichlet</em> e i <em>caratteri</em> modulo \(d\): \(L(s,\chi) = \sum_{n=1}^\infty \chi(n)/n^s\).
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 10.2 — Lagrange (1770)</div>
+        Ogni intero non negativo è somma di al più quattro quadrati: \(n = a^2+b^2+c^2+d^2\).
+      </div>
+
+      <div class="block theorem">
+        <div class="block-label">Teorema 10.3 — Ultimo Teorema di Fermat (Wiles, 1995)</div>
+        Per \(n > 2\), l'equazione \(x^n + y^n = z^n\) non ha soluzioni in interi positivi. La dimostrazione (oltre 100 pagine) usa le <em>curve ellittiche modulari</em> e la congettura di Taniyama–Shimura.
+      </div>
+
+      <p>
+        Il legame profondo tra numeri primi e analisi complessa emerge nella <strong>funzione zeta di Riemann</strong>:
+      </p>
+      <div class="formula-box">
+        \(\displaystyle\zeta(s) = \sum_{n=1}^{\infty} \frac{1}{n^s} = \prod_{p\;\text{primo}} \frac{1}{1-p^{-s}} \qquad (\Re s > 1)\)
+      </div>
+      <p>Il <strong>prodotto di Eulero</strong> (a destra) codifica il Teorema Fondamentale dell'Aritmetica. L'<em>Ipotesi di Riemann</em> — tutti gli zeri non-banali di \(\zeta\) hanno parte reale \(1/2\) — rimane il più grande problema aperto in matematica, con implicazioni profonde sulla distribuzione dei primi.</p>
+    </div>
+
+    <div>
+      <!-- TIMELINE -->
+      <p class="chart-title-label">Pietre miliari storiche</p>
+      <div class="timeline">
+        <div class="timeline-row"><span class="timeline-year">~300 a.C.</span><span class="timeline-text">Euclide — infinità dei primi, algoritmo MCD (<em>Elementi</em>)</span></div>
+        <div class="timeline-row"><span class="timeline-year">~250 a.C.</span><span class="timeline-text">Eratostene — crivello per i numeri primi</span></div>
+        <div class="timeline-row"><span class="timeline-year">1640</span><span class="timeline-text">Fermat — piccolo teorema, somma di quadrati</span></div>
+        <div class="timeline-row"><span class="timeline-year">1736</span><span class="timeline-text">Eulero — dimostrazione del Teor. di Fermat, funzione \(\varphi\)</span></div>
+        <div class="timeline-row"><span class="timeline-year">1770</span><span class="timeline-text">Lagrange — teorema dei quattro quadrati, Wilson</span></div>
+        <div class="timeline-row"><span class="timeline-year">1796</span><span class="timeline-text">Gauss — reciprocità quadratica (prima dimostrazione)</span></div>
+        <div class="timeline-row"><span class="timeline-year">1837</span><span class="timeline-text">Dirichlet — infinità dei primi in progressioni aritmetiche</span></div>
+        <div class="timeline-row"><span class="timeline-year">1859</span><span class="timeline-text">Riemann — ipotesi sugli zeri di \(\zeta(s)\)</span></div>
+        <div class="timeline-row"><span class="timeline-year">1896</span><span class="timeline-text">Hadamard, de la Vallée Poussin — Teorema dei Numeri Primi</span></div>
+        <div class="timeline-row"><span class="timeline-year">1995</span><span class="timeline-text">Wiles — dimostrazione dell'Ultimo Teorema di Fermat</span></div>
+      </div>
+
+      <!-- CHART: zeta(s) -->
+      <p class="chart-title-label" style="margin-top:0.9rem;">\(\zeta(s)\) per \(s \in [1.1, 5]\) (troncata a 500 termini)</p>
+      <div class="chart-wrap" style="height:170px;">
+        <canvas id="zetaChart" role="img" aria-label="Grafico della funzione zeta di Riemann per s reale tra 1.1 e 5"></canvas>
+      </div>
+      <p class="chart-caption">Fig. 8 — \(\zeta(s)\) diverge per \(s\to 1^+\) (polo semplice) e tende a 1 per \(s\to\infty\).</p>
+    </div>
+
+    <!-- ═══════════════════ FORMULARIO FINALE -->
+    <div class="full-width">
+      <hr class="section-rule">
+      <h2 class="section-head major">Formulario di Riferimento Rapido</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.7rem 1.5rem;margin-top:0.5rem;">
+        <div class="formula-box" style="margin:0;">\(\varphi(n) = n\prod_{p|n}\!\left(1-\tfrac{1}{p}\right)\)</div>
+        <div class="formula-box" style="margin:0;">\(\sigma_k(p^e) = \dfrac{p^{k(e+1)}-1}{p^k-1}\)</div>
+        <div class="formula-box" style="margin:0;">\(a^{\varphi(n)}\!\equiv 1 \pmod{n},\;\gcd(a,n)\!=\!1\)</div>
+        <div class="formula-box" style="margin:0;">\(\gcd(a,b)\cdot\text{mcm}(a,b) = |ab|\)</div>
+        <div class="formula-box" style="margin:0;">\(\left(\tfrac{p}{q}\right)\!\left(\tfrac{q}{p}\right) = (-1)^{\frac{p-1}{2}\cdot\frac{q-1}{2}}\)</div>
+        <div class="formula-box" style="margin:0;">\(x_k+y_k\sqrt{d} = (x_1+y_1\sqrt{d})^k\)</div>
+      </div>
+    </div>
+
+    <!-- REFERENCES -->
+    <div class="full-width">
+      <hr class="section-rule">
+      <h2 class="section-head">Riferimenti Bibliografici</h2>
+      <div class="references">
+        <p>[1] G.H. Hardy, E.M. Wright, <em>An Introduction to the Theory of Numbers</em>, 6ª ed., Oxford University Press, 2008.</p>
+        <p>[2] I. Niven, H.S. Zuckerman, H.L. Montgomery, <em>An Introduction to the Theory of Numbers</em>, 5ª ed., Wiley, 1991.</p>
+        <p>[3] K. Ireland, M. Rosen, <em>A Classical Introduction to Modern Number Theory</em>, 2ª ed., Springer, 1990.</p>
+        <p>[4] A. Granville, <em>Analytic number theory</em>, Lecture Notes, Université de Montréal, 2019.</p>
+        <p>[5] C.F. Gauss, <em>Disquisitiones Arithmeticae</em>, Leipzig, 1801 (trad. it. a cura di C. Viola, UTET, 1997).</p>
+      </div>
+    </div>
+
+  </div><!-- end .columns -->
+
+  <!-- FOOTNOTE -->
+  <div class="footnotes">
+    <p><strong>Nota dell'autore.</strong> Questo compendio è frutto di studio e diletto personale. Non si rivendica alcuna originalità nei risultati matematici esposti. Errori e imprecisioni sono da attribuirsi esclusivamente all'autore; segnalazioni sono benvenute all'indirizzo email indicato.</p>
+    <p>Documento redatto in HTML/CSS con formule in \(\LaTeX\) via MathJax e grafici Chart.js. Versione 1.0 — aprile 2026.</p>
+  </div>
+
+  <div class="page-footer">
+    Alberto Oliva &nbsp;·&nbsp; Compendio di Teoria dei Numeri &nbsp;·&nbsp; 30 aprile 2026 &nbsp;·&nbsp; p. 1
+  </div>
+
+</div><!-- end .page -->
+
+<script>
+/* ── UTILITIES ── */
+function isPrime(n){
+  if(n<2)return false;
+  if(n===2)return true;
+  if(n%2===0)return false;
+  for(let i=3;i*i<=n;i+=2)if(n%i===0)return false;
+  return true;
+}
+
+function phi(n){
+  let r=n,m=n;
+  for(let p=2;p*p<=m;p++){
+    if(m%p===0){
+      while(m%p===0)m=Math.floor(m/p);
+      r-=Math.floor(r/p);
+    }
+  }
+  if(m>1)r-=Math.floor(r/m);
+  return r;
+}
+
+function mu(n){
+  if(n===1)return 1;
+  let factors=0,m=n;
+  for(let p=2;p*p<=m;p++){
+    if(m%p===0){
+      factors++;
+      m=Math.floor(m/p);
+      if(m%p===0)return 0;
+    }
+  }
+  if(m>1)factors++;
+  return (factors%2===0)?1:-1;
+}
+
+function sigma(n){
+  let s=0;
+  for(let i=1;i*i<=n;i++){
+    if(n%i===0){s+=i;if(i!==n/i)s+=n/i;}
+  }
+  return s;
+}
+
+function tau(n){
+  let s=0;
+  for(let i=1;i*i<=n;i++){
+    if(n%i===0){s++;if(i!==n/i)s++;}
+  }
+  return s;
+}
+
+/* ── SIEVE GRID ── */
+const sieveGrid=document.getElementById('sieveGrid');
+const primeSquares=new Set([4,9,25,49]);
+for(let i=1;i<=100;i++){
+  const d=document.createElement('div');
+  d.className='prime-cell '+(isPrime(i)?'is-prime':'not-prime');
+  if(primeSquares.has(i))d.className='prime-cell highlight';
+  d.textContent=i;
+  sieveGrid.appendChild(d);
+}
+
+/* ── PHI GRID ── */
+const phiGrid=document.getElementById('phiGrid');
+for(let n=1;n<=20;n++){
+  const c=document.createElement('div');
+  c.className='phi-cell';
+  c.innerHTML=`<span class="phi-n">${n}</span><span class="phi-v">${phi(n)}</span>`;
+  phiGrid.appendChild(c);
+}
+
+/* ── ARITHMETIC TABLE ── */
+const tbody=document.getElementById('arithmeticTable');
+const ns=[1,2,3,4,5,6,7,8,9,10,12,15,16,18,20,24,30,36];
+for(const n of ns){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${n}</td><td class="num">${phi(n)}</td><td class="num">${mu(n)}</td><td class="num">${tau(n)}</td><td class="num">${sigma(n)}</td>`;
+  tbody.appendChild(tr);
+}
+
+/* ── CHART DEFAULTS ── */
+const INK='#1a1410', MUTED='#7a6e65', RULE='#c8b89a';
+const BLUE='#1a3a6b', RED='#8b2020', GREEN='#3a6020', AMBER='#7a5010';
+const BLUE_L='#a0b8e0', RED_L='#e0a0a0';
+
+const baseOpts={
+  responsive:true,
+  maintainAspectRatio:false,
+  animation:false,
+  plugins:{legend:{display:false}},
+  scales:{
+    x:{grid:{color:'rgba(200,184,154,0.3)'},ticks:{color:MUTED,font:{size:10,family:'Source Code Pro'}}},
+    y:{grid:{color:'rgba(200,184,154,0.3)'},ticks:{color:MUTED,font:{size:10,family:'Source Code Pro'}}}
+  }
+};
+
+/* ── Fig 1: π(x) ── */
+const primeXs=[],piYs=[],approxYs=[];
+for(let x=10;x<=300;x+=5){
+  let cnt=0;for(let i=2;i<=x;i++)if(isPrime(i))cnt++;
+  primeXs.push(x);
+  piYs.push(cnt);
+  approxYs.push(+(x/Math.log(x)).toFixed(1));
+}
+new Chart(document.getElementById('primeChart'),{
+  type:'line',
+  data:{
+    labels:primeXs,
+    datasets:[
+      {label:'π(x)',data:piYs,borderColor:BLUE,borderWidth:1.5,pointRadius:0,tension:0.3},
+      {label:'x/ln x',data:approxYs,borderColor:RED,borderWidth:1,pointRadius:0,borderDash:[4,3],tension:0.3}
+    ]
+  },
+  options:{...baseOpts,
+    plugins:{legend:{display:true,position:'top',labels:{color:INK,font:{size:10,family:'EB Garamond'},boxWidth:14,padding:12}}},
+    scales:{
+      x:{...baseOpts.scales.x,ticks:{...baseOpts.scales.x.ticks,maxTicksLimit:8}},
+      y:{...baseOpts.scales.y}
+    }
+  }
+});
+
+/* ── Fig 2: residui quadratici mod 13 ── */
+const resData=[];const resColors=[];
+for(let a=1;a<=12;a++){
+  const r=(a*a)%13;
+  resData.push(r);
+  resColors.push(r===0?MUTED:(isPrime(r)?BLUE_L:RED_L));
+}
+const resColors2=[];
+const qr13=new Set([1,3,4,9,10,12]);
+for(let a=1;a<=12;a++)resColors2.push(qr13.has((a*a)%13)?BLUE:RED);
+new Chart(document.getElementById('residueChart'),{
+  type:'bar',
+  data:{
+    labels:Array.from({length:12},(_,i)=>i+1),
+    datasets:[{label:'a² mod 13',data:resData,backgroundColor:resColors2,borderWidth:0}]
+  },
+  options:{...baseOpts,
+    scales:{
+      x:{...baseOpts.scales.x,title:{display:true,text:'a',color:MUTED,font:{size:10}}},
+      y:{...baseOpts.scales.y,title:{display:true,text:'a² mod 13',color:MUTED,font:{size:10}},ticks:{stepSize:1,...baseOpts.scales.y.ticks}}
+    }
+  }
+});
+
+/* ── Fig 3: φ(n) barchart ── */
+const phiNs=Array.from({length:30},(_,i)=>i+1);
+const phiVs=phiNs.map(phi);
+const phiColors=phiNs.map(n=>isPrime(n)?BLUE:MUTED);
+new Chart(document.getElementById('eulerChart'),{
+  type:'bar',
+  data:{labels:phiNs,datasets:[{data:phiVs,backgroundColor:phiColors,borderWidth:0}]},
+  options:{...baseOpts,
+    scales:{
+      x:{...baseOpts.scales.x,ticks:{...baseOpts.scales.x.ticks,font:{size:9,family:'Source Code Pro'}}},
+      y:{...baseOpts.scales.y}
+    }
+  }
+});
+
+/* ── Fig 4: σ(n)/n ── */
+const sigRatio=phiNs.map(n=>(sigma(n)/n).toFixed(3));
+new Chart(document.getElementById('sigmaChart'),{
+  type:'line',
+  data:{
+    labels:phiNs,
+    datasets:[
+      {data:sigRatio,borderColor:GREEN,borderWidth:1.5,pointRadius:2,pointBackgroundColor:phiNs.map(n=>sigma(n)/n>2?RED:GREEN),tension:0.2,fill:false},
+      {data:Array(30).fill(2),borderColor:RED,borderWidth:1,borderDash:[4,3],pointRadius:0}
+    ]
+  },
+  options:{...baseOpts}
+});
+
+/* ── Fig 5: radice primitiva 2 mod 13 ── */
+const rootPows=[];for(let k=1;k<=12;k++)rootPows.push(Math.pow(2,k)%13);
+new Chart(document.getElementById('rootChart'),{
+  type:'bar',
+  data:{
+    labels:Array.from({length:12},(_,i)=>`2^${i+1}`),
+    datasets:[{data:rootPows,backgroundColor:BLUE,borderWidth:0}]
+  },
+  options:{...baseOpts,
+    scales:{
+      x:{...baseOpts.scales.x,ticks:{...baseOpts.scales.x.ticks,font:{size:8,family:'Source Code Pro'}}},
+      y:{...baseOpts.scales.y,min:0,max:13,ticks:{stepSize:1,...baseOpts.scales.y.ticks}}
+    }
+  }
+});
+
+/* ── Fig 6: simbolo Legendre p=11 ── */
+const legData=[1,-1,1,1,1,-1,-1,-1,1,-1];
+const legColors=legData.map(v=>v===1?BLUE:RED);
+new Chart(document.getElementById('legendreChart'),{
+  type:'bar',
+  data:{
+    labels:Array.from({length:10},(_,i)=>i+1),
+    datasets:[{data:legData,backgroundColor:legColors,borderWidth:0}]
+  },
+  options:{...baseOpts,
+    scales:{
+      x:{...baseOpts.scales.x},
+      y:{...baseOpts.scales.y,min:-1.5,max:1.5,ticks:{stepSize:1,...baseOpts.scales.y.ticks}}
+    }
+  }
+});
+
+/* ── Fig 7: CF √2 errors ── */
+const cfPs=[1,3,7,17,41,99,239];
+const cfQs=[1,2,5,12,29,70,169];
+const sqrt2=Math.sqrt(2);
+const cfErrs=cfPs.map((p,i)=>Math.abs(sqrt2-p/cfQs[i]));
+new Chart(document.getElementById('cfChart'),{
+  type:'line',
+  data:{
+    labels:cfPs.map((p,i)=>`${p}/${cfQs[i]}`),
+    datasets:[{data:cfErrs,borderColor:AMBER,borderWidth:1.5,pointRadius:3,pointBackgroundColor:AMBER,tension:0}]
+  },
+  options:{...baseOpts,
+    scales:{
+      x:{...baseOpts.scales.x,ticks:{...baseOpts.scales.x.ticks,font:{size:8,family:'Source Code Pro'}}},
+      y:{...baseOpts.scales.y,type:'logarithmic',ticks:{color:MUTED,font:{size:9}}}
+    }
+  }
+});
+
+/* ── Fig 8: ζ(s) ── */
+function zetaApprox(s,N=500){
+  let z=0;for(let n=1;n<=N;n++)z+=Math.pow(n,-s);return z;
+}
+const zetaXs=[];const zetaYs=[];
+for(let s=1.1;s<=5.0;s+=0.1){
+  zetaXs.push(s.toFixed(1));
+  zetaYs.push(+zetaApprox(s).toFixed(4));
+}
+new Chart(document.getElementById('zetaChart'),{
+  type:'line',
+  data:{
+    labels:zetaXs,
+    datasets:[{data:zetaYs,borderColor:BLUE,borderWidth:1.5,pointRadius:0,tension:0.4}]
+  },
+  options:{...baseOpts,
+    scales:{
+      x:{...baseOpts.scales.x,ticks:{...baseOpts.scales.x.ticks,maxTicksLimit:8}},
+      y:{...baseOpts.scales.y,min:1,max:11}
+    }
+  }
+});
+</script>
+</body>
+</html>

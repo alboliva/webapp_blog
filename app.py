@@ -3,14 +3,12 @@ import os, re
 from datetime import datetime, date
 import calendar
 
-# Configurazione pagina (deve essere la prima cosa)
 st.set_page_config(
-    page_title="Reporter",  
-    page_icon="📚",                       # ← Qui metti l'icona
-    layout="wide",                        # o "centered"
+    page_title="Reporter",
+    page_icon="📚",
+    layout="wide",
     initial_sidebar_state="expanded"
 )
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COSTANTI
@@ -40,6 +38,20 @@ hr {
     padding-top: 0.25rem !important;
     padding-bottom: 0.25rem !important;
     height: 36px !important;
+}
+
+/* ── Pill buttons per le categorie ── */
+div[data-testid="stHorizontalBlock"] .stButton > button {
+    font-size: 0.55rem !important;
+    padding: 0 10px !important;
+    max-width: 14   0px !important; 
+    height: 18px !important;
+    min-height: unset !important;
+    border-radius: 20px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    line-height: 1 !important;
 }
 
 /* ── Navigator bar ── */
@@ -114,9 +126,6 @@ def _human_title(fname: str) -> str:
     return base.title() if base else fname
 
 def scan_articoli(root: str) -> dict:
-    """
-    Scansiona la cartella articoli/ con sottocartelle (politica/, scienza/, ecc.)
-    """
     result: dict[str, list] = {}
     if not os.path.isdir(root):
         return result
@@ -178,13 +187,6 @@ def inject_viewer_css(html: str) -> str:
 # MAIN APP
 # ─────────────────────────────────────────────────────────────────────────────
 def main():
-    st.set_page_config(
-        page_title="Notizie",
-        layout="wide",
-        page_icon="📰",
-        initial_sidebar_state="expanded",
-    )
-
     st.markdown(NAV_CSS, unsafe_allow_html=True)
 
     # ── Scan Articoli ─────────────────────────────────────────────────────
@@ -214,12 +216,12 @@ def main():
     st.markdown('<h1 style="margin-bottom:0; margin-top:0;">📰 Archivio Notizie</h1>', unsafe_allow_html=True)
     st.markdown('<p style="color:#64748b; margin-top:2px; margin-bottom:6px;">Politica • Scienza • Economia • Esteri • Approfondimenti</p>', unsafe_allow_html=True)
 
-    # ── Category Tabs ─────────────────────────────────────────────────────
-    cols = st.columns(len(categories) + 1)
+    # ── Category Pills (compatte) ──────────────────────────────────────────
+    cols = st.columns(len(categories) )
     for i, c in enumerate(categories):
         is_active = (c == cat)
         if cols[i].button(
-            f"{'●' if is_active else '○'} {c}",
+            c,
             key=f"cat_{c}",
             use_container_width=True,
             type="primary" if is_active else "secondary"

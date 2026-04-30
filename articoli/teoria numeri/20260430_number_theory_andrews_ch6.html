@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teoria dei Numeri – Capitolo 6: Funzioni Aritmetiche</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Rajdhani:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --ink:#0a0e1a;--paper:#f4f2f8;--cream:#eae4f5;
+  --plum:#3a1060;--purple:#6030a8;--lavender:#9060d0;
+  --teal:#186050;--emerald:#2a8060;--sage:#508070;
+  --rose:#8a1840;--gold:#b87810;--amber:#d09020;
+  --rule:#b0a0d0;--thm:#ece8f8;--proof:#faf8f4;
+  --ex:#fdf0e8;--hist:#140820;--defn:#e4f0e8;
+  --mob:#f0e8ff;--mult:#e8f8f0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);font-family:'Merriweather',Georgia,serif;font-size:16.5px;line-height:1.78;}
+
+header{
+  background:var(--hist);color:var(--paper);
+  padding:3.5rem 4rem 2.8rem;text-align:center;
+  border-bottom:5px solid var(--gold);position:relative;overflow:hidden;
+}
+header::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,rgba(96,48,168,.05) 0,rgba(96,48,168,.05) 1px,transparent 0,transparent 50%) 0 0/18px 18px;}
+header::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 90% 60% at 50% 100%,rgba(58,16,96,.5) 0%,transparent 70%);}
+.jtag{font-family:'Roboto Mono',monospace;font-size:.66rem;letter-spacing:.28em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;display:block;position:relative;z-index:1;}
+header h1{font-family:'Rajdhani',sans-serif;font-size:3rem;font-weight:700;letter-spacing:.05em;line-height:1.1;color:#fff;margin-bottom:.5rem;position:relative;z-index:1;}
+header h2{font-family:'Merriweather',serif;font-style:italic;font-size:1.1rem;color:#a090d0;margin-bottom:1.5rem;position:relative;z-index:1;}
+.meta{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:.81rem;color:#5a4880;border-top:1px solid #281848;padding-top:1rem;position:relative;z-index:1;}
+.meta strong{color:var(--amber);}
+.meta a{color:#a090d0;}
+
+.abstract{background:var(--cream);border-left:4px solid var(--plum);border-right:4px solid var(--plum);max-width:880px;margin:2rem auto;padding:1.6rem 2.2rem;font-style:italic;font-size:.94rem;color:#180c28;}
+.abstract strong{font-style:normal;color:var(--rose);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2.8rem;max-width:1280px;margin:0 auto;padding:2.2rem 3rem;}
+@media(max-width:880px){.two-col{grid-template-columns:1fr;padding:1.2rem 1.4rem;}header{padding:2rem 1.5rem;}header h1{font-size:2rem;}}
+.full{grid-column:1/-1;}
+
+.sb{grid-column:1/-1;display:flex;align-items:center;gap:1rem;margin:2rem 0 .6rem;border-top:2px solid var(--rule);padding-top:1.1rem;}
+.sb h3{font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:600;letter-spacing:.04em;color:var(--plum);white-space:nowrap;}
+.sb::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+p{margin-bottom:.95em;text-align:justify;hyphens:auto;}
+h4.sub{font-family:'Merriweather',serif;font-size:1rem;color:var(--rose);font-style:italic;margin:1.3rem 0 .5rem;border-bottom:1px dotted var(--rule);padding-bottom:.2rem;}
+
+.thm{background:var(--thm);border:1px solid #c0a8e0;border-left:5px solid var(--plum);padding:1rem 1.3rem;margin:1.1rem 0;border-radius:2px;}
+.thm .lbl{font-family:'Roboto Mono',monospace;font-size:.63rem;letter-spacing:.14em;color:var(--plum);text-transform:uppercase;font-weight:500;margin-bottom:.35rem;display:block;}
+.thm .stmt{font-style:italic;font-size:.96rem;color:#140820;}
+
+.mob-thm{background:var(--mob);border:1px solid #d0b0f0;border-left:5px solid var(--lavender);padding:1rem 1.3rem;margin:1.1rem 0;border-radius:2px;}
+.mob-thm .lbl{font-family:'Roboto Mono',monospace;font-size:.63rem;letter-spacing:.14em;color:var(--lavender);text-transform:uppercase;font-weight:500;margin-bottom:.35rem;display:block;}
+.mob-thm .stmt{font-style:italic;font-size:.96rem;color:#180830;}
+
+.mult-thm{background:var(--mult);border:1px solid #a0d0c0;border-left:5px solid var(--emerald);padding:1rem 1.3rem;margin:1.1rem 0;border-radius:2px;}
+.mult-thm .lbl{font-family:'Roboto Mono',monospace;font-size:.63rem;letter-spacing:.14em;color:var(--emerald);text-transform:uppercase;font-weight:500;margin-bottom:.35rem;display:block;}
+
+.proof{background:var(--proof);border:1px solid #d8c8a0;border-left:4px solid var(--gold);padding:.9rem 1.3rem;margin:.8rem 0 1.5rem;font-size:.93rem;}
+.proof::before{content:'Dimostrazione';display:block;font-variant:small-caps;font-size:.73rem;letter-spacing:.1em;color:var(--gold);margin-bottom:.5rem;}
+.proof .qed{float:right;color:var(--gold);}
+
+.defn{background:var(--defn);border:1px solid #a0c8b0;border-left:5px solid var(--teal);padding:.9rem 1.2rem;margin:1rem 0;font-size:.94rem;}
+.defn .lbl{font-family:'Roboto Mono',monospace;font-size:.63rem;letter-spacing:.14em;color:var(--teal);text-transform:uppercase;margin-bottom:.3rem;display:block;}
+
+.ex{background:var(--ex);border:1px solid #d8c070;border-left:4px solid var(--rose);padding:.85rem 1.1rem;margin:.55rem 0;font-size:.92rem;}
+.ex .exl{font-family:'Roboto Mono',monospace;font-size:.63rem;color:var(--rose);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem;display:block;}
+
+.note{background:#f0ecff;border:1px dashed var(--lavender);padding:.65rem 1rem;font-size:.87rem;border-radius:2px;margin:.8rem 0;}
+.note::before{content:'💡 ';}
+
+.hist{background:linear-gradient(135deg,#140820 0%,#201035 100%);color:#b8a8e8;padding:1.3rem 1.5rem;border-radius:4px;margin:1.2rem 0;font-size:.86rem;}
+.hist h4{font-family:'Rajdhani',sans-serif;font-size:1.05rem;letter-spacing:.04em;color:var(--amber);margin-bottom:.6rem;font-weight:600;}
+.hist p{color:#9888c8;text-align:left;}
+
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;}
+th{background:var(--plum);color:#fff;padding:.5rem .9rem;font-variant:small-caps;letter-spacing:.06em;font-weight:500;}
+td{padding:.38rem .9rem;text-align:center;border-bottom:1px solid var(--rule);}
+tr:nth-child(even) td{background:rgba(58,16,96,.04);}
+td.hi{background:rgba(96,48,168,.18);font-weight:bold;color:var(--plum);}
+td.sq{background:rgba(42,128,96,.18);font-weight:bold;color:var(--emerald);}
+.mono{font-family:'Roboto Mono',monospace;font-size:.8rem;}
+
+.vis{background:#fff;border:1px solid var(--rule);border-radius:4px;padding:1rem;margin:1rem 0;text-align:center;}
+.vis figcaption{font-size:.74rem;color:#888;margin-top:.4rem;font-style:italic;}
+.formula{text-align:center;margin:.9rem 0;padding:.5rem;background:rgba(58,16,96,.04);border-radius:3px;font-size:1.02rem;}
+
+.mobius-values{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin:.6rem 0;}
+.mv{text-align:center;padding:.3rem;border-radius:2px;font-family:'Roboto Mono',monospace;font-size:.8rem;}
+.mv-hdr{background:var(--plum);color:#fff;font-size:.72rem;}
+.mv-pos{background:#e8f8ec;color:#186050;}
+.mv-neg{background:#fce8ee;color:#8a1840;}
+.mv-zer{background:#f0f0f0;color:#888;}
+
+.bib{border-bottom:1px solid var(--rule);padding:.55rem 0;font-size:.86rem;}
+.bib-k{font-family:'Roboto Mono',monospace;color:var(--plum);font-size:.71rem;margin-bottom:.12rem;}
+
+footer{background:var(--ink);color:#3a2858;text-align:center;padding:1.5rem;font-size:.77rem;border-top:3px solid var(--gold);margin-top:3rem;}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <span class="jtag">Studio di Teoria dei Numeri · Capitolo 6</span>
+  <h1>Funzioni Aritmetiche</h1>
+  <h2>George E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971)</h2>
+  <div class="meta">
+    <span><strong>Autore:</strong> Alberto Oliva</span>
+    <span><strong>Email:</strong> <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a></span>
+    <span><strong>Rif.:</strong> Andrews, G.E. – <em>Number Theory</em>, Cap. 6</span>
+    <span><strong>Data:</strong> Aprile 2026</span>
+  </div>
+</header>
+
+<!-- ABSTRACT -->
+<div class="abstract">
+  <strong>Abstract.</strong> Il Capitolo 6 introduce le <em>funzioni aritmetiche</em> — funzioni che associano a ogni intero positivo un valore, e che codificano proprietà moltiplicative fondamentali dei numeri. Le protagoniste sono: la funzione di Eulero \(\phi(n)\) (già incontrata nel Cap. 4), il numero di divisori \(d(n)\), la somma dei divisori \(\sigma(n)\), e la fondamentale funzione di Möbius \(\mu(n)\). Il capitolo sviluppa formule esplicite per queste funzioni, dimostra la loro <em>moltiplicatività</em>, e culmina nella celebre <em>Formula di Inversione di Möbius</em> — uno strumento che permette di "invertire" relazioni tra funzioni aritmetiche e che apparirà in molti contesti avanzati della matematica.
+</div>
+
+<div class="two-col">
+
+<!-- STORIA -->
+<div class="sb"><h3>Contesto Storico</h3></div>
+
+<div>
+  <div class="hist">
+    <h4>MÖBIUS E LA SUA FUNZIONE</h4>
+    <p>August Ferdinand Möbius (1790–1868), celebre per il nastro che porta il suo nome, introdusse la funzione \(\mu(n)\) nel 1832 nel contesto dell'inversione di serie. La formula di inversione che porta il suo nome è uno degli strumenti più versatili della teoria dei numeri analitica: permette di "invertire" relazioni del tipo \(f(n)=\sum_{d\mid n}g(d)\) per trovare \(g\) in funzione di \(f\). Applicazioni sorprendenti: il Teorema dei Numeri Primi, le identità di Ramanujan, la teoria delle forme modulari.</p>
+  </div>
+  <div class="hist" style="margin-top:.7rem;">
+    <h4>LE FUNZIONI ARITMETICHE NELLA STORIA</h4>
+    <p>La funzione \(\sigma(n)\) (somma dei divisori) era già nota agli antichi Greci: i <em>numeri perfetti</em> soddisfano \(\sigma(n)=2n\). Il calcolo di \(\phi(n)\) risale a Eulero (1760). La funzione \(d(n)\) fu studiata da Dirichlet (1838–1840) nel suo celebre "Divisor Problem": trovare una formula asintotica per \(\sum_{k=1}^n d(k)\). Andrews usa tecniche combinatorie originali — ereditando lo spirito di Ryser — per ricavare queste formule senza l'analisi complessa.</p>
+  </div>
+</div>
+
+<div>
+  <div class="hist">
+    <h4>LA MOLTIPLICATIVITÀ: UN CONCETTO UNIFICANTE</h4>
+    <p>La nozione di funzione <em>moltiplicativa</em> (Def. 6-2: \(f(mn)=f(m)f(n)\) se \(\gcd(m,n)=1\)) è il fil rouge del capitolo. Essa permette di calcolare \(f(n)\) a partire dalla fattorizzazione di \(n\): basta conoscere \(f\) sulle potenze di primo. Questo è il "magical trick" che spiega perché formule come \(\phi(n)=n\prod_{p\mid n}(1-1/p)\) si ricavano così naturalmente.</p>
+  </div>
+  <div class="hist" style="margin-top:.7rem;">
+    <h4>LE COPPIE DI MÖBIUS NELLA MATEMATICA MODERNA</h4>
+    <p>Il concetto di "coppia di Möbius" (Def. 6-3) è un caso speciale della teoria della <em>convoluzione di Dirichlet</em> e dell'algebra dell'<em>incidenza di reticoli</em>, sviluppata da Gian-Carlo Rota negli anni '60. La formula di inversione di Möbius appare oggi in combinatoria enumerativa, teoria dei grafi, algebra astratta e fisica teorica (teoria delle stringhe via modular forms).</p>
+  </div>
+</div>
+
+<!-- SEZIONE 6-1 -->
+<div class="sb"><h3>§ 6-1 · Studio Combinatorio di φ(n)</h3></div>
+
+<div>
+  <h4 class="sub">Che cosa sono le funzioni aritmetiche?</h4>
+  <p>Una <em>funzione aritmetica</em> è semplicemente una funzione il cui dominio è l'insieme dei numeri interi positivi. Nel Capitolo 4 abbiamo incontrato \(\phi(n)\) — quanti interi da 1 a \(n\) sono coprimi con \(n\). In questo capitolo incontriamo altre due funzioni naturali: \(d(n)\), il numero di divisori positivi di \(n\), e \(\sigma(n)\), la somma dei divisori positivi di \(n\).</p>
+  <p>La domanda centrale è: esiste un modo sistematico di <em>calcolare</em> queste funzioni senza elencare tutti i divisori? La risposta è sì — e la chiave è la <em>fattorizzazione in primi</em>. Andrews dimostra formule esplicite che riducono il calcolo di \(\phi\), \(d\) e \(\sigma\) alla conoscenza della fattorizzazione di \(n\).</p>
+
+  <h4 class="sub">φ(pⁿ) — la formula per le potenze di primo</h4>
+  <p>Partiamo da un caso semplice: \(n=p^\alpha\) per un primo \(p\). Quali interi da 1 a \(p^\alpha\) non sono coprimi con \(p^\alpha\)? Esattamente quelli divisibili per \(p\): sono \(p, 2p, 3p, \ldots, p^{\alpha-1}\cdot p\), cioè \(p^{\alpha-1}\) interi. Quindi:
+  \[\phi(p^\alpha) = p^\alpha - p^{\alpha-1} = p^\alpha\!\left(1-\tfrac1p\right).\]</p>
+  <p><strong>Esempio 6-2</strong> (telescopico): \(1+\phi(p)+\phi(p^2)+\cdots+\phi(p^n) = 1+(p-1)+(p^2-p)+\cdots+(p^n-p^{n-1})=p^n\). I termini si cancellano a vicenda tranne l'ultimo.</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 6-1 — Somma di Eulero sui Divisori</span>
+    <div class="stmt">\[\sum_{d\mid n} \phi(d) = n.\]</div>
+  </div>
+  <div class="proof">
+    Sia \(S_n=\{1,2,\ldots,n\}\) e per ogni \(d\mid n\) sia \(T_d(n)\) il sottoinsieme di \(S_n\) degli interi il cui gcd con \(n\) è esattamente \(d\). Gli insiemi \(T_d(n)\) (al variare dei divisori \(d\) di \(n\)) formano una partizione di \(S_n\). Ora \(T_d(n)\) ha \(\phi(n/d)\) elementi: gli interi multipli di \(d\) in \(S_n\) coprimi con \(n/d\). Quindi:
+    \[n = \#S_n = \sum_{d\mid n}\#T_d(n) = \sum_{d\mid n}\phi\!\left(\tfrac{n}{d}\right) = \sum_{d\mid n}\phi(d).\]
+    (l'ultima uguaglianza perché \(d\) e \(n/d\) scorrono gli stessi divisori). <span class="qed">■</span>
+  </div>
+
+  <p>Verifica per \(n=6\): \(\phi(1)+\phi(2)+\phi(3)+\phi(6)=1+1+2+2=6\) ✓</p>
+</div>
+
+<div>
+  <!-- Visual: Partition of S_12 by T_d(12) -->
+  <div class="vis">
+    <svg viewBox="0 0 310 210" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="13" fill="#3a1060" font-weight="600">Partizione di S₁₂ per gcd con 12 — Thm 6-1</text>
+      <!-- T_1: gcd=1: 1,5,7,11 → φ(12)=4 -->
+      <rect x="5" y="25" width="68" height="85" rx="3" fill="#ece8f8" stroke="#9060d0" stroke-width="1.5"/>
+      <text x="39" y="40" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#6030a8" font-weight="bold">T₁(12)</text>
+      <text x="39" y="53" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">gcd=1</text>
+      <text x="39" y="68" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#3a1060">1, 5</text>
+      <text x="39" y="82" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#3a1060">7, 11</text>
+      <text x="39" y="100" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#6030a8">φ(12)=4</text>
+      <!-- T_2: gcd=2: 2,10 → φ(6)=2 -->
+      <rect x="79" y="25" width="55" height="85" rx="3" fill="#e4f0e8" stroke="#2a8060" stroke-width="1.5"/>
+      <text x="106" y="40" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#186050" font-weight="bold">T₂(12)</text>
+      <text x="106" y="53" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">gcd=2</text>
+      <text x="106" y="69" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#186050">2, 10</text>
+      <text x="106" y="100" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#186050">φ(6)=2</text>
+      <!-- T_3: gcd=3: 3,9 → φ(4)=2 -->
+      <rect x="140" y="25" width="55" height="85" rx="3" fill="#fdf0f8" stroke="#8a1840" stroke-width="1.5"/>
+      <text x="167" y="40" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#8a1840" font-weight="bold">T₃(12)</text>
+      <text x="167" y="53" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">gcd=3</text>
+      <text x="167" y="69" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#8a1840">3, 9</text>
+      <text x="167" y="100" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#8a1840">φ(4)=2</text>
+      <!-- T_4: gcd=4: 4,8 → φ(3)=2 -->
+      <rect x="201" y="25" width="50" height="85" rx="3" fill="#fff8e0" stroke="#b87810" stroke-width="1.5"/>
+      <text x="226" y="40" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#b87810" font-weight="bold">T₄(12)</text>
+      <text x="226" y="53" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">gcd=4</text>
+      <text x="226" y="69" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#b87810">4, 8</text>
+      <text x="226" y="100" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#b87810">φ(3)=2</text>
+      <!-- T_6: gcd=6: 6 → φ(2)=1 -->
+      <rect x="257" y="25" width="48" height="85" rx="3" fill="#e8f0ff" stroke="#1864a0" stroke-width="1.5"/>
+      <text x="281" y="40" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#1864a0" font-weight="bold">T₆,₁₂</text>
+      <text x="281" y="53" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">gcd=6,12</text>
+      <text x="281" y="68" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#1864a0">6</text>
+      <text x="281" y="82" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#1864a0">12</text>
+      <text x="281" y="100" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#1864a0">φ(2)+φ(1)</text>
+      <!-- Sum -->
+      <rect x="5" y="120" width="300" height="36" rx="3" fill="#3a1060"/>
+      <text x="155" y="135" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#e8d8ff">φ(1)+φ(2)+φ(3)+φ(4)+φ(6)+φ(12)</text>
+      <text x="155" y="150" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#c8901a">= 1+1+2+2+2+4 = 12 ✓</text>
+      <text x="155" y="175" text-anchor="middle" font-family="Merriweather,serif" font-size="11" fill="#555" font-style="italic">Ogni intero da 1 a 12 cade in esattamente un T_d(12)</text>
+    </svg>
+    <figcaption>La partizione di \(S_{12}\) per valore del gcd con 12. Il Teorema 6-1 dice che la somma delle cardinalità è 12.</figcaption>
+  </div>
+
+  <!-- Möbius function definition -->
+  <h4 class="sub">La Funzione di Möbius μ(n)</h4>
+  <div class="defn">
+    <span class="lbl">Definizione 6-1 — Funzione di Möbius</span>
+    \[\mu(n) = \begin{cases} 1 & \text{se } n=1 \\ 0 & \text{se } p^2\mid n \text{ per qualche primo } p \\ (-1)^r & \text{se } n=p_1 p_2\cdots p_r \text{ (prodotto di } r \text{ primi distinti)} \end{cases}\]
+  </div>
+
+  <p>In altre parole: \(\mu(n)=0\) se \(n\) ha un quadrato di primo come fattore; altrimenti \(\mu(n)=\pm1\) a seconda della parità del numero di fattori primi distinti. I valori di \(\mu\) oscillano irregolarmente — questa irregolarità è collegata alla distribuzione dei numeri primi e al Teorema dei Numeri Primi.</p>
+
+  <!-- Möbius values grid -->
+  <div class="mobius-values">
+    <div class="mv mv-hdr">n</div><div class="mv mv-hdr">1</div><div class="mv mv-hdr">2</div><div class="mv mv-hdr">3</div><div class="mv mv-hdr">4</div><div class="mv mv-hdr">5</div>
+    <div class="mv mv-hdr">μ(n)</div><div class="mv mv-pos">+1</div><div class="mv mv-neg">−1</div><div class="mv mv-neg">−1</div><div class="mv mv-zer">0</div><div class="mv mv-neg">−1</div>
+    <div class="mv mv-hdr">n</div><div class="mv mv-hdr">6</div><div class="mv mv-hdr">7</div><div class="mv mv-hdr">8</div><div class="mv mv-hdr">9</div><div class="mv mv-hdr">10</div>
+    <div class="mv mv-hdr">μ(n)</div><div class="mv mv-pos">+1</div><div class="mv mv-neg">−1</div><div class="mv mv-zer">0</div><div class="mv mv-zer">0</div><div class="mv mv-pos">+1</div>
+    <div class="mv mv-hdr">n</div><div class="mv mv-hdr">11</div><div class="mv mv-hdr">12</div><div class="mv mv-hdr">13</div><div class="mv mv-hdr">14</div><div class="mv mv-hdr">15</div>
+    <div class="mv mv-hdr">μ(n)</div><div class="mv mv-neg">−1</div><div class="mv mv-zer">0</div><div class="mv mv-neg">−1</div><div class="mv mv-pos">+1</div><div class="mv mv-pos">+1</div>
+  </div>
+  <p style="font-size:.81rem;color:#555;font-style:italic;">Verde=+1, Rosso=-1, Grigio=0. Nota: \(\mu(4)=\mu(8)=\mu(9)=\mu(12)=0\) (divisibili da \(p^2\)).</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 6-2 — Formula esplicita per φ(n)</span>
+    <div class="stmt">\[\phi(n) = \sum_{d\mid n}\mu(d)\frac{n}{d} = n\prod_{p\mid n}\!\left(1-\frac{1}{p}\right).\]</div>
+  </div>
+  <div class="proof">
+    Per induzione sul numero di fattori primi distinti di \(n\). Caso base \(n=p^\alpha\):
+    \[\sum_{d\mid p^\alpha}\mu(d)\tfrac{p^\alpha}{d} = \mu(1)p^\alpha + \mu(p)p^{\alpha-1} + 0+\cdots = p^\alpha-p^{\alpha-1} = \phi(p^\alpha).\]
+    Step induttivo: \(n=n'p^\alpha\) con \(p\nmid n'\). Per l'ipotesi \(\phi(n')=\sum_{d\mid n'}\mu(d)n'/d\). Separando i divisori di \(n\) in quelli di \(n'\) e i loro multipli per potenze di \(p\), il calcolo (vedi pagina 79 del libro) porta a \(\phi(n)=n\prod_{p\mid n}(1-1/p)\). <span class="qed">■</span>
+  </div>
+
+  <p><strong>Formula moltiplicativa:</strong> se \(n=p_1^{e_1}p_2^{e_2}\cdots p_s^{e_s}\):
+  \[\phi(n) = \phi(p_1^{e_1})\phi(p_2^{e_2})\cdots\phi(p_s^{e_s}) = (p_1^{e_1}-p_1^{e_1-1})\cdots(p_s^{e_s}-p_s^{e_s-1}).\]</p>
+</div>
+
+<!-- Tabella phi, d, sigma -->
+<div class="full">
+  <h4 class="sub">Tabella 6-1 — Valori di φ(n), d(n), σ(n) per 1 ≤ n ≤ 20</h4>
+  <table>
+    <thead><tr><th>n</th><th>φ(n)</th><th>d(n)</th><th>σ(n)</th><th>n</th><th>φ(n)</th><th>d(n)</th><th>σ(n)</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>11</td><td>10</td><td>2</td><td>12</td></tr>
+      <tr><td>2</td><td>1</td><td>2</td><td>3</td><td>12</td><td>4</td><td>6</td><td class="hi">28</td></tr>
+      <tr><td>3</td><td>2</td><td>2</td><td>4</td><td>13</td><td>12</td><td>2</td><td>14</td></tr>
+      <tr><td>4</td><td>2</td><td>3</td><td>7</td><td>14</td><td>6</td><td>4</td><td>24</td></tr>
+      <tr><td>5</td><td>4</td><td>2</td><td>6</td><td>15</td><td>8</td><td>4</td><td>24</td></tr>
+      <tr><td>6</td><td>2</td><td>4</td><td>12</td><td>16</td><td>8</td><td>5</td><td>31</td></tr>
+      <tr><td>7</td><td>6</td><td>2</td><td>8</td><td>17</td><td>16</td><td>2</td><td>18</td></tr>
+      <tr><td>8</td><td>4</td><td>4</td><td>15</td><td>18</td><td>6</td><td>6</td><td>39</td></tr>
+      <tr><td>9</td><td>6</td><td>3</td><td>13</td><td>19</td><td>18</td><td>2</td><td>20</td></tr>
+      <tr><td class="sq">6</td><td class="sq">2</td><td class="sq">4</td><td class="sq">12 (perf.?)</td>
+          <td class="sq">28</td><td class="sq">12</td><td class="sq">6</td><td class="sq">56=2·28 ✓</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:.81rem;color:#555;font-style:italic;">In verde: 6 e 28 sono numeri perfetti (σ(n)=2n). Si noti come d(n) è dispari esattamente per i quadrati perfetti (d(1)=1, d(4)=3, d(9)=3, d(16)=5) — teorema dimostrato nell'Es. 6-2.</p>
+</div>
+
+<!-- SEZIONE 6-2 -->
+<div class="sb"><h3>§ 6-2 · Formule per d(n) e σ(n)</h3></div>
+
+<div>
+  <h4 class="sub">I divisori di una potenza di primo</h4>
+  <p>Cominciamo con il caso più semplice: \(n=p^\alpha\). I divisori positivi di \(p^\alpha\) sono esattamente \(1, p, p^2, \ldots, p^\alpha\), cioè \(\alpha+1\) divisori. La loro somma è una serie geometrica:</p>
+  <div class="formula">\[d(p^\alpha) = \alpha+1, \qquad \sigma(p^\alpha) = 1+p+p^2+\cdots+p^\alpha = \frac{p^{\alpha+1}-1}{p-1}.\]</div>
+  <p>Il Teorema 6-3 generalizza queste formule a qualsiasi \(n\) via la sua fattorizzazione. L'idea è elegante: se \(n=n'\cdot p^\alpha\) con \(\gcd(n',p)=1\), i divisori di \(n\) sono esattamente i prodotti di un divisore di \(n'\) per una potenza di \(p\) da \(p^0\) a \(p^\alpha\). Questo ci dà \(d(n)=d(n')\cdot(\alpha+1)\) e \(\sigma(n)=\sigma(n')\cdot\sigma(p^\alpha)\).</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 6-3 — Formule per d(n) e σ(n)</span>
+    <div class="stmt">Se \(n = p_1^{\alpha_1}p_2^{\alpha_2}\cdots p_s^{\alpha_s}\), allora:
+    \[d(n) = (\alpha_1+1)(\alpha_2+1)\cdots(\alpha_s+1),\]
+    \[\sigma(n) = \frac{p_1^{\alpha_1+1}-1}{p_1-1}\cdot\frac{p_2^{\alpha_2+1}-1}{p_2-1}\cdots\frac{p_s^{\alpha_s+1}-1}{p_s-1}.\]
+    </div>
+  </div>
+  <div class="proof">
+    Per induzione sul numero di fattori primi distinti. Base (\(n=p^\alpha\)): verificata sopra. Passo induttivo: sia \(n=n'p^\alpha\) con \(n'=p_1^{\alpha_1}\cdots p_k^{\alpha_k}\) e \(p\nmid n'\). I divisori di \(n\) sono tutti i prodotti \(d_i\cdot p^j\) per \(d_i\mid n'\) e \(0\leq j\leq\alpha\). Quindi:
+    \[d(n) = d(n')(\alpha+1), \quad \sigma(n)=\sigma(n')\cdot(1+p+\cdots+p^\alpha)=\sigma(n')\cdot\frac{p^{\alpha+1}-1}{p-1}.\]
+    Per ipotesi induttiva si ottiene la formula completa. <span class="qed">■</span>
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Corollario 6-1 — Moltiplicatività di d e σ</span>
+    <div class="stmt">Se \(n=p_1^{\alpha_1}\cdots p_s^{\alpha_s}\):
+    \[d(n)=d(p_1^{\alpha_1})\cdots d(p_s^{\alpha_s}), \qquad \sigma(n)=\sigma(p_1^{\alpha_1})\cdots\sigma(p_s^{\alpha_s}).\]
+    </div>
+  </div>
+</div>
+
+<div>
+  <h4 class="sub">Esempi e calcoli</h4>
+  <div class="note">
+    <strong>Esempio 6-6:</strong> \(n = 120 = 2^3\cdot 3\cdot 5\).
+    \[d(120)=d(2^3)d(3)d(5)=4\cdot2\cdot2=\mathbf{16}.\]
+    \[\sigma(120)=\frac{2^4-1}{2-1}\cdot\frac{3^2-1}{3-1}\cdot\frac{5^2-1}{5-1}=15\cdot4\cdot6=\mathbf{360}.\]
+  </div>
+
+  <!-- Visual: divisors of 12 -->
+  <div class="vis">
+    <svg viewBox="0 0 310 180" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="13" fill="#3a1060" font-weight="600">Divisori di 12 = 2²·3 — struttura moltiplicativa</text>
+      <!-- Grid of divisors: rows=powers of 2 (0,1,2), cols=powers of 3 (0,1) -->
+      <text x="60" y="38" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#555">3⁰=1</text>
+      <text x="130" y="38" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#555">3¹=3</text>
+      <text x="30" y="68" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">2⁰=1</text>
+      <text x="30" y="108" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">2¹=2</text>
+      <text x="30" y="148" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">2²=4</text>
+      <!-- Cells -->
+      <rect x="45" y="50" width="60" height="36" rx="3" fill="#ece8f8" stroke="#9060d0" stroke-width="1.2"/>
+      <text x="75" y="73" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="14" fill="#6030a8" font-weight="bold">1</text>
+      <rect x="115" y="50" width="60" height="36" rx="3" fill="#e4f0e8" stroke="#2a8060" stroke-width="1.2"/>
+      <text x="145" y="73" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="14" fill="#186050" font-weight="bold">3</text>
+      <rect x="45" y="90" width="60" height="36" rx="3" fill="#ece8f8" stroke="#9060d0" stroke-width="1.2"/>
+      <text x="75" y="113" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="14" fill="#6030a8" font-weight="bold">2</text>
+      <rect x="115" y="90" width="60" height="36" rx="3" fill="#e4f0e8" stroke="#2a8060" stroke-width="1.2"/>
+      <text x="145" y="113" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="14" fill="#186050" font-weight="bold">6</text>
+      <rect x="45" y="130" width="60" height="36" rx="3" fill="#ece8f8" stroke="#9060d0" stroke-width="1.2"/>
+      <text x="75" y="153" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="14" fill="#6030a8" font-weight="bold">4</text>
+      <rect x="115" y="130" width="60" height="36" rx="3" fill="#e4f0e8" stroke="#2a8060" stroke-width="1.2"/>
+      <text x="145" y="153" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="14" fill="#186050" font-weight="bold">12</text>
+      <!-- Summary -->
+      <text x="220" y="68" font-family="Roboto Mono,monospace" font-size="10" fill="#555">d(12) = 3·2 = 6</text>
+      <text x="220" y="90" font-family="Roboto Mono,monospace" font-size="10" fill="#555">σ(12) = (1+2+4)</text>
+      <text x="220" y="108" font-family="Roboto Mono,monospace" font-size="10" fill="#555">      · (1+3)</text>
+      <text x="220" y="126" font-family="Roboto Mono,monospace" font-size="10" fill="#555">  = 7 · 4 = 28</text>
+      <text x="220" y="155" font-family="Roboto Mono,monospace" font-size="9" fill="#6030a8">Div: {1,2,3,4,6,12}</text>
+    </svg>
+    <figcaption>I divisori di \(12=2^2\cdot3\) si dispongono in una griglia \(3\times2\). \(d(12)=3\cdot2=6\), \(\sigma(12)=(1+2+4)\cdot(1+3)=28\).</figcaption>
+  </div>
+
+  <h4 class="sub">Esercizi §6-2 selezionati</h4>
+  <div class="ex">
+    <span class="exl">Esercizio 1 — d(n) è dispari iff n è un quadrato perfetto</span>
+    <strong>Dimostrazione:</strong> \(d(n)=\prod(\alpha_i+1)\). Il prodotto è dispari iff ogni fattore è dispari, iff ogni \(\alpha_i\) è pari, iff tutti gli esponenti nella fattorizzazione sono pari, iff \(n\) è un quadrato perfetto. ∎
+  </div>
+  <div class="ex">
+    <span class="exl">Esercizio 8 — d(n) &lt; 2√n</span>
+    Ogni fattorizzazione \(n=a\cdot b\) con \(a\leq b\) dà \(a\leq\sqrt n\). Quindi ogni divisore \(\leq\sqrt n\) è accoppiato con uno \(\geq\sqrt n\). Ci sono al più \(\sqrt n\) divisori \(\leq\sqrt n\), quindi \(d(n)\leq 2\sqrt n\). ∎
+  </div>
+  <div class="ex">
+    <span class="exl">Esercizi 10–11</span>
+    \(\sigma(210)=\sigma(2\cdot3\cdot5\cdot7)=(1+2)(1+3)(1+5)(1+7)=3\cdot4\cdot6\cdot8=\mathbf{576}\).<br>
+    \(\phi(100)=\phi(2^2\cdot5^2)=(4-2)(25-5)=2\cdot20=\mathbf{40}\).<br>
+    \(\sigma(999)=\sigma(3^3\cdot37)=\frac{3^4-1}{2}\cdot(1+37)=40\cdot38=\mathbf{1520}\).<br>
+    \(d(47)=2\) (47 primo), \(d(63)=d(3^2\cdot7)=3\cdot2=\mathbf{6}\), \(d(150)=d(2\cdot3\cdot5^2)=2\cdot2\cdot3=\mathbf{12}\).
+  </div>
+</div>
+
+<!-- SEZIONE 6-3 -->
+<div class="sb"><h3>§ 6-3 · Funzioni Aritmetiche Moltiplicative</h3></div>
+
+<div>
+  <h4 class="sub">La moltiplicatività: il concetto chiave</h4>
+  <p>Il filo conduttore dell'intero capitolo è la <em>moltiplicatività</em>. Una funzione aritmetica \(f\) è moltiplicativa se \(f(mn)=f(m)f(n)\) ogni volta che \(\gcd(m,n)=1\). Questa proprietà è la ragione per cui le formule di \(\phi\), \(d\), \(\sigma\) si fattorizzano così neatly: basta conoscere i valori sulle potenze di primo.</p>
+  <p>La moltiplicatività ha una conseguenza potente: per determinare \(f\) su tutti gli interi, basta specificarla su \(\{1, p, p^2, p^3, \ldots\}\) per ogni primo \(p\). Se due funzioni moltiplicative concordano su queste potenze, sono identiche su tutti gli interi (Esercizio 1 di §6-3).</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 6-2 — Funzione Moltiplicativa</span>
+    Una funzione aritmetica \(f(n)\) è <strong>moltiplicativa</strong> se \(f(mn)=f(m)f(n)\) ogni volta che \(\gcd(m,n)=1\).
+  </div>
+
+  <div class="mult-thm">
+    <span class="lbl">Teorema 6-4</span>
+    Le funzioni \(\phi(n)\), \(d(n)\), \(\sigma(n)\) e \(\mu(n)\) sono tutte moltiplicative.
+  </div>
+  <div class="proof">
+    Per \(\phi\): dalla formula \(\phi(n)=\prod_{p\mid n}\phi(p^{e_p})\) e \(\gcd(m,n)=1\) → i fattori primi di \(mn\) sono l'unione disgiunta di quelli di \(m\) e \(n\) → \(\phi(mn)=\phi(m)\phi(n)\). Analogamente per \(d\) e \(\sigma\) (Corollario 6-1). Per \(\mu\): se \(\gcd(m,n)=1\) e uno ha un fattore quadratico, allora \(\mu(mn)=0=\mu(m)\mu(n)\). Se entrambi sono privi di quadrati, \(mn\) ha \(r_m+r_n\) fattori primi e \(\mu(mn)=(-1)^{r_m+r_n}=\mu(m)\mu(n)\). <span class="qed">■</span>
+  </div>
+</div>
+
+<div>
+  <!-- Visual: multiplicativity diagram -->
+  <div class="vis">
+    <svg viewBox="0 0 310 160" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="12" fill="#3a1060" font-weight="600">Moltiplicatività: φ(15) = φ(3)·φ(5)</text>
+      <!-- n=15=3·5, gcd(3,5)=1 -->
+      <rect x="10" y="28" width="90" height="36" rx="3" fill="#ece8f8" stroke="#6030a8" stroke-width="1.5"/>
+      <text x="55" y="42" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#3a1060">φ(3) = 2</text>
+      <text x="55" y="57" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">{1, 2} coprimi con 3</text>
+      <text x="155" y="50" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="16" fill="#b87810" font-weight="700">×</text>
+      <rect x="210" y="28" width="90" height="36" rx="3" fill="#e4f0e8" stroke="#2a8060" stroke-width="1.5"/>
+      <text x="255" y="42" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="10" fill="#186050">φ(5) = 4</text>
+      <text x="255" y="57" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">{1,2,3,4} cop. con 5</text>
+      <!-- Arrow -->
+      <path d="M155 68 L155 85" stroke="#b87810" stroke-width="2" marker-end="url(#am8)"/>
+      <defs><marker id="am8" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b87810"/></marker></defs>
+      <!-- Result -->
+      <rect x="60" y="88" width="190" height="40" rx="3" fill="#3a1060"/>
+      <text x="155" y="104" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="11" fill="#c8a0ff">φ(15) = 2 × 4 = 8</text>
+      <text x="155" y="120" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#9080b0">{1,2,4,7,8,11,13,14} cop. con 15</text>
+      <text x="155" y="148" text-anchor="middle" font-family="Merriweather,serif" font-size="10" fill="#888" font-style="italic">gcd(3,5)=1 → moltiplicatività garantisce φ(15)=φ(3)φ(5)</text>
+    </svg>
+  </div>
+
+  <h4 class="sub">Esercizi §6-1 selezionati</h4>
+  <div class="ex">
+    <span class="exl">Esercizio 4 — φ(m) è sempre pari per m &gt; 2</span>
+    Per \(m>2\), se \(p\mid m\) con \(p>2\): \((p-1)\) è pari, quindi \(\phi(p^e)=p^{e-1}(p-1)\) è pari. Se \(m=2^\alpha\) con \(\alpha>1\): \(\phi(2^\alpha)=2^{\alpha-1}\) è pari. Combinando: \(\phi(m)=\prod\phi(p_i^{e_i})\) ha almeno un fattore pari. ∎
+  </div>
+  <div class="ex">
+    <span class="exl">Esercizio 6 — Trovare tutti n con φ(n)=12</span>
+    \(\phi(n)=12\). Candidati: \(n=13\) (primo: \(\phi(13)=12\)), \(n=21=3\cdot7\) (\(\phi=2\cdot6=12\)), \(n=26=2\cdot13\) (\(\phi=\phi(2)\phi(13)=12\)), \(n=28=4\cdot7\) (\(\phi=2\cdot6=12\)), \(n=36=4\cdot9\) (\(\phi=2\cdot6=12\)). Risposta: \(n\in\{13,21,26,28,36\}\).
+  </div>
+  <div class="ex">
+    <span class="exl">Esercizio 9 — Moltiplicatività di φ (via SRR)</span>
+    Se \(\gcd(m,n)=1\), si mostra che se \(x\) percorre un SRR mod \(m\) e \(y\) percorre un SRR mod \(n\), allora \(mx+ny\) percorre un SRR mod \(mn\). Questo dà \(\phi(mn)=\phi(m)\phi(n)\). Poi per induzione si ottiene \(\phi(n)=n\prod_{p\mid n}(1-1/p)\).
+  </div>
+  <div class="ex">
+    <span class="exl">Esercizio 15 — Valutare φ</span>
+    \(\phi(19)=18\) (19 primo).<br>
+    \(\phi(49)=\phi(7^2)=49-7=\mathbf{42}\).<br>
+    \(\phi(243)=\phi(3^5)=243-81=\mathbf{162}\).<br>
+    \(\phi(1024)=\phi(2^{10})=512\).
+  </div>
+</div>
+
+<!-- SEZIONE 6-4 -->
+<div class="sb"><h3>§ 6-4 · La Formula di Inversione di Möbius</h3></div>
+
+<div>
+  <h4 class="sub">L'idea dell'inversione</h4>
+  <p>La Formula di Inversione di Möbius è uno dei risultati più potenti e versatili della teoria dei numeri. L'idea è questa: spesso in matematica si conosce una funzione \(f(n)=\sum_{d\mid n}g(d)\) ma si vuole trovare \(g\) a partire da \(f\). La formula di Möbius dà la risposta esplicita: \(g(n)=\sum_{d\mid n}\mu(d)f(n/d)\).</p>
+  <p>Pensate a come funziona nell'esempio del Teorema 6-1: sappiamo che \(n=\sum_{d\mid n}\phi(d)\), quindi con l'inversione di Möbius otteniamo \(\phi(n)=\sum_{d\mid n}\mu(d)\frac{n}{d}\) — esattamente la prima parte del Teorema 6-2! L'inversione di Möbius non è quindi un trucco isolato: è il meccanismo generale che lega \(f\) e \(g\) in una coppia di equazioni equivalenti.</p>
+  <p>Un'analogia utile: nella teoria dei segnali, la trasformata di Fourier e la sua inversa formano una coppia analoga. La funzione \(\mu\) gioca il ruolo del "kernel di inversione".</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 6-5 — Proprietà sommatoria di μ</span>
+    <div class="stmt">\[\sum_{d\mid n}\mu(d) = \begin{cases}1 & \text{se }n=1\\0 & \text{se }n>1\end{cases}\]</div>
+  </div>
+  <div class="proof">
+    Per \(n=1\): \(\sum_{d\mid 1}\mu(d)=\mu(1)=1\). Per \(n=p^\alpha\): \(\sum_{d\mid p^\alpha}\mu(d)=\mu(1)+\mu(p)+\mu(p^2)+\cdots=1-1+0+\cdots=0\). Per induzione: se \(n=n'p^\alpha\) con \(p\nmid n'\), si hanno \(\sum_{d\mid n}\mu(d)=\sum_{d\mid n'}\mu(d)+\sum_{d\mid n'}\mu(pd)+\cdots=\sum_{d\mid n'}\mu(d)-\sum_{d\mid n'}\mu(d)+0+\cdots=0\). <span class="qed">■</span>
+  </div>
+
+  <p>Questa proprietà è la chiave dell'inversione: quando si fa la sostituzione nell'inversione, appaiono somme \(\sum_{d\mid h}\mu(d)\) che valgono 0 per \(h>1\) e 1 per \(h=1\) — il che "seleziona" il termine giusto.</p>
+</div>
+
+<div>
+  <div class="mob-thm">
+    <span class="lbl">Teorema 6-6 — Formula di Inversione di Möbius</span>
+    <div class="stmt">Se due funzioni aritmetiche \(f(n)\) e \(g(n)\) soddisfano una delle due condizioni:
+    \[f(n)=\sum_{d\mid n}g(d) \qquad\text{oppure}\qquad g(n)=\sum_{d\mid n}\mu(d)f\!\left(\frac{n}{d}\right)\]
+    allora soddisfano anche l'altra.</div>
+  </div>
+
+  <div class="proof">
+    Supponiamo \(f(n)=\sum_{d\mid n}g(d)\). Allora:
+    \[\sum_{d\mid n}\mu(d)f\!\left(\tfrac{n}{d}\right) = \sum_{d\mid n}\mu(d)\sum_{e\mid(n/d)}g(e) = \sum_{de\mid n}\mu(d)g(e) = \sum_{e\mid n}g(e)\sum_{d\mid(n/e)}\mu(d).\]
+    Per Thm 6-5, \(\sum_{d\mid(n/e)}\mu(d)=0\) se \(n/e>1\) e \(=1\) se \(n/e=1\) (cioè \(e=n\)). Quindi solo il termine \(e=n\) sopravvive: il risultato è \(g(n)\). Il viceversa è analogo. <span class="qed">■</span>
+  </div>
+
+  <!-- Visual: Möbius inversion diagram -->
+  <div class="vis">
+    <svg viewBox="0 0 310 150" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs><marker id="am9" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#6030a8"/></marker>
+      <marker id="am9r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#b87810"/></marker></defs>
+      <text x="155" y="14" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="12" fill="#3a1060" font-weight="600">Inversione di Möbius — schema</text>
+      <!-- f box -->
+      <rect x="10" y="35" width="130" height="50" rx="4" fill="#ece8f8" stroke="#6030a8" stroke-width="1.5"/>
+      <text x="75" y="57" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="11" fill="#3a1060" font-weight="bold">f(n)</text>
+      <text x="75" y="73" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#6030a8">= Σ g(d)</text>
+      <text x="75" y="86" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#6030a8">  d|n</text>
+      <!-- g box -->
+      <rect x="170" y="35" width="130" height="50" rx="4" fill="#f0e8ff" stroke="#9060d0" stroke-width="1.5"/>
+      <text x="235" y="57" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="11" fill="#3a1060" font-weight="bold">g(n)</text>
+      <text x="235" y="73" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#9060d0">= Σ μ(d)f(n/d)</text>
+      <text x="235" y="86" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#9060d0">  d|n</text>
+      <!-- Bidirectional arrows -->
+      <line x1="140" y1="52" x2="168" y2="52" stroke="#6030a8" stroke-width="1.8" marker-end="url(#am9)"/>
+      <text x="154" y="46" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="8" fill="#6030a8">Thm 6-6 →</text>
+      <line x1="168" y1="68" x2="140" y2="68" stroke="#b87810" stroke-width="1.8" marker-end="url(#am9r)"/>
+      <text x="154" y="82" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="8" fill="#b87810">← Thm 6-6</text>
+      <!-- Example -->
+      <text x="155" y="110" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">Esempio: f=n, g=φ → n=Σφ(d) ↔ φ(n)=Σμ(d)n/d</text>
+      <text x="155" y="130" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#555">Esempio: f=d(n), g=1 → d(n)=Σ1 ↔ 1=Σμ(d)d(n/d)</text>
+    </svg>
+    <figcaption>La Formula di Inversione di Möbius stabilisce una biiezione tra coppie \(\{f,g\}\). Ogni coppia è una coppia di Möbius.</figcaption>
+  </div>
+</div>
+
+<!-- Coppie di Möbius e Thm 6-8 -->
+<div class="full">
+  <div class="defn">
+    <span class="lbl">Definizione 6-3 — Coppia di Möbius</span>
+    Se \(f(n)=\sum_{d\mid n}g(d)\), diciamo che \(\{f(n),g(n)\}\) è una <strong>coppia di Möbius</strong>.
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 6-7 — Moltiplicatività nelle Coppie di Möbius</span>
+    <div class="stmt">Se una delle funzioni in una coppia di Möbius \(\{f(n),g(n)\}\) è moltiplicativa, lo è anche l'altra.</div>
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 6-8 — Le Coppie di Möbius di φ, d, σ</span>
+    <div class="stmt">\(\{n,\phi(n)\}\), \(\{d(n),1\}\) e \(\{\sigma(n),n\}\) sono coppie di Möbius.</div>
+  </div>
+  <div class="proof">
+    Per Thm 6-1: \(n=\sum_{d\mid n}\phi(d)\), quindi \(\{n,\phi(n)\}\) è una coppia di Möbius. Per definizione: \(d(n)=\sum_{d\mid n}1\) e \(\sigma(n)=\sum_{d\mid n}d\). <span class="qed">■</span>
+  </div>
+
+  <div class="note">Il Teorema 6-7 dà una seconda dimostrazione che \(\phi\), \(d\), \(\sigma\) sono moltiplicative: le funzioni costanti \(f_1(n)=1\) e \(f_2(n)=n\) sono chiaramente moltiplicative, e sono le seconde componenti delle rispettive coppie di Möbius.</div>
+
+  <!-- Esercizi 6-4 -->
+  <h4 class="sub">Esercizi §6-4 — Soluzioni</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizio 1 — σ_k moltiplicativa</span>
+      Sia \(\sigma_k(n)=\sum_{d\mid n}d^k\). Poiché \(g(n)=n^k\) è moltiplicativa, e \(\sigma_k(n)=\sum_{d\mid n}g(d)=f(n)\) (coppia di Möbius con \(g\) molt.), per Thm 6-7 anche \(\sigma_k\) è moltiplicativa. ∎ (Si noti: \(\sigma_0=d\) e \(\sigma_1=\sigma\).)
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 2 — Formula di prodotto per Σμ(d)f(d)</span>
+      Se \(f\) è moltiplicativa, \(\sum_{d\mid n}\mu(d)f(d)=\prod_{p\mid n}(1-f(p))\). Questo perché \(\mu(d)f(d)\) è moltiplicativa (prodotto di due mult.) e si applica la formula del Thm 6-3 con la serie geometrica: ogni fattore primo \(p^e\) contribuisce \(\mu(1)f(1)+\mu(p)f(p)=1-f(p)\) (i termini con \(e\geq2\) danno \(\mu=0\)). ∎
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 3 — Formula φ tramite Es. 2</span>
+      Applicare l'esercizio 2 a \(f(n)=n\) (moltiplicativa): \(\phi(n)=\sum_{d\mid n}\mu(d)\frac nd=n\sum_{d\mid n}\frac{\mu(d)}{d}=n\prod_{p\mid n}(1-\frac1p)\). Questo dà una terza dimostrazione della formula di Eulero per \(\phi\). ∎
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 4 — Numeri square-free e μ</span>
+      Sia \(S(n)\) il numero di interi square-free \(\leq n\) (non divisibili da \(p^2\) per nessun primo). Dimostrare: \(S(n)=\sum_{j=1}^n|\mu(j)|\).
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        \(|\mu(j)|=1\) iff \(j\) è square-free, \(=0\) altrimenti. Quindi \(\sum_{j=1}^n|\mu(j)|\) conta esattamente i numeri square-free da 1 a \(n\). ∎
+      </div>
+    </div>
+  </div>
+
+  <!-- Mappa concettuale -->
+  <h4 class="sub" style="margin-top:1.5rem;">Mappa Concettuale — Struttura del Capitolo 6</h4>
+  <div class="vis">
+    <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="am10" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#3a1060"/>
+        </marker>
+        <marker id="am10m" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6030a8"/>
+        </marker>
+      </defs>
+      <!-- Nodes -->
+      <rect x="5" y="80" width="110" height="42" rx="4" fill="#3a1060"/>
+      <text x="60" y="97" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="11" font-weight="600">Def φ(n),d(n),σ(n)</text>
+      <text x="60" y="112" text-anchor="middle" fill="#c0a0e8" font-family="Roboto Mono,monospace" font-size="8">Funz. Aritmetiche</text>
+
+      <rect x="135" y="40" width="120" height="42" rx="4" fill="#6030a8"/>
+      <text x="195" y="58" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="10" font-weight="600">Thm 6-1</text>
+      <text x="195" y="72" text-anchor="middle" fill="#d0b8ff" font-family="Roboto Mono,monospace" font-size="8">Σ_{d|n} φ(d)=n</text>
+
+      <rect x="135" y="120" width="120" height="42" rx="4" fill="#6030a8" opacity=".85"/>
+      <text x="195" y="138" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="10" font-weight="600">Def μ(n)</text>
+      <text x="195" y="152" text-anchor="middle" fill="#d0b8ff" font-family="Roboto Mono,monospace" font-size="8">Funzione di Möbius</text>
+
+      <rect x="275" y="80" width="120" height="42" rx="4" fill="#186050"/>
+      <text x="335" y="97" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="10" font-weight="600">Thm 6-2,3</text>
+      <text x="335" y="111" text-anchor="middle" fill="#a0d8c0" font-family="Roboto Mono,monospace" font-size="8">Formule φ,d,σ</text>
+
+      <rect x="415" y="40" width="120" height="42" rx="4" fill="#2a8060"/>
+      <text x="475" y="58" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="10" font-weight="600">Thm 6-4</text>
+      <text x="475" y="72" text-anchor="middle" fill="#b0f0d8" font-family="Roboto Mono,monospace" font-size="8">Moltiplicatività</text>
+
+      <rect x="415" y="120" width="120" height="42" rx="4" fill="#6030a8"/>
+      <text x="475" y="138" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="10" font-weight="600">Thm 6-5</text>
+      <text x="475" y="152" text-anchor="middle" fill="#d0b8ff" font-family="Roboto Mono,monospace" font-size="8">Σ_{d|n} μ(d)=0/1</text>
+
+      <rect x="555" y="62" width="160" height="58" rx="4" fill="#140820"/>
+      <text x="635" y="84" text-anchor="middle" fill="#b87810" font-family="Rajdhani,sans-serif" font-size="13" font-weight="700">Thm 6-6,7,8</text>
+      <text x="635" y="100" text-anchor="middle" fill="#b0a0e0" font-family="Roboto Mono,monospace" font-size="8">Inversione di Möbius</text>
+      <text x="635" y="113" text-anchor="middle" fill="#b0a0e0" font-family="Roboto Mono,monospace" font-size="8">Coppie di Möbius</text>
+
+      <!-- Arrows -->
+      <line x1="115" y1="101" x2="133" y2="66" stroke="#6030a8" stroke-width="1.5" marker-end="url(#am10m)"/>
+      <line x1="115" y1="101" x2="133" y2="136" stroke="#6030a8" stroke-width="1.5" marker-end="url(#am10m)"/>
+      <line x1="255" y1="66" x2="273" y2="90" stroke="#186050" stroke-width="1.5" marker-end="url(#am10)"/>
+      <line x1="255" y1="140" x2="273" y2="110" stroke="#186050" stroke-width="1.5" marker-end="url(#am10)"/>
+      <line x1="395" y1="100" x2="413" y2="70" stroke="#2a8060" stroke-width="1.5" marker-end="url(#am10)"/>
+      <line x1="395" y1="100" x2="413" y2="130" stroke="#6030a8" stroke-width="1.5" marker-end="url(#am10m)"/>
+      <line x1="535" y1="70" x2="553" y2="83" stroke="#2a8060" stroke-width="1.5" marker-end="url(#am10)"/>
+      <line x1="535" y1="141" x2="553" y2="110" stroke="#6030a8" stroke-width="1.5" marker-end="url(#am10m)"/>
+
+      <text x="360" y="185" text-anchor="middle" font-family="Merriweather,serif" font-size="10" fill="#888" font-style="italic">La funzione di Möbius è il "kernel di inversione" che collega tutti i risultati del capitolo</text>
+    </svg>
+  </div>
+</div>
+
+<!-- BIBLIOGRAFIA -->
+<div class="sb"><h3>§ Riferimenti Bibliografici</h3></div>
+<div class="full">
+  <div class="bib"><div class="bib-k">[And71]</div>Andrews, G.E. (1971). <em>Number Theory</em>. W.B. Saunders, Philadelphia. — <strong>Riferimento principale.</strong></div>
+  <div class="bib"><div class="bib-k">[Mob32]</div>Möbius, A.F. (1832). <em>Über eine besondere Art von Umkehrung der Reihen</em>. J. Reine Angew. Math. 9. — Prima introduzione della funzione \(\mu\) e della formula di inversione.</div>
+  <div class="bib"><div class="bib-k">[HarWri08]</div>Hardy, G.H. &amp; Wright, E.M. (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford. — Capitoli 16–18 sulle funzioni aritmetiche e l'inversione di Möbius.</div>
+  <div class="bib"><div class="bib-k">[Apo76]</div>Apostol, T.M. (1976). <em>Introduction to Analytic Number Theory</em>. Springer. — Trattazione sistematica delle funzioni aritmetiche, convoluzione di Dirichlet.</div>
+  <div class="bib"><div class="bib-k">[Niv91]</div>Niven, I., Zuckerman, H.S. &amp; Montgomery, H.L. (1991). <em>An Introduction to the Theory of Numbers</em> (5th ed.). Wiley.</div>
+  <div class="bib"><div class="bib-k">[Ire90]</div>Ireland, K. &amp; Rosen, M. (1990). <em>A Classical Introduction to Modern Number Theory</em> (2nd ed.). Springer. — Connessione con la teoria delle forme modulari.</div>
+  <div class="bib"><div class="bib-k">[Rot64]</div>Rota, G.-C. (1964). <em>On the Foundations of Combinatorial Theory I: Theory of Möbius Functions</em>. Z. Wahrsch. — Generalizzazione moderna della formula di Möbius ai reticoli.</div>
+  <div class="bib"><div class="bib-k">[Dir38]</div>Dirichlet, P.G.L. (1838). <em>Sur l'usage des séries infinies dans la théorie des nombres</em>. J. Reine Angew. Math. 18. — Introduzione della serie di Dirichlet e studio di \(d(n)\).</div>
+  <div class="bib"><div class="bib-k">[Knu97]</div>Knuth, D.E. (1997). <em>The Art of Computer Programming, Vol. 2</em> (3rd ed.). Addison-Wesley. — Algoritmi per il calcolo di \(\phi\), \(d\), \(\sigma\).</div>
+  <div class="bib"><div class="bib-k">[ConGuy96]</div>Conway, J.H. &amp; Guy, R.K. (1996). <em>The Book of Numbers</em>. Springer.</div>
+</div>
+
+</div><!-- end two-col -->
+
+<footer>
+  Studio redatto da <strong>Alberto Oliva</strong> —
+  <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a> ·
+  Rif.: G.E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971) — Capitolo 6 ·
+  Aprile 2026
+</footer>
+</body>
+</html>

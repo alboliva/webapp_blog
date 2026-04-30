@@ -44,7 +44,7 @@ hr {
 div[data-testid="stHorizontalBlock"] .stButton > button {
     font-size: 0.55rem !important;
     padding: 0 10px !important;
-    max-width: 14   0px !important; 
+    max-width: 140px !important;
     height: 18px !important;
     min-height: unset !important;
     border-radius: 20px !important;
@@ -124,6 +124,22 @@ def _human_title(fname: str) -> str:
     base = re.sub(r"^\d{8}_?", "", base)
     base = re.sub(r"[_\-]+", " ", base).strip()
     return base.title() if base else fname
+
+@st.cache_data(show_spinner=False)
+def _extract_text(html_path: str) -> str:
+    """Estrae testo plain dall'HTML per la ricerca nel contenuto (cached)."""
+    try:
+        with open(html_path, "r", encoding="utf-8") as f:
+            html = f.read()
+        # Rimuove script e style
+        html = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
+        # Rimuove tag HTML
+        text = re.sub(r"<[^>]+>", " ", html)
+        # Comprime spazi
+        text = re.sub(r"\s+", " ", text).strip()
+        return text.lower()
+    except:
+        return ""
 
 def scan_articoli(root: str) -> dict:
     result: dict[str, list] = {}
@@ -207,21 +223,75 @@ def main():
     if "nav_idx" not in ss:
         ss.nav_idx = 0
 
+    # ── Sidebar: Filtri ────────────────────────────────────────────────────
+    with st.sidebar:
+        st.markdown("### 🔍 Filtri")
+
+        # Radio: dove cercare
+        search_mode = st.radio(
+            "Cerca in:",
+            options=["Titolo", "Testo articolo"],
+            index=0,
+            horizontal=True,
+            key="search_mode"
+        )
+
+        if search_mode == "Testo articolo":
+            st.caption("⚠️ La ricerca nel testo può essere più lenta con molti articoli.")
+
+        # Campo testo
+        label = "Cerca nel titolo" if search_mode == "Titolo" else "Cerca nel testo"
+        query = st.text_input(label, key="search_query").strip().lower()
+
+        st.divider()
+
+        # Raccoglie tutti i doc per il conteggio totale
+        all_docs_flat = [doc for docs in catalog.values() for doc in docs]
+
+        # Applica filtro
+        if query:
+            if search_mode == "Titolo":
+                matched = [d for d in all_docs_flat if query in d["title"].lower()]
+            else:
+                with st.spinner("Ricerca nel testo..."):
+                    matched = [d for d in all_docs_flat if query in _extract_text(d["full_path"])]
+            st.markdown(f"📋 **{len(matched)} articoli** trovati")
+        else:
+            matched = None
+            st.markdown(f"📊 **{len(all_docs_flat)} articoli totali** trovati")
+
+    # ── Determina categoria e docs attivi ─────────────────────────────────
     cat = ss.nav_cat
-    docs = catalog[cat]
-    idx = min(ss.nav_idx, len(docs) - 1)
-    doc = docs[idx]
+    docs_in_cat = catalog[cat]
+
+    # Se c'è una ricerca attiva, filtra per categoria corrente
+    if matched is not None:
+        docs = [d for d in matched if d["category"] == cat]
+    else:
+        docs = docs_in_cat
+
+    if not docs:
+        # Categoria attiva ma nessun risultato: mostra avviso
+        pass
+
+    idx = min(ss.nav_idx, max(len(docs) - 1, 0))
 
     # ── Header ─────────────────────────────────────────────────────────────
     st.markdown('<h1 style="margin-bottom:0; margin-top:0;">📰 Archivio Notizie</h1>', unsafe_allow_html=True)
     st.markdown('<p style="color:#64748b; margin-top:2px; margin-bottom:6px;">Politica • Scienza • Economia • Esteri • Approfondimenti</p>', unsafe_allow_html=True)
 
-    # ── Category Pills (compatte) ──────────────────────────────────────────
-    cols = st.columns(len(categories) )
+    # ── Category Pills ─────────────────────────────────────────────────────
+    cols = st.columns(len(categories))
     for i, c in enumerate(categories):
         is_active = (c == cat)
+        # Conta risultati per categoria se ricerca attiva
+        if matched is not None:
+            n = len([d for d in matched if d["category"] == c])
+            label = f"{c} ({n})"
+        else:
+            label = c
         if cols[i].button(
-            c,
+            label,
             key=f"cat_{c}",
             use_container_width=True,
             type="primary" if is_active else "secondary"
@@ -232,7 +302,14 @@ def main():
 
     st.divider()
 
-    # ── Navigator Bar compatto ─────────────────────────────────────────────
+    # ── Nessun risultato ───────────────────────────────────────────────────
+    if not docs:
+        st.warning(f"Nessun articolo trovato in **{cat}** per la ricerca «{query}».")
+        return
+
+    doc = docs[idx]
+
+    # ── Navigator Bar ──────────────────────────────────────────────────────
     st.markdown(f"""
     <div class="bnav" style="margin-bottom:10px;">
         <div class="bnav-date">{doc['date_label']}</div>
@@ -245,7 +322,7 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # Pulsanti di navigazione compatti
+    # Pulsanti di navigazione
     nc1, nc2, nc3, nc4 = st.columns(4)
     with nc1:
         if st.button("‹ Precedente", use_container_width=True, disabled=(idx >= len(docs)-1), key="btn_prev"):
@@ -266,7 +343,7 @@ def main():
 
     st.divider()
 
-    # ── Download Buttons ──────────────────────────────────────────────────
+    # ── Download Buttons ───────────────────────────────────────────────────
     col_dl1, col_dl2 = st.columns(2)
     try:
         with open(doc["full_path"], "rb") as f:
@@ -295,7 +372,7 @@ def main():
         except:
             pass
 
-    # ── Visualizza Articolo ───────────────────────────────────────────────
+    # ── Visualizza Articolo ────────────────────────────────────────────────
     try:
         with open(doc["full_path"], "r", encoding="utf-8") as f:
             html_content = f.read()

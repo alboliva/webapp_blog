@@ -165,6 +165,24 @@ def scan_articoli(root_dir):
         df = df.sort_values("Data", ascending=False).reset_index(drop=True)
     return df
 
+
+@st.cache_data(show_spinner=False)
+def _extract_text(percorso: str) -> str:
+    """Estrae testo plain dall'HTML per la ricerca nel contenuto (cached)."""
+    try:
+        with open(percorso, "r", encoding="utf-8") as f:
+            html = f.read()
+        # Rimuove script e style
+        html = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
+        # Rimuove tag HTML
+        text = re.sub(r"<[^>]+>", " ", html)
+        # Comprime spazi
+        text = re.sub(r"\s+", " ", text).strip()
+        return text.lower()
+    except:
+        return ""
+
+
 if "df_articoli" not in st.session_state:
     with st.spinner("🔎 Scansionando tutti gli articoli e sottocartelle..."):
         st.session_state.df_articoli = scan_articoli(ARTICOLI_DIR)
@@ -177,16 +195,41 @@ if df.empty:
 # ─── SIDEBAR ─────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.header("🔎 Filtri")
-    search = st.text_input("Cerca nel titolo", placeholder="es. riforma, clima, elezioni...")
+
+    # Radio: dove cercare
+    search_mode = st.radio(
+        "Cerca in:",
+        options=["Titolo", "Testo articolo"],
+        index=0,
+        horizontal=True,
+        key="search_mode"
+    )
+
+    if search_mode == "Testo articolo":
+        st.caption("⚠️ La ricerca nel testo può essere più lenta con molti articoli.")
+
+    label = "Cerca nel titolo" if search_mode == "Titolo" else "Cerca nel testo"
+    search = st.text_input(label, placeholder="es. riforma, clima, elezioni...", key="search_query")
+
     categorie = sorted(df["Categoria"].unique())
     selected_cats = st.multiselect("Argomenti", options=categorie, default=categorie)
+
     st.divider()
     st.caption(f"📊 **{len(df)} articoli totali** trovati")
 
 # ─── FILTRI ──────────────────────────────────────────────────────────────────
 filtered = df.copy()
+
 if search:
-    filtered = filtered[filtered["Titolo"].str.contains(search, case=False, na=False)]
+    if search_mode == "Titolo":
+        filtered = filtered[filtered["Titolo"].str.contains(search, case=False, na=False)]
+    else:
+        with st.spinner("Ricerca nel testo degli articoli..."):
+            mask = filtered["Percorso"].apply(
+                lambda p: search.lower() in _extract_text(p)
+            )
+        filtered = filtered[mask]
+
 if selected_cats:
     filtered = filtered[filtered["Categoria"].isin(selected_cats)]
 
@@ -206,13 +249,11 @@ if not filtered.empty:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ─── LAYOUT PRINCIPALE ───────────────────────────────────────────────────────
-# Tabella più stretta (2) e preview più larga (3)
 col_table, col_viewer = st.columns([2, 3])
 
 with col_table:
     st.subheader(f"📋 Articoli trovati: **{len(filtered)}**")
 
-    # Tabella con colonna download (link HTML inline)
     display_df = filtered[["Data_str", "Titolo"]].copy()
     display_df = display_df.rename(columns={"Data_str": "Data"})
 
@@ -229,7 +270,6 @@ with col_table:
         }
     )
 
-    # Pulsante download separato per riga selezionata (sotto tabella, fallback)
     if len(selected_row["selection"]["rows"]) > 0:
         idx = selected_row["selection"]["rows"][0]
         sel = filtered.iloc[idx]
@@ -257,7 +297,6 @@ with col_viewer:
             with open(selected_file["Percorso"], "r", encoding="utf-8") as f:
                 html_content = f.read()
 
-            # ── Header preview: titolo + download in alto a destra ──────────
             dl_col, btn_col = st.columns([3, 1])
             with dl_col:
                 st.markdown(
@@ -267,7 +306,7 @@ with col_viewer:
                     unsafe_allow_html=True
                 )
             with btn_col:
-                st.markdown("<br>", unsafe_allow_html=True)  # allineamento verticale
+                st.markdown("<br>", unsafe_allow_html=True)
                 st.download_button(
                     "⬇️ Scarica",
                     data=html_content.encode("utf-8"),
@@ -277,7 +316,6 @@ with col_viewer:
                     key="dl_preview"
                 )
 
-            # ── Contenuto articolo ──────────────────────────────────────────
             inject = """
             <style>
             body {
@@ -303,8 +341,6 @@ with col_viewer:
             </style>
             """
             html_content_styled = html_content.replace("</head>", inject + "</head>")
-
-            # Iframe più alto per leggibilità
             st.components.v1.html(html_content_styled, height=860, scrolling=True)
 
         except Exception as e:

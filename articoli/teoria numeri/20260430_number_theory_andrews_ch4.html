@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teoria dei Numeri – Capitolo 4: Fondamenti delle Congruenze</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --ink:#0d0d1a;--paper:#f5f2f8;--cream:#ece5f5;
+  --indigo:#2d2060;--violet:#4a2c8a;--lilac:#7a5ab8;
+  --rose:#8b1a40;--gold:#c8901a;--teal:#1a6060;
+  --rule:#b8a8d8;--thm:#eceaf8;--proof:#f8f5ff;
+  --ex:#fdf5e8;--hist:#100d25;--defn:#eaf4f4;
+  --card:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);font-family:'Spectral',Georgia,serif;font-size:17px;line-height:1.76;}
+
+/* HEADER */
+header{
+  background:var(--hist);color:var(--paper);
+  padding:3.5rem 4rem 2.8rem;text-align:center;
+  border-bottom:5px solid var(--gold);position:relative;overflow:hidden;
+}
+header::before{content:'';position:absolute;inset:0;
+  background:repeating-conic-gradient(rgba(122,90,184,.06) 0% 25%,transparent 0% 50%) 0 0/40px 40px;}
+header::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(74,44,138,.4) 0%,transparent 70%);}
+.jtag{font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;margin-bottom:1rem;display:block;position:relative;z-index:1;}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;letter-spacing:.06em;line-height:1.05;color:#fff;margin-bottom:.5rem;position:relative;z-index:1;}
+header h2{font-family:'Spectral',serif;font-style:italic;font-size:1.15rem;color:#a898d8;margin-bottom:1.5rem;position:relative;z-index:1;}
+.meta{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:.81rem;color:#685888;border-top:1px solid #20185a;padding-top:1rem;position:relative;z-index:1;}
+.meta strong{color:var(--gold);}
+.meta a{color:#a898d8;}
+
+/* ABSTRACT */
+.abstract{background:var(--cream);border-left:4px solid var(--violet);border-right:4px solid var(--violet);max-width:880px;margin:2rem auto;padding:1.6rem 2.2rem;font-style:italic;font-size:.95rem;color:#1a1030;}
+.abstract strong{font-style:normal;color:var(--rose);}
+
+/* TWO-COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2.8rem;max-width:1280px;margin:0 auto;padding:2.2rem 3rem;}
+@media(max-width:880px){.two-col{grid-template-columns:1fr;padding:1.2rem 1.4rem;}header{padding:2rem 1.5rem;}header h1{font-size:2rem;}}
+.full{grid-column:1/-1;}
+
+/* SECTION BREAK */
+.sb{grid-column:1/-1;display:flex;align-items:center;gap:1rem;margin:2rem 0 .6rem;border-top:2px solid var(--rule);padding-top:1.1rem;}
+.sb h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.05em;color:var(--indigo);white-space:nowrap;}
+.sb::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+/* PROSE */
+p{margin-bottom:.95em;text-align:justify;hyphens:auto;}
+h4.sub{font-family:'Spectral',serif;font-size:1.05rem;color:var(--rose);font-style:italic;margin:1.3rem 0 .5rem;border-bottom:1px dotted var(--rule);padding-bottom:.2rem;}
+
+/* BOXES */
+.thm{background:var(--thm);border:1px solid #b8a8d8;border-left:5px solid var(--indigo);padding:1rem 1.3rem;margin:1.1rem 0;border-radius:2px;}
+.thm .lbl{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.14em;color:var(--indigo);text-transform:uppercase;font-weight:700;margin-bottom:.35rem;display:block;}
+.thm .stmt{font-style:italic;font-size:.97rem;color:#100d25;}
+.thm .stmt strong{font-style:normal;}
+
+.proof{background:var(--proof);border:1px solid #d0c0e8;border-left:4px solid var(--lilac);padding:.9rem 1.3rem;margin:.8rem 0 1.5rem;font-size:.94rem;}
+.proof::before{content:'Dimostrazione';display:block;font-variant:small-caps;font-size:.74rem;letter-spacing:.1em;color:var(--lilac);margin-bottom:.5rem;}
+.proof .qed{float:right;color:var(--lilac);font-size:1.1rem;}
+
+.defn{background:var(--defn);border:1px solid #a8d0d0;border-left:5px solid var(--teal);padding:.9rem 1.2rem;margin:1rem 0;font-size:.95rem;}
+.defn .lbl{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.14em;color:var(--teal);text-transform:uppercase;margin-bottom:.3rem;display:block;}
+
+.ex{background:var(--ex);border:1px solid #dcc870;border-left:4px solid var(--rose);padding:.85rem 1.1rem;margin:.55rem 0;font-size:.93rem;}
+.ex .exl{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--rose);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem;display:block;}
+
+.note{background:#f4f0ff;border:1px dashed var(--lilac);padding:.65rem 1rem;font-size:.88rem;border-radius:2px;margin:.8rem 0;}
+.note::before{content:'💡 ';}
+
+.warn{background:#fff5f0;border:1px solid #e8a090;border-left:4px solid var(--rose);padding:.7rem 1rem;font-size:.88rem;margin:.8rem 0;}
+.warn::before{content:'⚠️  ';}
+
+.hist{background:linear-gradient(135deg,#100d25 0%,#1e1848 100%);color:#c0b8e8;padding:1.3rem 1.5rem;border-radius:4px;margin:1.2rem 0;font-size:.87rem;}
+.hist h4{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.05em;color:var(--gold);margin-bottom:.6rem;}
+.hist p{color:#988ac8;text-align:left;}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse;font-size:.87rem;margin:.8rem 0;}
+th{background:var(--indigo);color:#fff;padding:.5rem .9rem;font-variant:small-caps;letter-spacing:.06em;font-weight:500;}
+td{padding:.4rem .9rem;text-align:center;border-bottom:1px solid var(--rule);}
+tr:nth-child(even) td{background:rgba(45,32,96,.05);}
+.mono{font-family:'Space Mono',monospace;font-size:.8rem;}
+td.hi{background:rgba(74,44,138,.18);font-weight:bold;}
+
+/* VISUAL */
+.vis{background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:1rem;margin:1rem 0;text-align:center;}
+.vis figcaption{font-size:.75rem;color:#888;margin-top:.4rem;font-style:italic;}
+
+.formula{text-align:center;margin:1rem 0;padding:.5rem;background:rgba(45,32,96,.05);border-radius:3px;font-size:1.05rem;}
+
+/* RESIDUE CLOCK */
+.clock-wrap{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin:.8rem 0;}
+.clock-label{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--indigo);text-align:center;margin-top:.3rem;}
+
+/* CARD GRID */
+.card-deck{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:.5rem 0;}
+.card{width:28px;height:40px;border-radius:3px;background:var(--card);border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:.7rem;color:var(--indigo);font-weight:700;}
+.card.hl{background:var(--indigo);color:#fff;border-color:var(--indigo);}
+.card.hi2{background:var(--rose);color:#fff;border-color:var(--rose);}
+
+/* BIB */
+.bib{border-bottom:1px solid var(--rule);padding:.55rem 0;font-size:.87rem;}
+.bib-k{font-family:'Space Mono',monospace;color:var(--indigo);font-size:.72rem;margin-bottom:.12rem;}
+
+/* FOOTER */
+footer{background:var(--ink);color:#4a4060;text-align:center;padding:1.5rem;font-size:.77rem;border-top:3px solid var(--gold);margin-top:3rem;}
+footer a{color:var(--gold);text-decoration:none;}
+
+/* CONGRUENCE GRID */
+.cong-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin:.5rem 0;}
+.cg-cell{text-align:center;font-family:'Space Mono',monospace;font-size:.78rem;padding:.3rem;background:rgba(45,32,96,.07);border-radius:2px;}
+.cg-cell.hdr{background:var(--indigo);color:#fff;font-size:.72rem;}
+.cg-cell.same{background:var(--violet);color:#fff;font-weight:bold;}
+.cg-cell.zero{background:var(--teal);color:#fff;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <span class="jtag">Studio di Teoria dei Numeri · Capitolo 4</span>
+  <h1>Fondamenti delle Congruenze</h1>
+  <h2>George E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971)</h2>
+  <div class="meta">
+    <span><strong>Autore:</strong> Alberto Oliva</span>
+    <span><strong>Email:</strong> <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a></span>
+    <span><strong>Rif.:</strong> Andrews, G.E. – <em>Number Theory</em>, Cap. 4</span>
+    <span><strong>Data:</strong> Aprile 2026</span>
+  </div>
+</header>
+
+<!-- ABSTRACT -->
+<div class="abstract">
+  <strong>Abstract.</strong> Il Capitolo 4 introduce la <em>notazione delle congruenze</em>, inventata da Gauss nelle <em>Disquisitiones Arithmeticae</em> (1801), che trasforma la teoria della divisibilità in un linguaggio algebrico potente ed elegante. Vengono studiate le proprietà di base (Teoremi 4-1, 4-2, 4-3), i sistemi di residui completi e ridotti (§4-2), la funzione di Eulero \(\phi(m)\), e una sorprendente applicazione al rimescolamento di un mazzo di carte (§4-3 Riffling). Ogni sezione include spiegazioni discorsive, dimostrazioni complete, visualizzazioni grafiche e soluzioni guidate agli esercizi.
+</div>
+
+<!-- MAIN BODY -->
+<div class="two-col">
+
+<!-- STORIA -->
+<div class="sb"><h3>Contesto Storico</h3></div>
+
+<div>
+  <div class="hist">
+    <h4>GAUSS E LA NOTAZIONE DELLE CONGRUENZE</h4>
+    <p>Carl Friedrich Gauss (1777–1855) introdusse la notazione \(a \equiv b \pmod{c}\) nelle <em>Disquisitiones Arithmeticae</em> (1801), scritte a soli 21 anni. Prima di Gauss, le proprietà di divisibilità venivano descritte con frasi verbose; la notazione modulare le comprime in simboli, rivelando analogie algebriche profonde. Andrews scrive: "succinct proofs are possible with congruence notation, first introduced by Gauss" — il Capitolo 4 dimostra questo punto in ogni teorema.</p>
+  </div>
+  <div class="hist" style="margin-top:.7rem;">
+    <h4>LA STRUTTURA DI ANELLO ℤ/mℤ</h4>
+    <p>Andrews menziona esplicitamente che il sistema completo di residui modulo \(m\) costituisce un <em>anello finito</em>, con le operazioni "+" e "·" definite modulo \(m\). Questo è il precursore dell'algebra moderna: Birkhoff e MacLane nel loro classico <em>A Survey of Modern Algebra</em> (citato da Andrews) sviluppano questa struttura in dettaglio. Il sistema ridotto di residui — quelli coprimi con \(m\) — forma invece un <em>gruppo moltiplicativo</em>, il cui ordine è \(\phi(m)\).</p>
+  </div>
+</div>
+
+<div>
+  <div class="hist">
+    <h4>EULERO E LA FUNZIONE φ</h4>
+    <p>Leonhard Euler (1707–1783) introdusse la funzione \(\phi(m)\) (oggi chiamata "funzione di Eulero" o "funzione totiente di Eulero") nel 1760–1763. Essa generalizza il Piccolo Teorema di Fermat: dove Fermat richiedeva \(p\) primo, il Teorema di Eulero (Cap. 5) varrà per qualsiasi \(m\). La funzione \(\phi\) è fondamentale nella crittografia: in RSA, la chiave privata si calcola come \(d \equiv e^{-1} \pmod{\phi(n)}\).</p>
+  </div>
+  <div class="hist" style="margin-top:.7rem;">
+    <h4>SUN-TSU E IL TEOREMA CINESE DEI RESTI</h4>
+    <p>La sezione §4-3 menziona il problema di Sun-Tsu (I sec. d.C.): "Quale numero dà resti 2, 3, 2 quando diviso per 3, 5, 7?" — un esempio di sistema di congruenze simultanee. La soluzione sistematica di questi problemi è il <em>Teorema Cinese dei Resti</em>, sviluppato nel Cap. 5. Il Riffling (rimescolamento delle carte) è un'applicazione concreta e sorprendente delle congruenze al tempo libero!</p>
+  </div>
+</div>
+
+<!-- SEZIONE 4-1 -->
+<div class="sb"><h3>§ 4-1 · Proprietà di Base delle Congruenze</h3></div>
+
+<div>
+  <h4 class="sub">Cos'è una congruenza — e perché è rivoluzionaria</h4>
+  <p>La congruenza modulare è una delle idee più potenti e feconde della matematica. Essa cattura formalmente una nozione intuitiva: due numeri sono "equivalenti" se hanno lo stesso resto nella divisione per \(m\). Gauss comprese che questo è esattamente il concetto giusto per organizzare l'aritmetica degli interi.</p>
+  <p>Prima di Gauss, per dire che 17 e 5 "si comportano allo stesso modo" modulo 12, si doveva scrivere "17 − 5 = 12 è divisibile per 12". Gauss abbreviò tutto in: \(17 \equiv 5 \pmod{12}\). Questo non è solo risparmio tipografico: è un cambio di prospettiva che rivela strutture algebriche nascoste, permette di "sostituire" numeri con altri più comodi, e rende le dimostrazioni molto più snelle.</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 4-1 — Congruenza</span>
+    Se \(c \neq 0\), scriviamo \(a \equiv b \pmod{c}\) (leggi: "<em>a è congruente a b modulo c</em>") se \((a-b)/c\) è un intero, cioè se \(c \mid a-b\).
+  </div>
+
+  <p>Esempi immediati: \(8 \equiv 2 \pmod{2}\) (perché \((8-2)/2=3\) è intero); \(17 \equiv 12 \pmod{5}\); \(100 \equiv -40 \pmod{20}\); \(11 \equiv -1 \pmod{12}\). Con la notazione modulare, il Piccolo Teorema di Fermat diventa \(n^p \equiv n \pmod{p}\) e il Teorema di Wilson diventa \((p-1)! \equiv -1 \pmod{p}\) — entrambi molto più compatti!</p>
+
+  <div class="note">
+    La congruenza \(a \equiv b \pmod{c}\) è equivalente a \(a \equiv b \pmod{-c}\), quindi possiamo sempre assumere il modulo positivo. In tutto il capitolo i moduli sono positivi.
+  </div>
+</div>
+
+<div>
+  <!-- Visual: clock/circle mod visualization -->
+  <h4 class="sub">Visualizzazione geometrica: l'orologio modulare</h4>
+  <div class="vis">
+    <svg viewBox="0 0 300 170" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="75" y="14" text-anchor="middle" font-family="Bebas Neue,sans-serif" font-size="13" fill="#2d2060" letter-spacing=".05em">mod 5</text>
+      <text x="225" y="14" text-anchor="middle" font-family="Bebas Neue,sans-serif" font-size="13" fill="#2d2060" letter-spacing=".05em">mod 7</text>
+      <!-- Clock mod 5 -->
+      <circle cx="75" cy="90" r="52" fill="#f0eeff" stroke="#b8a8d8" stroke-width="1.5"/>
+      <!-- 5 positions -->
+      <g font-family="Space Mono,monospace" font-size="11">
+        <circle cx="75" cy="40" r="13" fill="#2d2060"/><text x="75" y="45" text-anchor="middle" fill="white">0</text>
+        <circle cx="120" cy="72" r="13" fill="#4a2c8a"/><text x="120" y="77" text-anchor="middle" fill="white">1</text>
+        <circle cx="104" cy="128" r="13" fill="#4a2c8a" opacity=".85"/><text x="104" y="133" text-anchor="middle" fill="white">2</text>
+        <circle cx="46" cy="128" r="13" fill="#4a2c8a" opacity=".7"/><text x="46" y="133" text-anchor="middle" fill="white">3</text>
+        <circle cx="30" cy="72" r="13" fill="#c8901a"/><text x="30" y="77" text-anchor="middle" fill="white">4</text>
+      </g>
+      <!-- arrows -->
+      <path d="M90,43 Q118,50 118,70" stroke="#7a5ab8" stroke-width="1.2" fill="none" marker-end="url(#am4)"/>
+      <path d="M118,85 Q115,118 106,126" stroke="#7a5ab8" stroke-width="1.2" fill="none" marker-end="url(#am4)"/>
+      <path d="M91,128 Q58,130 48,126" stroke="#7a5ab8" stroke-width="1.2" fill="none" marker-end="url(#am4)"/>
+      <path d="M32,87 Q27,62 60,43" stroke="#c8901a" stroke-width="1.2" fill="none" marker-end="url(#am4)"/>
+      <text x="75" y="158" text-anchor="middle" font-family="Space Mono,monospace" font-size="8" fill="#666">17 ≡ 2 (mod 5)</text>
+
+      <!-- Clock mod 7 -->
+      <circle cx="225" cy="90" r="52" fill="#f0eeff" stroke="#b8a8d8" stroke-width="1.5"/>
+      <g font-family="Space Mono,monospace" font-size="10">
+        <circle cx="225" cy="40" r="12" fill="#2d2060"/><text x="225" y="45" text-anchor="middle" fill="white">0</text>
+        <circle cx="263" cy="57" r="12" fill="#4a2c8a"/><text x="263" y="62" text-anchor="middle" fill="white">1</text>
+        <circle cx="273" cy="97" r="12" fill="#4a2c8a" opacity=".85"/><text x="273" y="102" text-anchor="middle" fill="white">2</text>
+        <circle cx="247" cy="130" r="12" fill="#4a2c8a" opacity=".7"/><text x="247" y="135" text-anchor="middle" fill="white">3</text>
+        <circle cx="203" cy="130" r="12" fill="#4a2c8a" opacity=".6"/><text x="203" y="135" text-anchor="middle" fill="white">4</text>
+        <circle cx="177" cy="97" r="12" fill="#c8901a" opacity=".85"/><text x="177" y="102" text-anchor="middle" fill="white">5</text>
+        <circle cx="187" cy="57" r="12" fill="#8b1a40"/><text x="187" y="62" text-anchor="middle" fill="white">6</text>
+      </g>
+      <text x="225" y="158" text-anchor="middle" font-family="Space Mono,monospace" font-size="8" fill="#666">27 ≡ 6 (mod 7)</text>
+      <defs>
+        <marker id="am4" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill="#7a5ab8"/>
+        </marker>
+      </defs>
+    </svg>
+    <figcaption>La congruenza modulo \(m\) "mappa" ogni intero su un punto di un cerchio con \(m\) posizioni. Interi congruenti cadono sullo stesso punto.</figcaption>
+  </div>
+</div>
+
+<!-- Teorema 4-1: Relazione di equivalenza -->
+<div class="full">
+  <div class="thm">
+    <span class="lbl">Teorema 4-1 — La congruenza è una relazione di equivalenza</span>
+    <div class="stmt">Se \(a,b,c,d\) sono interi con \(c\neq 0\), allora:
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-top:.5rem;">
+      <div><strong>(i) Riflessiva:</strong> \(a \equiv a \pmod{c}\)</div>
+      <div><strong>(ii) Simmetrica:</strong> se \(a\equiv b\) allora \(b\equiv a\)</div>
+      <div><strong>(iii) Transitiva:</strong> se \(a\equiv b\) e \(b\equiv d\) allora \(a\equiv d\)</div>
+    </div>
+    </div>
+  </div>
+  <div class="proof">
+    (i) \((a-a)/c = 0\) è un intero. ✓ (ii) Se \((a-b)/c\) è intero, anche \((b-a)/c = -(a-b)/c\) è intero. ✓ (iii) Se \((a-b)/c\) e \((b-d)/c\) sono interi, allora la loro somma \((a-d)/c\) è un intero. ✓ <span class="qed">■</span>
+  </div>
+
+  <div class="note">Una <em>relazione di equivalenza</em> partiziona un insieme in classi di equivalenza: la classe di \(a\) modulo \(m\) è \(\{a, a\pm m, a\pm 2m, \ldots\}\). Tutte le classi sono disgiunte e coprono \(\mathbb{Z}\).</div>
+</div>
+
+<!-- Teorema 4-2: Algebra delle congruenze -->
+<div>
+  <h4 class="sub">Algebra delle congruenze: somma, differenza, prodotto</h4>
+  <p>Il Teorema 4-2 è il cuore pratico dell'aritmetica modulare: possiamo fare algebra con le congruenze come con le uguaglianze, tranne che per la divisione (che richiede cautele extra).</p>
+  <p>Questo è enormemente utile: se vogliamo sapere il resto di \(19 \times 6\) quando diviso per 4, basta osservare \(19 \equiv 3 \pmod 4\) e \(6 \equiv 2 \pmod 4\), quindi \(19\times 6 \equiv 3\times 2 = 6 \equiv 2 \pmod 4\). Velocissimo, senza calcolare 114!</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 4-2 — Operazioni sulle Congruenze</span>
+    <div class="stmt">Se \(a \equiv a' \pmod{c}\) e \(b \equiv b' \pmod{c}\), allora:
+    \[a \pm b \equiv a' \pm b' \pmod{c} \qquad \text{e} \qquad ab \equiv a'b' \pmod{c}.\]
+    </div>
+  </div>
+  <div class="proof">
+    Poiché \((a-a')/c\) e \((b-b')/c\) sono interi, anche \(\frac{(a\pm b)-(a'\pm b')}{c} = \frac{a-a'}{c} \pm \frac{b-b'}{c}\) è intero. Per il prodotto: \(\frac{ab-a'b'}{c} = a\cdot\frac{b-b'}{c} + b'\cdot\frac{a-a'}{c}\) è intero. <span class="qed">■</span>
+  </div>
+
+  <p><strong>Esempio 4-4 commentato:</strong> Da \(19\equiv 11\pmod 4\) e \(6\equiv 2\pmod 4\):
+  \[\underbrace{19+6}_{25}\equiv\underbrace{11+2}_{13}\pmod 4,\quad \underbrace{19-6}_{13}\equiv\underbrace{11-2}_{9}\pmod 4,\quad \underbrace{19\cdot6}_{114}\equiv\underbrace{11\cdot2}_{22}\pmod 4.\]
+  Verifica: \(25\equiv 1\pmod 4\), \(13\equiv 1\pmod 4\) ✓; \(114/4=28R2\), \(22/4=5R2\) ✓.</p>
+</div>
+
+<div>
+  <h4 class="sub">La Legge di Cancellazione: quando si può dividere</h4>
+  <p>La divisione in aritmetica modulare è più delicata che in aritmetica ordinaria. L'esempio di Andrews è illuminante: da \(14 \equiv 4 \pmod{10}\) si potrebbe essere tentati di dividere entrambi i lati per 2, ottenendo \(7 \equiv 2 \pmod{10}\) — ma \(7-2=5\) non è divisibile per 10! Quindi la divisione per 2 non era valida.</p>
+  <p>La regola è: si può dividere (cancellare) per un fattore solo se quel fattore è coprimo con il modulo. Se il modulo è primo, si può sempre dividere per qualsiasi numero non multiplo del primo.</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 4-3 — Legge di Cancellazione</span>
+    <div class="stmt">Se \(bd \equiv bd' \pmod{c}\) e \(\gcd(b,c)=1\), allora \(d \equiv d' \pmod{c}\).</div>
+  </div>
+  <div class="proof">
+    Poiché \((bd-bd')/c\) è un intero, \(c\mid b(d-d')\). Dato che \(\gcd(b,c)=1\), per il Teorema 2-3 (Cap. 2): \(c\mid d-d'\), cioè \(d\equiv d'\pmod c\). <span class="qed">■</span>
+  </div>
+
+  <div class="warn">
+    Non si può sempre dividere ambo i membri di una congruenza per lo stesso intero. Si può farlo solo se quell'intero è coprimo con il modulo. Esempio: \(6\equiv 12\pmod 2\) e \(\gcd(2,2)=2\neq 1\), quindi non si può concludere \(3\equiv 6\pmod 2\) (che sarebbe falso: \(3-6=-3\) non è divisibile per 2).
+  </div>
+
+  <!-- Table of congruence operations -->
+  <h4 class="sub" style="margin-top:1rem;">Tavola di Addizione e Moltiplicazione mod 5</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;">
+    <div>
+      <p style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--indigo);margin-bottom:.3rem;">+ (mod 5)</p>
+      <table>
+        <thead><tr><th>+</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">0</td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+          <tr><td class="mono">1</td><td>1</td><td>2</td><td>3</td><td>4</td><td class="hi">0</td></tr>
+          <tr><td class="mono">2</td><td>2</td><td>3</td><td>4</td><td class="hi">0</td><td>1</td></tr>
+          <tr><td class="mono">3</td><td>3</td><td>4</td><td class="hi">0</td><td>1</td><td>2</td></tr>
+          <tr><td class="mono">4</td><td>4</td><td class="hi">0</td><td>1</td><td>2</td><td>3</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <p style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--indigo);margin-bottom:.3rem;">× (mod 5)</p>
+      <table>
+        <thead><tr><th>×</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">0</td><td class="hi">0</td><td class="hi">0</td><td class="hi">0</td><td class="hi">0</td><td class="hi">0</td></tr>
+          <tr><td class="mono">1</td><td class="hi">0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+          <tr><td class="mono">2</td><td class="hi">0</td><td>2</td><td>4</td><td>1</td><td>3</td></tr>
+          <tr><td class="mono">3</td><td class="hi">0</td><td>3</td><td>1</td><td>4</td><td>2</td></tr>
+          <tr><td class="mono">4</td><td class="hi">0</td><td>4</td><td>3</td><td>2</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p style="font-size:.82rem;color:#555;margin-top:.3rem;font-style:italic;">Ogni riga e colonna nella tavola + contiene tutti i valori 0–4 esattamente una volta (struttura di gruppo). Nella tavola ×, ogni riga non-zero ha lo stesso comportamento: \(\mathbb{Z}/5\mathbb{Z}\) è un campo perché 5 è primo.</p>
+</div>
+
+<!-- Esercizi 4-1 -->
+<div class="full">
+  <h4 class="sub">Esercizi §4-1 — Soluzioni Guidate</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizio 1 — Trovare x</span>
+      (a) \(5x\equiv 4\pmod 3\): poiché \(5\equiv 2\pmod 3\), l'equazione diventa \(2x\equiv 4\equiv 1\pmod 3\). Moltiplichiamo per 2: \(4x\equiv 2\), cioè \(x\equiv 2\pmod 3\). ✓<br>
+      (b) \(7x\equiv 6\pmod 5\): \(7\equiv 2\pmod 5\), quindi \(2x\equiv 6\equiv 1\pmod 5\). Moltiplichiamo per 3: \(6x\equiv 3\), cioè \(x\equiv 3\pmod 5\). ✓
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 2 — Quando non esiste soluzione</span>
+      (a) \(6x\equiv 5\pmod 4\): \(\gcd(6,4)=2\) e \(2\nmid 5\) → <strong>nessuna soluzione</strong>.<br>
+      (b) \(10x\equiv 8\pmod 6\): \(\gcd(10,6)=2\) e \(2\mid 8\) → soluzioni esistono. Divisione per 2: \(5x\equiv 4\pmod 3\), cioè \(2x\equiv 1\pmod 3\), \(x\equiv 2\pmod 3\).<br>
+      (c) \(12x\equiv 9\pmod 6\): \(\gcd(12,6)=6\) e \(6\nmid 9\) → <strong>nessuna soluzione</strong>.
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 3 — Polinomi congruenti</span>
+      Se \(x\equiv y\pmod m\), allora \(a_0 x^r + \cdots + a_r \equiv a_0 y^r + \cdots + a_r\pmod m\).
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Per induzione: \(x\equiv y\Rightarrow x^k\equiv y^k\) (Thm 4-2 applicato \(k\) volte). Poi si usa la proprietà additiva del Thm 4-2. ∎
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 5 — Unicità nel range</span>
+      Se \(|a|<k/2\), \(|b|<k/2\) e \(a\equiv b\pmod k\), allora \(a=b\).
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Da \(k\mid a-b\) e \(|a-b|\leq |a|+|b| < k/2+k/2 = k\), si ha \(|a-b|<k\). L'unico multiplo di \(k\) con valore assoluto \(< k\) è 0, quindi \(a-b=0\), cioè \(a=b\). ∎
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 7 — Verificare congruenze</span>
+      (c) \(57\equiv 208\pmod 4\)? \(208-57=151\); \(151/4=37.75\): non intero → <strong>FALSO</strong>.<br>
+      (d) \(531\equiv 1236\pmod{7561}\)? \(1236-531=705\); \(705/7561\): non intero → <strong>FALSO</strong>.<br>
+      (e) \(12321\equiv 111\pmod 3\)? Somma delle cifre di 12321: \(1+2+3+2+1=9\equiv 0\pmod 3\); di 111: \(3\equiv 0\pmod 3\); entrambi \(\equiv 0\pmod 3\) → <strong>VERO</strong>.
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 6 — n² ≡ -1 (mod p)?</span>
+      Per \(p=3\): \(1^2=1\), \(2^2=4\equiv 1\): nessun quadrato è \(\equiv -1\equiv 2\pmod 3\). <strong>NO.</strong><br>
+      Per \(p=5\): \(2^2=4\equiv -1\pmod 5\). <strong>SÌ.</strong><br>
+      Per \(p=7\): quadrati mod 7 sono 1,2,4. Non c'è 6≡-1. <strong>NO.</strong><br>
+      Per \(p=13\): \(5^2=25\equiv 12\equiv -1\pmod{13}\). <strong>SÌ.</strong><br>
+      Schema: \(n^2\equiv -1\pmod p\) ha soluzione iff \(p\equiv 1\pmod 4\).
+    </div>
+  </div>
+</div>
+
+<!-- SEZIONE 4-2 -->
+<div class="sb"><h3>§ 4-2 · Sistemi di Residui</h3></div>
+
+<div>
+  <h4 class="sub">Perché i sistemi di residui?</h4>
+  <p>Il Teorema 4-2 ci dice che possiamo sostituire un intero con qualsiasi suo "congruente" in operazioni di somma, differenza e prodotto. Questo suggerisce di lavorare con un insieme di <em>rappresentanti</em> — uno per ogni classe di equivalenza modulo \(m\). Un tale insieme è un <em>sistema di residui completo</em>.</p>
+  <p>Il sistema più naturale è \(\{0, 1, 2, \ldots, m-1\}\) — i resti nella divisione per \(m\). Ma qualsiasi insieme che contenga esattamente un elemento per ogni classe di equivalenza funziona. Questa flessibilità è spesso utile nelle dimostrazioni: si sceglie il rappresentante più comodo!</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 4-2 — Residuo</span>
+    Se \(h \equiv j \pmod{m}\), diciamo che \(j\) è un <strong>residuo</strong> di \(h\) modulo \(m\).
+  </div>
+
+  <div class="defn">
+    <span class="lbl">Definizione 4-3 — Sistema Completo di Residui</span>
+    L'insieme \(\{r_1, r_2, \ldots, r_s\}\) è un <strong>sistema completo di residui</strong> modulo \(m\) se:
+    (i) \(r_i \not\equiv r_j \pmod{m}\) per \(i\neq j\); e
+    (ii) per ogni intero \(n\) esiste un \(r_i\) tale che \(n\equiv r_i\pmod{m}\).
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 4-4</span>
+    <div class="stmt">Se \(s\) interi distinti \(r_1,\ldots,r_s\) formano un sistema completo di residui modulo \(m\), allora \(s = m\).</div>
+  </div>
+  <div class="proof">
+    \(\{0,1,\ldots,m-1\}\) è un sistema completo (per Euclide: ogni \(n = qm + u\) con \(0\leq u < m\), quindi \(n\equiv u\)). Ogni \(r_i\) è congruente a esattamente uno \(t_j\) in \(\{0,\ldots,m-1\}\) (così \(s\leq m\)); e ogni \(t_j\) è congruente a esattamente uno \(r_i\) (così \(m\leq s\)). Dunque \(s=m\). <span class="qed">■</span>
+  </div>
+
+  <!-- Visual: residue classes mod 6 -->
+  <div class="vis">
+    <svg viewBox="0 0 310 170" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle" font-family="Bebas Neue,sans-serif" font-size="13" fill="#2d2060" letter-spacing=".05em">Classi di Residui modulo 6</text>
+      <!-- 6 columns for residue classes -->
+      <g font-family="Space Mono,monospace" font-size="9">
+        <!-- class 0 -->
+        <rect x="5" y="22" width="42" height="140" rx="3" fill="rgba(45,32,96,.08)" stroke="#b8a8d8" stroke-width="1"/>
+        <text x="26" y="36" text-anchor="middle" fill="#2d2060" font-weight="bold">[0]</text>
+        <text x="26" y="52" text-anchor="middle" fill="#555">…</text>
+        <text x="26" y="66" text-anchor="middle" fill="#555">-12</text>
+        <text x="26" y="80" text-anchor="middle" fill="#555">-6</text>
+        <text x="26" y="94" text-anchor="middle" fill="#2d2060" font-weight="bold">0</text>
+        <text x="26" y="108" text-anchor="middle" fill="#555">6</text>
+        <text x="26" y="122" text-anchor="middle" fill="#555">12</text>
+        <text x="26" y="136" text-anchor="middle" fill="#555">…</text>
+        <!-- class 1 -->
+        <rect x="53" y="22" width="42" height="140" rx="3" fill="rgba(74,44,138,.08)" stroke="#b8a8d8" stroke-width="1"/>
+        <text x="74" y="36" text-anchor="middle" fill="#4a2c8a" font-weight="bold">[1]</text>
+        <text x="74" y="52" text-anchor="middle" fill="#555">…</text>
+        <text x="74" y="66" text-anchor="middle" fill="#555">-11</text>
+        <text x="74" y="80" text-anchor="middle" fill="#555">-5</text>
+        <text x="74" y="94" text-anchor="middle" fill="#4a2c8a" font-weight="bold">1</text>
+        <text x="74" y="108" text-anchor="middle" fill="#555">7</text>
+        <text x="74" y="122" text-anchor="middle" fill="#555">13</text>
+        <text x="74" y="136" text-anchor="middle" fill="#555">…</text>
+        <!-- class 2 -->
+        <rect x="101" y="22" width="42" height="140" rx="3" fill="rgba(122,90,184,.08)" stroke="#b8a8d8" stroke-width="1"/>
+        <text x="122" y="36" text-anchor="middle" fill="#7a5ab8" font-weight="bold">[2]</text>
+        <text x="122" y="94" text-anchor="middle" fill="#7a5ab8" font-weight="bold">2</text>
+        <text x="122" y="66" text-anchor="middle" fill="#555">-10</text>
+        <text x="122" y="80" text-anchor="middle" fill="#555">-4</text>
+        <text x="122" y="108" text-anchor="middle" fill="#555">8</text>
+        <text x="122" y="122" text-anchor="middle" fill="#555">14</text>
+        <!-- class 3 -->
+        <rect x="149" y="22" width="42" height="140" rx="3" fill="rgba(200,144,26,.08)" stroke="#dcc870" stroke-width="1"/>
+        <text x="170" y="36" text-anchor="middle" fill="#c8901a" font-weight="bold">[3]</text>
+        <text x="170" y="94" text-anchor="middle" fill="#c8901a" font-weight="bold">3</text>
+        <text x="170" y="66" text-anchor="middle" fill="#555">-9</text>
+        <text x="170" y="80" text-anchor="middle" fill="#555">-3</text>
+        <text x="170" y="108" text-anchor="middle" fill="#555">9</text>
+        <text x="170" y="122" text-anchor="middle" fill="#555">15</text>
+        <!-- class 4 -->
+        <rect x="197" y="22" width="42" height="140" rx="3" fill="rgba(139,26,64,.08)" stroke="#d8a0b0" stroke-width="1"/>
+        <text x="218" y="36" text-anchor="middle" fill="#8b1a40" font-weight="bold">[4]</text>
+        <text x="218" y="94" text-anchor="middle" fill="#8b1a40" font-weight="bold">4</text>
+        <text x="218" y="66" text-anchor="middle" fill="#555">-8</text>
+        <text x="218" y="80" text-anchor="middle" fill="#555">-2</text>
+        <text x="218" y="108" text-anchor="middle" fill="#555">10</text>
+        <text x="218" y="122" text-anchor="middle" fill="#555">16</text>
+        <!-- class 5 -->
+        <rect x="245" y="22" width="42" height="140" rx="3" fill="rgba(26,96,96,.08)" stroke="#a8d0d0" stroke-width="1"/>
+        <text x="266" y="36" text-anchor="middle" fill="#1a6060" font-weight="bold">[5]</text>
+        <text x="266" y="94" text-anchor="middle" fill="#1a6060" font-weight="bold">5</text>
+        <text x="266" y="66" text-anchor="middle" fill="#555">-7</text>
+        <text x="266" y="80" text-anchor="middle" fill="#555">-1</text>
+        <text x="266" y="108" text-anchor="middle" fill="#555">11</text>
+        <text x="266" y="122" text-anchor="middle" fill="#555">17</text>
+      </g>
+      <text x="155" y="162" text-anchor="middle" font-family="Space Mono,monospace" font-size="8" fill="#888">Sistema completo: {0,1,2,3,4,5} — uno per classe</text>
+    </svg>
+    <figcaption>Le 6 classi di residui modulo 6. Un sistema completo sceglie esattamente un rappresentante per classe. Quello canonico è \(\{0,1,2,3,4,5\}\).</figcaption>
+  </div>
+</div>
+
+<div>
+  <h4 class="sub">Sistema Ridotto di Residui e Funzione di Eulero φ(m)</h4>
+  <p>Non tutti gli elementi di un sistema completo di residui sono "uguali" rispetto alla moltiplicazione. Gli elementi coprimi con \(m\) sono speciali: formano un <em>gruppo moltiplicativo</em>. Un sistema ridotto di residui seleziona solo questi elementi privilegiati.</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 4-4 — Sistema Ridotto di Residui</span>
+    \(\{r_1,\ldots,r_s\}\) è un <strong>sistema ridotto di residui</strong> modulo \(m\) se:
+    (i) \(\gcd(r_i,m)=1\) per ogni \(i\);
+    (ii) \(r_i\not\equiv r_j\pmod m\) per \(i\neq j\);
+    (iii) ogni intero coprimo con \(m\) è congruente a qualche \(r_i\).
+  </div>
+
+  <div class="defn">
+    <span class="lbl">Definizione 4-5 — Funzione di Eulero φ(m)</span>
+    \(\phi(m)\) è il numero di interi positivi minori o uguali a \(m\) che sono relativamente primi con \(m\).
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 4-5</span>
+    <div class="stmt">Se \(s\) interi formano un sistema ridotto di residui modulo \(m\), allora \(s = \phi(m)\).</div>
+  </div>
+  <div class="proof">
+    Analogo al Thm 4-4: i \(\phi(m)\) interi \(t_1,\ldots,t_{\phi(m)}\) minori di \(m\) e coprimi con \(m\) formano un sistema ridotto di riferimento. Ogni \(r_i\) è congruente a esattamente un \(t_j\) (da \(s\leq\phi(m)\)); ogni \(t_j\) è congruente a esattamente un \(r_i\) (da \(\phi(m)\leq s\)). Quindi \(s=\phi(m)\). <span class="qed">■</span>
+  </div>
+
+  <h4 class="sub">Valori della funzione φ(m)</h4>
+  <table>
+    <thead><tr><th>m</th><th>Elementi coprimi con m</th><th>φ(m)</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>{1}</td><td>1</td></tr>
+      <tr><td>2</td><td>{1}</td><td>1</td></tr>
+      <tr><td>3</td><td>{1,2}</td><td>2</td></tr>
+      <tr><td>4</td><td>{1,3}</td><td>2</td></tr>
+      <tr><td>5</td><td>{1,2,3,4}</td><td>4</td></tr>
+      <tr><td>6</td><td>{1,5}</td><td class="hi">2</td></tr>
+      <tr><td>7</td><td>{1,2,3,4,5,6}</td><td>6</td></tr>
+      <tr><td>8</td><td>{1,3,5,7}</td><td>4</td></tr>
+      <tr><td>9</td><td>{1,2,4,5,7,8}</td><td>6</td></tr>
+      <tr><td>10</td><td>{1,3,7,9}</td><td class="hi">4</td></tr>
+      <tr><td>12</td><td>{1,5,7,11}</td><td>4</td></tr>
+      <tr><td>p (primo)</td><td>{1,2,…,p-1}</td><td>p-1</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:.82rem;color:#555;margin-top:.3rem;font-style:italic;">Per \(m=6\): i coprimi con 6 in \(\{1,\ldots,6\}\) sono 1 e 5, quindi \(\phi(6)=2\). Sistema ridotto: \(\{1,5\}\) (oppure \(\{1,-1\}\), oppure \(\{7,11\}\), ecc.)</p>
+</div>
+
+<!-- Esercizi 4-2 -->
+<div class="full">
+  <h4 class="sub">Esercizi §4-2 — Soluzioni</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizio 1 — Sistemi completi mod 11</span>
+      (a) \(\{0,1,2,4,8,16,32,64,128,256,512\}\): ogni elemento è una potenza di 2 mod 11. Le potenze di 2 mod 11 ciclano: 1,2,4,8,5,10,9,7,3,6,1,... (periodo 10). Quindi i valori distinti sono \(\{1,2,3,4,5,6,7,8,9,10\}\) più il 0 dalla potenza... ma il 0 non è potenza di 2. Analizzando: \(2^0=1,2^1=2,...,2^{10}\equiv 1\pmod{11}\). Con 0 aggiunto: \(\{0,1,2,4,8,16\equiv5,...\}\) — <strong>SÌ</strong>, è un sistema completo (11 elementi tutti distinti mod 11).<br>
+      (d) \(\{-5,-4,-3,-2,-1,0,1,2,3,4,5\}\): 11 interi consecutivi centrati su 0 → <strong>SÌ</strong>, sistema completo.
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 2 — Sistemi ridotti mod 18</span>
+      \(\phi(18)=\phi(2\cdot3^2)=18\cdot(1-1/2)\cdot(1-1/3)=6\). I 6 interi in \(\{1,\ldots,18\}\) coprimi con 18 sono: 1,5,7,11,13,17.<br>
+      (a) \(\{1,5,25,125,625,3125\}\): tutte potenze di 5. Modulo 18: \(5^1=5, 5^2=7, 5^3=17, 5^4=13, 5^5=11, 5^6=1\). Sono i 6 elementi \(\{1,5,7,11,13,17\}\) → <strong>SÌ</strong>, sistema ridotto.<br>
+      (d) \(\{1,5,7,11,13,17\}\): esattamente i 6 coprimi con 18 in \(\{1,\ldots,18\}\) → <strong>SÌ</strong>.
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 3 — Rappresentazione in base k</span>
+      Se \(\{a_1,\ldots,a_k\}\) è un sistema completo mod \(k\), dimostrare che per ogni \(n\) e ogni \(s\geq 0\) esiste una congruenza \(n\equiv\sum_{j=0}^s b_j k^j\pmod{k^{s+1}}\) con \(b_j\in\{a_i\}\).
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Questo è essenzialmente il Teorema 1-3 (Rappresentazione in Base) riformulato in notazione modulare. Per induzione su \(s\): base \(s=0\): ogni \(n\equiv a_j\pmod k\) per qualche \(j\). Passo: se vale per \(s=k-1\), scriviamo \(n\equiv\sum_{j=0}^{k-1}b_j k^j + r\cdot k^k\pmod{k^{k+1}}\) scegliendo \(b_k\in\{a_i\}\) con \(b_k\equiv r\pmod k\). ∎
+      </div>
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 4 — w(n) vs φ(n)</span>
+      Sia \(w(n)\) il numero di primi \(\leq n\) che non dividono \(n\). È sempre vero che \(w(n)<\phi(n)\)?
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Per \(n=p\) primo: \(w(p)=\pi(p)-1\) (tutti i primi \(\leq p\) tranne \(p\) stesso); \(\phi(p)=p-1\). Per \(p=2\): \(w(2)=0<\phi(2)=1\). Per \(p=3\): \(w(3)=1<\phi(3)=2\). Per grandi \(p\), \(w(p)\approx p/\ln p\) mentre \(\phi(p)=p-1\), quindi \(w<\phi\). Ma per n composto la situazione è più sottile.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEZIONE 4-3 -->
+<div class="sb"><h3>§ 4-3 · Riffling — Il Rimescolamento delle Carte</h3></div>
+
+<div>
+  <h4 class="sub">La matematica del mazziere</h4>
+  <p>La sezione §4-3 è uno dei momenti più deliziosi dell'intero libro: Andrews dimostra che la congruenza modulare risolve un problema pratico e sorprendente — quante volte bisogna rimescolare un mazzo di carte (con una tecnica specifica, il "faro perfetto") prima che torni all'ordine originale?</p>
+  <p>Il problema sembra un gioco, ma la risposta richiede di trovare il minimo \(n\) tale che \(2^n \equiv 1 \pmod{m+1}\), dove \(m\) è il numero di carte. Questo è un <em>ordine moltiplicativo</em> di 2 nel gruppo \(\mathbb{Z}/(m+1)\mathbb{Z}^*\) — un concetto cruciale in teoria dei numeri e in crittografia!</p>
+  <p>Il "faro perfetto modificato" funziona così: si taglia il mazzo in due metà uguali, poi si alternano le carte. Una carta in posizione \(x\) (con \(1\leq x\leq 52\)) finisce in posizione \(y\) con \(2x\equiv y\pmod{53}\). Dopo \(n\) fari: \(2^n x\equiv x\pmod{53}\), cioè \(2^n\equiv 1\pmod{53}\).</p>
+
+  <div class="thm">
+    <span class="lbl">Il Problema del Riffling</span>
+    <div class="stmt">Un mazzo di 52 carte torna all'ordine originale dopo il minimo numero \(n\) di fari perfetti modificati tale che \(2^n \equiv 1 \pmod{53}\). Per il Piccolo Teorema di Fermat, \(2^{52}\equiv 1\pmod{53}\), dunque \(n\mid 52\). Il valore minimo è \(n=52\).</div>
+  </div>
+
+  <p>Andrews verifica: \(2^{52}\equiv 1\pmod{53}\). Dunque servono esattamente <strong>52 rimescolamenti</strong> per riportare il mazzo all'ordine originale! Un risultato sorprendente: ogni rimescolamento sembra "disordinare" il mazzo, ma dopo 52 tutto torna a posto.</p>
+  <p>Per un mazzo di 62 carte: \(2^n\equiv 1\pmod{63}\). Poiché \(63=7\cdot 9\), e \(2^6=64\equiv 1\pmod{63}\), bastano solo <strong>6 rimescolamenti</strong>!</p>
+</div>
+
+<div>
+  <!-- Visual: card shuffle tracking -->
+  <div class="vis">
+    <svg viewBox="0 0 310 250" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="16" text-anchor="middle" font-family="Bebas Neue,sans-serif" font-size="13" fill="#2d2060" letter-spacing=".05em">Faro Perfetto — Tracciamento Posizioni (6 carte)</text>
+      <!-- Initial deck -->
+      <text x="30" y="35" font-family="Space Mono,monospace" font-size="9" fill="#555">Mazzo iniziale:</text>
+      <g transform="translate(10,40)">
+        <rect x="0" y="0" width="26" height="36" rx="2" fill="#2d2060"/><text x="13" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">1</text>
+        <rect x="30" y="0" width="26" height="36" rx="2" fill="#4a2c8a"/><text x="43" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">2</text>
+        <rect x="60" y="0" width="26" height="36" rx="2" fill="#7a5ab8"/><text x="73" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">3</text>
+        <rect x="90" y="0" width="26" height="36" rx="2" fill="#c8901a"/><text x="103" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">4</text>
+        <rect x="120" y="0" width="26" height="36" rx="2" fill="#8b1a40"/><text x="133" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">5</text>
+        <rect x="150" y="0" width="26" height="36" rx="2" fill="#1a6060"/><text x="163" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">6</text>
+      </g>
+      <!-- Arrow -->
+      <text x="215" y="62" font-family="Space Mono,monospace" font-size="11" fill="#c8901a">faro →</text>
+      <!-- After 1 shuffle: pos x→2x mod 7; 1→2,2→4,3→6,4→1,5→3,6→5 -->
+      <text x="30" y="105" font-family="Space Mono,monospace" font-size="9" fill="#555">Dopo 1 faro (2x mod 7):</text>
+      <g transform="translate(10,110)">
+        <rect x="0" y="0" width="26" height="36" rx="2" fill="#c8901a"/><text x="13" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">4</text>
+        <rect x="30" y="0" width="26" height="36" rx="2" fill="#2d2060"/><text x="43" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">1</text>
+        <rect x="60" y="0" width="26" height="36" rx="2" fill="#8b1a40"/><text x="73" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">5</text>
+        <rect x="90" y="0" width="26" height="36" rx="2" fill="#4a2c8a"/><text x="103" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">2</text>
+        <rect x="120" y="0" width="26" height="36" rx="2" fill="#1a6060"/><text x="133" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">6</text>
+        <rect x="150" y="0" width="26" height="36" rx="2" fill="#7a5ab8"/><text x="163" y="23" text-anchor="middle" fill="white" font-family="Space Mono,monospace" font-size="11" font-weight="bold">3</text>
+      </g>
+      <!-- tracking card 1 -->
+      <text x="155" y="175" text-anchor="middle" font-family="Spectral,serif" font-size="11" fill="#2d2060" font-style="italic">Orbita della carta 1 (mod 7): 1→2→4→1</text>
+      <text x="155" y="192" text-anchor="middle" font-family="Space Mono,monospace" font-size="10" fill="#8b1a40">ordine = 3  (2³ ≡ 1 mod 7)</text>
+      <!-- Powers of 2 mod 7 table -->
+      <text x="155" y="215" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#555">2¹≡2, 2²≡4, 2³≡1 (mod 7) → 3 fari per 6 carte</text>
+      <text x="155" y="232" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#555">2¹≡2, 2²≡4, ..., 2⁵²≡1 (mod 53) → 52 fari per 52 carte</text>
+    </svg>
+    <figcaption>Con 6 carte: la carta in posizione \(x\) va in posizione \(2x\bmod 7\). Bastano 3 fari (dato che \(2^3\equiv 1\pmod 7\)).</figcaption>
+  </div>
+
+  <h4 class="sub">Tabella: quanti fari servono?</h4>
+  <table>
+    <thead><tr><th>Carte (m)</th><th>Modulo (m+1)</th><th>Minimo n: \(2^n\equiv 1\)</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>6</td><td>7 (primo)</td><td>3</td><td>\(2^3=8\equiv 1\pmod 7\)</td></tr>
+      <tr><td>10</td><td>11 (primo)</td><td>10</td><td>Fermat: \(2^{10}\equiv 1\pmod{11}\)</td></tr>
+      <tr><td>12</td><td>13 (primo)</td><td>12</td><td>Fermat: \(2^{12}\equiv 1\pmod{13}\)</td></tr>
+      <tr><td>18</td><td>19 (primo)</td><td>18</td><td>Fermat: \(2^{18}\equiv 1\pmod{19}\)</td></tr>
+      <tr><td class="hi">52</td><td class="hi">53 (primo)</td><td class="hi">52</td><td class="hi">Mazzo standard!</td></tr>
+      <tr><td>62</td><td>63=7·9</td><td class="hi">6</td><td>\(2^6=64\equiv 1\pmod{63}\): sorpresa!</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Esercizi 4-3 -->
+<div class="full">
+  <h4 class="sub">Esercizi §4-3 — Soluzioni</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizio 1 — Fari per 6, 8, 12 carte</span>
+      Per 6 carte: trovare min \(n\) t.c. \(2^n\equiv 1\pmod 7\). \(2^1=2, 2^2=4, 2^3=8\equiv 1\pmod 7\) → <strong>n=3</strong>.<br>
+      Per 8 carte: min \(n\) t.c. \(2^n\equiv 1\pmod 9\). \(2^1=2, 2^2=4, 2^3=8, 2^4=16\equiv 7, 2^5\equiv 5, 2^6\equiv 1\pmod 9\) → <strong>n=6</strong>.<br>
+      Per 12 carte: min \(n\) t.c. \(2^n\equiv 1\pmod{13}\). Per Fermat: \(2^{12}\equiv 1\pmod{13}\). Verifica divisori: \(2^6=64\equiv 12\equiv -1\neq 1\), \(2^4=16\equiv 3\neq 1\). Quindi l'ordine è 12 → <strong>n=12</strong>.
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 2 — Shuffle alternativo</span>
+      Si prendono la carta in fondo e in cima alternately per formare il nuovo mazzo. Per 6 carte: la carta in posizione \(x\) va in posizione \(y\) dove \(y=7-x\) (inversione). Dimostrare che le carte di un mazzo di \(2^n\) carte tornano in \(n+1\) shuffle.
+      <div style="margin-top:.4rem;font-style:italic;font-size:.88rem;color:#444;">
+        Con questa variante, il permutazione è diversa. Per \(2^n\) carte: ogni shuffle applica la permutazione \(x\mapsto 2^n+1-x\). Dopo 2 shuffle: \(x\mapsto 2^n+1-(2^n+1-x)=x\). Quindi 2 shuffle bastano... ma per il caso generale di \(2^n\) carte, bisogna analizzare la struttura completa della permutazione, che ha cicli di lunghezza variabile. Andrews dimostra che \(n+1\) shuffle bastano.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mappa concettuale -->
+<div class="full" style="margin-top:1rem;">
+  <h4 class="sub">Mappa Concettuale — Struttura del Capitolo 4</h4>
+  <div class="vis">
+    <svg viewBox="0 0 720 195" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="am5" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#2d2060"/>
+        </marker>
+        <marker id="am5g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#c8901a"/>
+        </marker>
+      </defs>
+      <!-- Nodes -->
+      <rect x="5" y="77" width="115" height="42" rx="4" fill="#2d2060"/>
+      <text x="62" y="95" text-anchor="middle" fill="white" font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".05em">Def 4-1</text>
+      <text x="62" y="110" text-anchor="middle" fill="#c0b8e8" font-family="Space Mono,monospace" font-size="8">a≡b (mod c)</text>
+
+      <rect x="140" y="40" width="125" height="42" rx="4" fill="#4a2c8a"/>
+      <text x="202" y="58" text-anchor="middle" fill="white" font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".05em">Thm 4-1</text>
+      <text x="202" y="73" text-anchor="middle" fill="#c0b8e8" font-family="Space Mono,monospace" font-size="8">Rel. Equivalenza</text>
+
+      <rect x="140" y="115" width="125" height="42" rx="4" fill="#4a2c8a" opacity=".85"/>
+      <text x="202" y="133" text-anchor="middle" fill="white" font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".05em">Thm 4-2</text>
+      <text x="202" y="148" text-anchor="middle" fill="#c0b8e8" font-family="Space Mono,monospace" font-size="8">±, × congruenze</text>
+
+      <rect x="285" y="77" width="130" height="42" rx="4" fill="#8b1a40"/>
+      <text x="350" y="95" text-anchor="middle" fill="white" font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".05em">Thm 4-3</text>
+      <text x="350" y="110" text-anchor="middle" fill="#f8c0c0" font-family="Space Mono,monospace" font-size="8">Cancellazione</text>
+
+      <rect x="435" y="40" width="130" height="42" rx="4" fill="#1a6060"/>
+      <text x="500" y="58" text-anchor="middle" fill="white" font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".05em">Thm 4-4,5</text>
+      <text x="500" y="73" text-anchor="middle" fill="#c0e8e8" font-family="Space Mono,monospace" font-size="8">Sist. Residui</text>
+
+      <rect x="435" y="115" width="130" height="42" rx="4" fill="#c8901a"/>
+      <text x="500" y="133" text-anchor="middle" fill="white" font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".05em">Def 4-5</text>
+      <text x="500" y="148" text-anchor="middle" fill="#fff0c0" font-family="Space Mono,monospace" font-size="8">φ(m) di Eulero</text>
+
+      <rect x="585" y="77" width="130" height="42" rx="4" fill="#100d25"/>
+      <text x="650" y="95" text-anchor="middle" fill="#c8901a" font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".05em">§4-3 Riffling</text>
+      <text x="650" y="110" text-anchor="middle" fill="#c0b8e8" font-family="Space Mono,monospace" font-size="8">2ⁿ≡1 (mod m+1)</text>
+
+      <!-- Arrows -->
+      <line x1="120" y1="98" x2="138" y2="65" stroke="#4a2c8a" stroke-width="1.5" marker-end="url(#am5)"/>
+      <line x1="120" y1="98" x2="138" y2="132" stroke="#4a2c8a" stroke-width="1.5" marker-end="url(#am5)"/>
+      <line x1="265" y1="65" x2="283" y2="90" stroke="#4a2c8a" stroke-width="1.5" marker-end="url(#am5)"/>
+      <line x1="265" y1="136" x2="283" y2="103" stroke="#4a2c8a" stroke-width="1.5" marker-end="url(#am5)"/>
+      <line x1="415" y1="90" x2="433" y2="65" stroke="#1a6060" stroke-width="1.5" marker-end="url(#am5)"/>
+      <line x1="415" y1="106" x2="433" y2="130" stroke="#c8901a" stroke-width="1.5" marker-end="url(#am5g)"/>
+      <line x1="565" y1="65" x2="583" y2="88" stroke="#1a6060" stroke-width="1.5" marker-end="url(#am5)"/>
+      <line x1="565" y1="136" x2="583" y2="108" stroke="#c8901a" stroke-width="1.5" marker-end="url(#am5g)"/>
+      <!-- → Cap 5 -->
+      <rect x="585" y="145" width="130" height="28" rx="3" fill="#2d2060" opacity=".5"/>
+      <text x="650" y="164" text-anchor="middle" fill="#c0b8e8" font-family="Space Mono,monospace" font-size="8">→ Cap.5 (Thm Eulero, CRT)</text>
+      <!-- caption -->
+      <text x="360" y="185" text-anchor="middle" font-family="Spectral,serif" font-size="10" fill="#888" font-style="italic">La notazione di Gauss rende ogni teorema più compatto — e il Riffling diventa matematica seria</text>
+    </svg>
+  </div>
+</div>
+
+<!-- BIBLIOGRAFIA -->
+<div class="sb"><h3>§ Riferimenti Bibliografici</h3></div>
+<div class="full">
+  <div class="bib"><div class="bib-k">[And71]</div>Andrews, G.E. (1971). <em>Number Theory</em>. W.B. Saunders, Philadelphia. — <strong>Riferimento principale.</strong></div>
+  <div class="bib"><div class="bib-k">[Gau01]</div>Gauss, C.F. (1801). <em>Disquisitiones Arithmeticae</em>. Lipsia. — Prima introduzione sistematica delle congruenze modulari.</div>
+  <div class="bib"><div class="bib-k">[HarWri08]</div>Hardy, G.H. &amp; Wright, E.M. (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford University Press. — Cap. 5 sulle congruenze, funzione \(\phi\).</div>
+  <div class="bib"><div class="bib-k">[Niv91]</div>Niven, I., Zuckerman, H.S. &amp; Montgomery, H.L. (1991). <em>An Introduction to the Theory of Numbers</em> (5th ed.). Wiley. — Trattazione estesa delle congruenze e sistemi di residui.</div>
+  <div class="bib"><div class="bib-k">[Ire90]</div>Ireland, K. &amp; Rosen, M. (1990). <em>A Classical Introduction to Modern Number Theory</em> (2nd ed.). Springer. — Funzione di Eulero, struttura algebrica di \(\mathbb{Z}/m\mathbb{Z}\).</div>
+  <div class="bib"><div class="bib-k">[BirMac41]</div>Birkhoff, G. &amp; MacLane, S. (1941). <em>A Survey of Modern Algebra</em>. Macmillan. — Citato da Andrews; trattazione algebraica degli anelli \(\mathbb{Z}/m\mathbb{Z}\).</div>
+  <div class="bib"><div class="bib-k">[Knu97]</div>Knuth, D.E. (1997). <em>The Art of Computer Programming, Vol. 2</em> (3rd ed.). Addison-Wesley. — Congruenze nei generatori di numeri pseudo-casuali; permutazioni faro.</div>
+  <div class="bib"><div class="bib-k">[Apo76]</div>Apostol, T.M. (1976). <em>Introduction to Analytic Number Theory</em>. Springer. — Funzione \(\phi\) di Eulero e proprietà moltiplicative.</div>
+  <div class="bib"><div class="bib-k">[Ros11]</div>Rosen, K.H. (2011). <em>Elementary Number Theory and Its Applications</em> (6th ed.). Pearson. — Ottime visualizzazioni dei sistemi di residui, applicazioni informatiche.</div>
+  <div class="bib"><div class="bib-k">[ConGuy96]</div>Conway, J.H. &amp; Guy, R.K. (1996). <em>The Book of Numbers</em>. Springer. — Presentazione intuitiva e storica della notazione modulare.</div>
+</div>
+
+</div><!-- end two-col -->
+
+<footer>
+  Studio redatto da <strong>Alberto Oliva</strong> —
+  <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a> ·
+  Rif.: G.E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971) — Capitolo 4 ·
+  Aprile 2026
+</footer>
+</body>
+</html>

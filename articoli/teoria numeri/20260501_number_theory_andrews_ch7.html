@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capitolo 7 — Radici Primitive | Andrews Number Theory</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Staatliches&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#f0ede8;--ink:#0a0810;--cream:#e4e0d8;
+  --night:#0c0918;--midnight:#15102a;--dusk:#211845;
+  --royal:#2a1c8a;--cobalt:#4035cc;--violet:#7060e8;
+  --lavender:#b0a8ff;--fog:#8880c0;
+  --gold:#c8900a;--amber:#e0a820;--bronze:#a06020;
+  --crimson:#8c1428;--rust:#c04030;
+  --teal:#107060;--sage:#388060;
+  --rule:#c0b8e0;
+  --thm-bg:#eceafc;--proof-bg:#faf8f3;--defn-bg:#e8f5ee;
+  --ex-bg:#fdf3e5;--hist-bg:#0c0918;--prim-bg:#e8eeff;
+  --shadow:0 2px 12px rgba(42,28,138,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);font-family:'Crimson Pro',Georgia,serif;font-size:18px;line-height:1.78;}
+
+header{position:relative;background:var(--night);padding:4rem 4rem 3rem;text-align:center;overflow:hidden;border-bottom:4px solid var(--gold);}
+header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 120% 60% at 50% 0%,rgba(42,28,138,.45) 0%,transparent 70%),repeating-conic-gradient(rgba(64,53,204,.06) 0deg 3deg,transparent 3deg 6deg) center/80px 80px;}
+header::after{content:'g, g², g³, …, gᵠ⁽ᵐ⁾';position:absolute;right:3rem;bottom:1.2rem;font-family:'Fira Code',monospace;font-size:.85rem;color:rgba(176,168,255,.18);letter-spacing:.1em;pointer-events:none;}
+.chapter-tag{font-family:'Fira Code',monospace;font-size:.68rem;letter-spacing:.32em;color:var(--amber);text-transform:uppercase;display:block;margin-bottom:1rem;position:relative;z-index:1;}
+header h1{font-family:'Staatliches',sans-serif;font-size:4rem;letter-spacing:.08em;line-height:1;color:#fff;margin-bottom:.4rem;position:relative;z-index:1;}
+header .subtitle{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.15rem;color:var(--fog);margin-bottom:1.6rem;position:relative;z-index:1;}
+.meta-strip{display:flex;justify-content:center;gap:2.2rem;flex-wrap:wrap;font-size:.82rem;color:#605898;border-top:1px solid rgba(112,96,232,.2);padding-top:1rem;position:relative;z-index:1;}
+.meta-strip strong{color:var(--gold);}
+.meta-strip a{color:var(--lavender);text-decoration:none;}
+
+.abstract{background:var(--cream);border-left:5px solid var(--royal);border-right:5px solid var(--royal);max-width:900px;margin:2rem auto;padding:1.6rem 2.4rem;font-style:italic;font-size:.96rem;color:#1a1230;}
+.abstract strong{font-style:normal;color:var(--crimson);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;max-width:1300px;margin:0 auto;padding:2.4rem 3.2rem;}
+.full{grid-column:1/-1;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;padding:1.4rem 1.6rem;}header{padding:2.4rem 1.6rem;}header h1{font-size:2.8rem;}}
+
+.sb{grid-column:1/-1;display:flex;align-items:center;gap:1.2rem;margin:2.4rem 0 .8rem;padding-top:1.2rem;border-top:2px solid var(--rule);}
+.sb h3{font-family:'Staatliches',sans-serif;font-size:1.6rem;letter-spacing:.05em;color:var(--royal);white-space:nowrap;}
+.sb::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+p{margin-bottom:1em;text-align:justify;hyphens:auto;}
+h4.sub{font-family:'Crimson Pro',serif;font-size:1.05rem;color:var(--crimson);font-style:italic;font-weight:600;margin:1.4rem 0 .55rem;padding-bottom:.2rem;border-bottom:1px dotted var(--rule);}
+
+.thm{background:var(--thm-bg);border:1px solid #c8c0f0;border-left:5px solid var(--royal);padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.thm .lbl{font-family:'Fira Code',monospace;font-size:.64rem;letter-spacing:.15em;color:var(--royal);text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem;}
+.thm .stmt{font-style:italic;font-size:.97rem;color:#0e0820;}
+
+.pthm{background:var(--prim-bg);border:1px solid #b0c0f8;border-left:5px solid var(--cobalt);padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.pthm .lbl{font-family:'Fira Code',monospace;font-size:.64rem;letter-spacing:.15em;color:var(--cobalt);text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem;}
+.pthm .stmt{font-style:italic;font-size:.97rem;color:#060418;}
+
+.defn{background:var(--defn-bg);border:1px solid #88c8a0;border-left:5px solid var(--teal);padding:.95rem 1.3rem;margin:1rem 0;font-size:.95rem;}
+.defn .lbl{font-family:'Fira Code',monospace;font-size:.64rem;letter-spacing:.15em;color:var(--teal);text-transform:uppercase;display:block;margin-bottom:.35rem;}
+
+.proof{background:var(--proof-bg);border:1px solid #d8c870;border-left:4px solid var(--gold);padding:1rem 1.4rem;margin:.9rem 0 1.6rem;font-size:.93rem;}
+.proof-hdr{font-variant:small-caps;font-size:.76rem;letter-spacing:.1em;color:var(--gold);display:block;margin-bottom:.5rem;}
+.qed{float:right;color:var(--gold);font-size:1.1rem;}
+
+.ex{background:var(--ex-bg);border:1px solid #d0b860;border-left:4px solid var(--bronze);padding:.9rem 1.2rem;margin:.6rem 0;font-size:.93rem;}
+.ex .exl{font-family:'Fira Code',monospace;font-size:.64rem;color:var(--bronze);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.35rem;}
+
+.note{background:#f0eeff;border:1px dashed var(--violet);padding:.7rem 1.1rem;font-size:.88rem;border-radius:3px;margin:.9rem 0;}
+.note::before{content:'💡 ';}
+.warn{background:#fff8ec;border:1px solid #e0a860;border-left:4px solid var(--rust);padding:.7rem 1.1rem;font-size:.88rem;margin:.9rem 0;}
+.warn::before{content:'⚠️ ';}
+
+.hist{background:var(--hist-bg);color:#b0a8d8;padding:1.4rem 1.6rem;border-radius:4px;margin:1.3rem 0;font-size:.87rem;}
+.hist h4{font-family:'Staatliches',sans-serif;font-size:1.2rem;letter-spacing:.05em;color:var(--gold);margin-bottom:.65rem;}
+.hist p{color:#9088c0;text-align:left;}
+
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.9rem 0;}
+th{background:var(--midnight);color:#fff;padding:.5rem 1rem;font-variant:small-caps;letter-spacing:.07em;font-weight:500;}
+td{padding:.42rem 1rem;text-align:center;border-bottom:1px solid var(--rule);}
+tr:nth-child(even) td{background:rgba(42,28,138,.04);}
+td.prim{background:rgba(139,20,40,.15);font-weight:700;color:var(--crimson);}
+td.ord1{background:rgba(16,112,96,.15);font-weight:700;color:var(--teal);}
+td.hi{background:rgba(42,28,138,.15);font-weight:700;color:var(--royal);}
+.mono{font-family:'Fira Code',monospace;font-size:.8rem;}
+
+.vis{background:#fff;border:1px solid var(--rule);border-radius:5px;padding:1.1rem;margin:1.1rem 0;text-align:center;box-shadow:var(--shadow);}
+.vis figcaption{font-size:.74rem;color:#888;margin-top:.5rem;font-style:italic;}
+.formula{text-align:center;margin:.95rem 0;padding:.55rem;background:rgba(42,28,138,.04);border-radius:3px;font-size:1.04rem;}
+
+.crypto-box{background:var(--midnight);border:1px solid rgba(112,96,232,.3);border-radius:4px;padding:1rem 1.3rem;font-family:'Fira Code',monospace;font-size:.82rem;color:#c0b8e8;margin:.9rem 0;}
+.crypto-box .step{color:var(--amber);display:block;margin-bottom:.25rem;}
+.crypto-box .math{color:var(--lavender);}
+
+.bib{border-bottom:1px solid var(--rule);padding:.6rem 0;font-size:.87rem;}
+.bib-k{font-family:'Fira Code',monospace;color:var(--royal);font-size:.72rem;margin-bottom:.12rem;}
+
+footer{background:var(--ink);color:#302858;text-align:center;padding:1.6rem;font-size:.78rem;border-top:3px solid var(--gold);margin-top:3rem;}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="chapter-tag">Studio di Teoria dei Numeri &middot; Capitolo 7</span>
+  <h1>RADICI PRIMITIVE</h1>
+  <div class="subtitle">George E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971)</div>
+  <div class="meta-strip">
+    <span><strong>Autore:</strong> Alberto Oliva</span>
+    <span><strong>Email:</strong> <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a></span>
+    <span><strong>Riferimento:</strong> Andrews, G.E. &mdash; <em>Number Theory</em>, Cap. 7</span>
+    <span><strong>Data:</strong> Aprile 2026</span>
+  </div>
+</header>
+
+<div class="abstract">
+  <strong>Abstract.</strong>
+  Il Capitolo 7 svela la struttura del gruppo moltiplicativo
+  \((\mathbb{Z}/m\mathbb{Z})^*\) attraverso il concetto di <em>radice
+  primitiva</em>. La sezione &sect;7-1 costruisce la teoria degli <em>esponenti</em>:
+  si definisce l&rsquo;ordine di un elemento (Def. 7-1), si prova che esso divide
+  sempre \(\phi(m)\) (Thm 7-2), si studiano le potenze di una radice primitiva
+  che formano un sistema ridotto di residui completo (Thm 7-3), e si conta il
+  numero di radici primitive via \(\phi\circ\phi\) (Thm 7-5). La sezione
+  &sect;7-2 dimostra il teorema fondamentale: <em>ogni numero primo \(p\) possiede
+  radici primitive</em>, e ce ne sono esattamente \(\phi(p-1)\) (Thm 7-6).
+  La dimostrazione &mdash; uno dei vertici del libro &mdash; unisce il Teorema di
+  Lagrange (Cap. 5) alla formula di somma di Eulero (Cap. 6). Gli esercizi
+  sviluppano gli indici discreti (logaritmi modulari) e caratterizzano
+  completamente i moduli che possiedono radici primitive.
+</div>
+
+<div class="two-col">
+
+<!-- STORIA -->
+<div class="sb"><h3>Contesto Storico &amp; Motivazioni</h3></div>
+
+<div>
+  <div class="hist">
+    <h4>GAUSS E LE DISQUISITIONES (1801)</h4>
+    <p>Carl Friedrich Gauss (1777&ndash;1855) nelle <em>Disquisitiones
+    Arithmeticae</em> (1801, &sect;&sect;52&ndash;66) introdusse sistematicamente
+    la teoria delle radici primitive. La scoperta chiave: il gruppo
+    \((\mathbb{Z}/p\mathbb{Z})^*\) &egrave; <em>ciclico</em> &mdash; esiste un
+    generatore \(g\) le cui potenze esauriscono tutti gli elementi del gruppo.
+    Gauss chiamo&grave; tale generatore &ldquo;radice primitiva&rdquo; e svilupp&ograve; la
+    teoria degli <em>indici</em>, l&rsquo;analogo del logaritmo nell&rsquo;aritmetica
+    modulare. Questo strumento &egrave; essenziale nella sua dimostrazione della
+    <em>Legge di Reciprocit&agrave; Quadratica</em> (Capitolo 9 di Andrews).</p>
+  </div>
+  <div class="hist" style="margin-top:.8rem;">
+    <h4>EULER E IL CONTESTO PRE-GAUSS</h4>
+    <p>Leonhard Euler (1707&ndash;1783) aveva gi&agrave; osservato empiricamente
+    che alcuni interi generano tutti i residui non-nulli modulo un primo. Nel
+    1773 Lambert congettur&ograve; l&rsquo;esistenza sistematica delle radici
+    primitive; la prima dimostrazione completa si deve a Gauss. Il concetto
+    di &ldquo;ordine di un elemento&rdquo; (Def. 7-1) &egrave; il nucleo della teoria dei
+    gruppi finiti di Galois e Cauchy, sviluppata nel XIX secolo.</p>
+  </div>
+</div>
+
+<div>
+  <div class="hist">
+    <h4>CRITTOGRAFIA A LOGARITMO DISCRETO (1976&ndash;)</h4>
+    <p>Il protocollo Diffie&ndash;Hellman (1976) sfrutta direttamente il
+    Teorema 7-6. Fissato un primo grande \(p\) e una radice primitiva \(g\)
+    modulo \(p\), le chiavi pubbliche sono potenze \(g^a\bmod p\). La sicurezza
+    si basa sulla difficolt&agrave; del <em>Problema del Logaritmo Discreto</em>
+    (DLP): dato \(h=g^a\bmod p\), trovare \(a\) &egrave; computazionalmente
+    difficile. Lo schema ElGamal (1985) e il DSA (NIST 1994) usano la
+    stessa struttura.</p>
+  </div>
+  <div class="hist" style="margin-top:.8rem;">
+    <h4>PERCH&Eacute; IL CAP. 7 &Egrave; IL CLIMAX DEL LIBRO</h4>
+    <p>Andrews costruisce il Capitolo 7 come punto di arrivo di tutto il
+    precedente. La dimostrazione del Teorema 7-6 usa: il Teorema di Lagrange
+    (Cap. 5), la Somma di Eulero \(\sum_{d\mid n}\phi(d)=n\) (Cap. 6), le
+    propriet&agrave; dei sistemi ridotti di residui (Cap. 4) e le congruenze
+    lineari (Cap. 5). Un esempio magnifico di come la matematica
+    elementare si intreccia in modo inaspettato.</p>
+  </div>
+</div>
+
+<!-- §7-1 -->
+<div class="sb"><h3>&sect; 7-1 &middot; Propriet&agrave; dei Sistemi Ridotti di Residui</h3></div>
+
+<div>
+  <h4 class="sub">Perch&eacute; studiare la struttura di (&#8484;/m&#8484;)*?</h4>
+  <p>In Capitolo 4 abbiamo incontrato i <em>sistemi ridotti di residui</em>:
+  gli interi da 1 a \(m\) coprimi con \(m\). Andrews osserva che questi
+  elementi formano un <em>gruppo</em> sotto la moltiplicazione modulare.
+  Il Capitolo 7 risponde alla domanda: qual &egrave; la struttura di questo
+  gruppo? Se \(p\) &egrave; primo, il gruppo &egrave; <em>ciclico</em> &mdash; esiste
+  un singolo elemento \(g\) le cui potenze \(g, g^2, \ldots, g^{p-1}\)
+  generano tutti gli altri.</p>
+
+  <p>Esempio 7-1: il SRR modulo 10 &egrave; \(\{1,3,7,9\}\). Calcoliamo le
+  potenze di \(g=3\):</p>
+  <div class="formula">\[3^1\equiv3,\quad 3^2\equiv9,\quad 3^3\equiv7,\quad 3^4\equiv1\pmod{10}.\]</div>
+  <p>Le quattro potenze coprono tutto il SRR \(\{1,3,7,9\}\): 3 &egrave; una
+  <em>radice primitiva</em> modulo 10. Invece \(9^2\equiv1\pmod{10}\):
+  ord\((9)=2\neq4=\phi(10)\), quindi 9 non &egrave; una radice primitiva.</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 7-1 &mdash; Esponente (Ordine) di a modulo m</span>
+    Se \(h\) &egrave; il pi&ugrave; piccolo intero positivo tale che
+    \(a^h\equiv 1\pmod{m}\), diciamo che \(a\) <strong>appartiene
+    all&rsquo;esponente \(h\)</strong> modulo \(m\).<br><br>
+    <em>In linguaggio di teoria dei gruppi: \(h = \mathrm{ord}(a)\) nel
+    gruppo \((\mathbb{Z}/m\mathbb{Z})^*\).</em>
+  </div>
+
+  <div class="note">
+    L&rsquo;esponente esiste finito se e solo se \(\gcd(a,m)=1\):
+    il Teorema di Eulero garantisce \(a^{\phi(m)}\equiv1\pmod m\),
+    quindi l&rsquo;esponente divide \(\phi(m)\).
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 7-1 &mdash; Condizione per l&rsquo;esistenza</span>
+    <div class="stmt">Affinch&eacute; \(a^b\equiv 1\pmod{m}\) per qualche intero \(b\),
+    &egrave; necessario e sufficiente che \(\gcd(a,m)=1\).</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    \((\Rightarrow)\) Se \(d=\gcd(a,m)>1\): \(d\mid a^b\) e \(d\mid m\) ma
+    \(d\nmid 1\): impossibile.<br>
+    \((\Leftarrow)\) Se \(\gcd(a,m)=1\): Eulero garantisce
+    \(a^{\phi(m)}\equiv1\pmod m\). <span class="qed">&#9632;</span>
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 7-2 &mdash; L&rsquo;esponente divide ogni potenza che vale 1</span>
+    <div class="stmt">Se \(a\) appartiene all&rsquo;esponente \(h\) modulo \(m\)
+    e \(a^r\equiv 1\pmod{m}\), allora \(h\mid r\).</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Scrivi \(r=kh+s\) con \(0\leq s&lt;h\). Allora
+    \(1\equiv a^r=(a^h)^k a^s\equiv a^s\pmod m\).
+    Poich&eacute; \(h\) &egrave; minimo e \(s&lt;h\), si ha \(s=0\),
+    cioè \(h\mid r\). <span class="qed">&#9632;</span><br><br>
+    <strong>Conseguenza:</strong> l&rsquo;esponente di \(a\) <em>divide sempre</em>
+    \(\phi(m)\). &Egrave; il Teorema di Lagrange per i gruppi finiti!
+  </div>
+</div>
+
+<div>
+  <div class="vis">
+    <svg viewBox="0 0 310 250" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="arh" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#4035cc"/>
+        </marker>
+        <marker id="arb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#c8900a"/>
+        </marker>
+      </defs>
+      <text x="155" y="16" text-anchor="middle" font-family="Staatliches,sans-serif"
+        font-size="15" fill="#15102a" letter-spacing=".05em">Orbita di g=3 modulo 10</text>
+      <circle cx="155" cy="130" r="78" fill="#f4f2ff" stroke="#c0b8e8" stroke-width="1.5"/>
+      <!-- Node 1 (top) -->
+      <circle cx="155" cy="54" r="23" fill="#15102a"/>
+      <text x="155" y="60" text-anchor="middle" fill="#c8900a"
+        font-family="Fira Code,monospace" font-size="14" font-weight="700">1</text>
+      <text x="155" y="42" text-anchor="middle" font-family="Fira Code,monospace"
+        font-size="9" fill="#b0a8d8">g&#8308;&#8801;1</text>
+      <!-- Node 3 (right) -->
+      <circle cx="231" cy="130" r="23" fill="#2a1c8a"/>
+      <text x="231" y="136" text-anchor="middle" fill="white"
+        font-family="Fira Code,monospace" font-size="14" font-weight="700">3</text>
+      <text x="257" y="130" text-anchor="middle" font-family="Fira Code,monospace"
+        font-size="9" fill="#2a1c8a">g&#185;</text>
+      <!-- Node 9 (bottom) -->
+      <circle cx="155" cy="206" r="23" fill="#2a1c8a"/>
+      <text x="155" y="212" text-anchor="middle" fill="white"
+        font-family="Fira Code,monospace" font-size="14" font-weight="700">9</text>
+      <text x="155" y="236" text-anchor="middle" font-family="Fira Code,monospace"
+        font-size="9" fill="#2a1c8a">g&#178;</text>
+      <!-- Node 7 (left) -->
+      <circle cx="79" cy="130" r="23" fill="#2a1c8a"/>
+      <text x="79" y="136" text-anchor="middle" fill="white"
+        font-family="Fira Code,monospace" font-size="14" font-weight="700">7</text>
+      <text x="52" y="130" text-anchor="middle" font-family="Fira Code,monospace"
+        font-size="9" fill="#2a1c8a">g&#179;</text>
+      <!-- Arrows -->
+      <path d="M173 62 Q213 82 219 109" stroke="#4035cc" stroke-width="2"
+        fill="none" marker-end="url(#arh)"/>
+      <text x="210" y="90" font-family="Fira Code,monospace" font-size="9" fill="#4035cc">&#215;3</text>
+      <path d="M224 152 Q211 185 173 202" stroke="#4035cc" stroke-width="2"
+        fill="none" marker-end="url(#arh)"/>
+      <text x="213" y="187" font-family="Fira Code,monospace" font-size="9" fill="#4035cc">&#215;3</text>
+      <path d="M135 202 Q96 185 88 153" stroke="#4035cc" stroke-width="2"
+        fill="none" marker-end="url(#arh)"/>
+      <text x="91" y="190" font-family="Fira Code,monospace" font-size="9" fill="#4035cc">&#215;3</text>
+      <path d="M86 108 Q96 74 134 62" stroke="#c8900a" stroke-width="2"
+        fill="none" marker-end="url(#arb)"/>
+      <text x="93" y="79" font-family="Fira Code,monospace" font-size="9" fill="#c8900a">&#215;3</text>
+      <!-- Center labels -->
+      <text x="155" y="127" text-anchor="middle" font-family="Crimson Pro,serif"
+        font-style="italic" font-size="11" fill="#2a1c8a">mod 10</text>
+      <text x="155" y="143" text-anchor="middle" font-family="Fira Code,monospace"
+        font-size="9" fill="#888">ord(3) = 4 = &#120601;(10)</text>
+    </svg>
+    <figcaption>Le 4 potenze di \(g=3\) ciclano su tutto il SRR \(\{1,3,7,9\}\) mod 10. \(g=3\) &egrave; radice primitiva; \(g=9\) non lo &egrave; (ord\((9)=2\)).</figcaption>
+  </div>
+
+  <div class="defn">
+    <span class="lbl">Definizione 7-2 &mdash; Radice Primitiva</span>
+    Se \(g\) appartiene all&rsquo;esponente \(\phi(m)\) modulo \(m\), allora
+    \(g\) &egrave; chiamata una <strong>radice primitiva</strong> modulo \(m\).<br><br>
+    <em>Equivalente: \(g\) &egrave; un generatore del gruppo ciclico
+    \((\mathbb{Z}/m\mathbb{Z})^*\).</em>
+  </div>
+
+  <div class="pthm">
+    <span class="lbl">Teorema 7-3 &mdash; Le potenze di g formano un SRR</span>
+    <div class="stmt">Se \(g\) &egrave; una radice primitiva modulo \(m\), allora
+    \(g, g^2, \ldots, g^{\phi(m)}\) sono mutuamente incongruenti e formano
+    un sistema ridotto di residui modulo \(m\).</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Supponiamo \(g^r\equiv g^s\) con \(1\leq s\leq r\leq\phi(m)\). Poich&eacute;
+    \(\gcd(g,m)=1\): \(g^{r-s}\equiv1\pmod m\). Ma \(0\leq r-s &lt; \phi(m)\)
+    contraddice il fatto che \(\phi(m)\) &egrave; il minimo esponente. Quindi
+    \(r=s\) e le potenze sono tutte distinte. <span class="qed">&#9632;</span>
+  </div>
+</div>
+
+<div>
+  <div class="thm">
+    <span class="lbl">Teorema 7-4 &mdash; Esponente di a<sup>k</sup></span>
+    <div class="stmt">Se \(a\) appartiene all&rsquo;esponente \(h\) modulo \(m\)
+    e \(\gcd(k,h)=d\), allora \(a^k\) appartiene all&rsquo;esponente
+    \(h/d\) modulo \(m\).</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Sia \(j\) l&rsquo;esponente di \(a^k\). Da \(a^{kj}\equiv1\) (Thm 7-2):
+    \(h\mid kj\). Poich&eacute; \(h_1=h/d\) e \(k_1=k/d\) soddisfano
+    \(\gcd(h_1,k_1)=1\): \(h_1\mid j\). Inoltre
+    \((a^k)^{h_1}=(a^h)^{k/d}\equiv1\), quindi \(j\mid h_1\).
+    Dunque \(j=h_1=h/d\). <span class="qed">&#9632;</span>
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Corollario 7-1 &mdash; Quando g<sup>r</sup> &egrave; ancora radice primitiva</span>
+    <div class="stmt">Se \(g\) &egrave; radice primitiva modulo \(m\), allora
+    \(g^r\) &egrave; radice primitiva modulo \(m\) <strong>se e solo se</strong>
+    \(\gcd(r,\phi(m))=1\).</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Per Thm 7-4: \(g^r\) ha esponente \(\phi(m)/\gcd(r,\phi(m))\).
+    Questo &egrave; uguale a \(\phi(m)\) iff \(\gcd(r,\phi(m))=1\). <span class="qed">&#9632;</span>
+  </div>
+
+  <div class="pthm">
+    <span class="lbl">Teorema 7-5 &mdash; Numero di radici primitive</span>
+    <div class="stmt">Se esistono radici primitive modulo \(m\), il loro
+    numero di classi incongruenti &egrave; esattamente \(\phi(\phi(m))\).</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Se \(g\) &egrave; radice primitiva, il Corollario 7-1 dice che \(g^r\) &egrave;
+    radice primitiva iff \(\gcd(r,\phi(m))=1\). Il numero di tali
+    \(r\in\{1,\ldots,\phi(m)\}\) &egrave; \(\phi(\phi(m))\). <span class="qed">&#9632;</span>
+  </div>
+
+  <div class="warn">
+    <strong>Attenzione:</strong> Non tutti i moduli hanno radici primitive!
+    Modulo 8: \(\phi(8)=4\), ma \(1^2\equiv3^2\equiv5^2\equiv7^2\equiv1\pmod8\):
+    nessun elemento ha esponente 4. Nessuna radice primitiva. La primalit&agrave;
+    &egrave; essenziale per il Teorema 7-6.
+  </div>
+</div>
+
+<!-- Tabelle esponenti -->
+<div class="full">
+  <h4 class="sub">Tabelle degli esponenti &mdash; mod 10 e mod 11</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+    <div>
+      <p style="font-family:'Fira Code',monospace;font-size:.78rem;color:var(--royal);margin-bottom:.3rem;">SRR mod 10 = {1,3,7,9}, &#120601;(10)=4</p>
+      <table>
+        <thead><tr><th>a</th><th>a&#185;</th><th>a&#178;</th><th>a&#179;</th><th>a&#8308;</th><th>ord(a)</th><th>Prim.?</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">1</td><td>1</td><td>1</td><td>1</td><td class="ord1">1</td><td>1</td><td>No</td></tr>
+          <tr><td class="mono">3</td><td>3</td><td>9</td><td>7</td><td class="ord1">1</td><td class="prim">4</td><td class="prim">&#10003;</td></tr>
+          <tr><td class="mono">7</td><td>7</td><td>9</td><td>3</td><td class="ord1">1</td><td class="prim">4</td><td class="prim">&#10003;</td></tr>
+          <tr><td class="mono">9</td><td>9</td><td class="ord1">1</td><td>9</td><td>1</td><td>2</td><td>No</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.78rem;color:#777;font-style:italic;">&#120601;(&#120601;(10))=&#120601;(4)=<strong>2</strong> rad. primitive: 3 e 7.</p>
+    </div>
+    <div>
+      <p style="font-family:'Fira Code',monospace;font-size:.78rem;color:var(--royal);margin-bottom:.3rem;">SRR mod 11 = {1,&hellip;,10}, &#120601;(11)=10</p>
+      <table>
+        <thead><tr><th>a</th><th>ord(a)</th><th>Prim.?</th><th>a</th><th>ord(a)</th><th>Prim.?</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>1</td><td>&mdash;</td><td>6</td><td class="prim">10</td><td class="prim">&#10003;</td></tr>
+          <tr><td>2</td><td class="prim">10</td><td class="prim">&#10003;</td><td>7</td><td class="prim">10</td><td class="prim">&#10003;</td></tr>
+          <tr><td>3</td><td>5</td><td>&mdash;</td><td>8</td><td class="prim">10</td><td class="prim">&#10003;</td></tr>
+          <tr><td>4</td><td>5</td><td>&mdash;</td><td>9</td><td>5</td><td>&mdash;</td></tr>
+          <tr><td>5</td><td>5</td><td>&mdash;</td><td>10</td><td>2</td><td>&mdash;</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.78rem;color:#777;font-style:italic;">&#120601;(&#120601;(11))=&#120601;(10)=<strong>4</strong> rad. primitive: {2,6,7,8}.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Esercizi 7-1 -->
+<div class="full">
+  <h4 class="sub">Esercizi &sect;7-1 &mdash; Soluzioni Complete</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+
+    <div class="ex">
+      <span class="exl">Esercizio 1 &mdash; Indici Discreti (Logaritmi Modulari)</span>
+      Se \(g\) &egrave; radice primitiva mod \(m\), l&rsquo;<em>indice</em> di \(a\) &egrave;
+      \(\mathrm{ind}_g a = t\) con \(g^t\equiv a\pmod m\).<br><br>
+      <strong>(a)</strong> \(\mathrm{ind}_g a\equiv\mathrm{ind}_g b\pmod{\phi(m)}\)
+      iff \(a\equiv b\pmod m\). (Da Thm 7-3.) &there4;<br>
+      <strong>(b)</strong> \(\mathrm{ind}_g(ac)\equiv\mathrm{ind}_g a+\mathrm{ind}_g c\). (Moltiplicazione &rarr; addizione.) &there4;<br>
+      <strong>(c)</strong> \(\mathrm{ind}_g(a^n)\equiv n\cdot\mathrm{ind}_g a\). (Potenza &rarr; prodotto.) &there4;<br><br>
+      <em>Analogia: log\((ab)\)=log\((a)\)+log\((b)\), log\((a^n)\)=n&middot;log\((a)\).</em>
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 2 &mdash; Tabella indici mod 17, g=3</span>
+      <div style="font-family:'Fira Code',monospace;font-size:.77rem;line-height:1.7;">
+        3&#185;=3 &emsp; 3&#178;=9 &emsp; 3&#179;=10 &emsp; 3&#8308;=13<br>
+        3&#8309;=5 &emsp; 3&#8310;=15 &emsp; 3&#8311;=11 &emsp; 3&#8312;=16<br>
+        3&#8313;=14 &emsp; 3&#185;&#8304;=8 &emsp; 3&#185;&#185;=7 &emsp; 3&#185;&#178;=4<br>
+        3&#185;&#179;=12 &emsp; 3&#185;&#8308;=2 &emsp; 3&#185;&#8309;=6 &emsp; 3&#185;&#8310;=1
+      </div>
+      <strong>Indici (ind&#8323;):</strong>
+      <div style="font-family:'Fira Code',monospace;font-size:.77rem;line-height:1.6;margin-top:.3rem;">
+        a=1&rarr;16, a=2&rarr;14, a=3&rarr;1, a=4&rarr;12<br>
+        a=5&rarr;5, a=6&rarr;15, a=7&rarr;11, a=8&rarr;10<br>
+        a=9&rarr;2, a=10&rarr;3, a=11&rarr;7, a=12&rarr;13<br>
+        a=13&rarr;4, a=14&rarr;9, a=15&rarr;6, a=16&rarr;8
+      </div>
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 3 &mdash; 9x&#8801;11 (mod 17)</span>
+      ind\((9)+\)ind\((x)\equiv\)ind\((11)\pmod{16}\):<br>
+      \(2+\mathrm{ind}(x)\equiv7\implies\mathrm{ind}(x)=5\implies x=3^5=5\).<br>
+      <strong>Verifica:</strong> \(9\cdot5=45=2\cdot17+11\equiv11\) &#10003;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 4 &mdash; 4y&#178;&#8801;1 (mod 17)</span>
+      \(12+2\cdot\mathrm{ind}(y)\equiv16\pmod{16}\implies\mathrm{ind}(y)\equiv2\pmod8\).<br>
+      ind\((y)=2\to y=9\); ind\((y)=10\to y=8\).<br>
+      <strong>Verifica:</strong> \(4\cdot81=324=19\cdot17+1\equiv1\) &#10003;; \(4\cdot64=256=15\cdot17+1\equiv1\) &#10003;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 5 &mdash; 12x&#178;&#8801;7 (mod 17)</span>
+      \(13+2\cdot\mathrm{ind}(x)\equiv11\pmod{16}\implies\mathrm{ind}(x)\equiv7\pmod8\).<br>
+      ind\((x)=7\to x=11\); ind\((x)=15\to x=6\).<br>
+      <strong>Verifica:</strong> \(12\cdot121=1452=85\cdot17+7\equiv7\) &#10003;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 6 &mdash; Radici primitive per moduli piccoli</span>
+      <strong>mod 5:</strong> {2,3}, &#120601;(4)=2 &#10003;<br>
+      <strong>mod 9:</strong> {2,5}, &#120601;(6)=2 &#10003;<br>
+      <strong>mod 11:</strong> {2,6,7,8}, &#120601;(10)=4 &#10003;<br>
+      <strong>mod 13:</strong> {2,6,7,11}, &#120601;(12)=4 &#10003;<br>
+      <strong>mod 15:</strong> nessuna (due fattori primi distinti)
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 16 &mdash; Esponenti mod 11, N(h)=&#120601;(h)</span>
+      <div style="font-family:'Fira Code',monospace;font-size:.78rem;line-height:1.8;">
+        N(1)=1=&#120601;(1) &#10003; {1}<br>
+        N(2)=1=&#120601;(2) &#10003; {10}<br>
+        N(5)=4=&#120601;(5) &#10003; {3,4,5,9}<br>
+        N(10)=4=&#120601;(10) &#10003; {2,6,7,8}
+      </div>
+      Somma: 1+1+4+4=10=p&minus;1 &#10003;
+    </div>
+
+  </div>
+</div>
+
+<!-- §7-2 -->
+<div class="sb"><h3>&sect; 7-2 &middot; Radici Primitive Modulo p</h3></div>
+
+<div>
+  <h4 class="sub">Il teorema fondamentale</h4>
+  <p>Fino ad ora sappiamo <em>cosa</em> &egrave; una radice primitiva e quante
+  ce ne siano, ma non <em>per quali moduli</em> esse esistano. Il Teorema 7-6
+  risponde per il caso pi&ugrave; importante: ogni primo \(p\) ha radici primitive.</p>
+
+  <p>La strategia &egrave; un argomento di conteggio. Sia \(N(h)\) il numero di
+  elementi del SRR \(\{1,\ldots,p-1\}\) con esponente esattamente \(h\).
+  Si dimostra \(N(h)\in\{0,\phi(h)\}\) (via Lagrange), poi si usa
+  \(\sum_{h\mid p-1}\phi(h)=p-1\) (via Eulero) per concludere che
+  \(N(h)=\phi(h)\) ovunque, incluso \(h=p-1\).</p>
+
+  <div class="pthm">
+    <span class="lbl">Teorema 7-6 &mdash; Esistenza e Numero delle Radici Primitive Modulo p</span>
+    <div class="stmt">Per ogni numero primo \(p\), il sistema ridotto di
+    residui \(\{1,\ldots,p-1\}\) contiene esattamente \(\phi(p-1)\)
+    radici primitive modulo \(p\).<br><br>
+    Equivalentemente, se \(N(h)\) &egrave; il numero di elementi del SRR con
+    esponente \(h\) modulo \(p\), allora
+    \(N(h)=\phi(h)\) per ogni \(h\mid p-1\).</div>
+  </div>
+
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione completa</span>
+    <strong>Passo 1.</strong> Ogni elemento ha esponente che divide \(p-1\) (Thm 7-2), quindi:
+    \[p-1=\sum_{h\mid p-1}N(h). \tag{7-2-1}\]
+    <strong>Passo 2.</strong> Fissiamo \(h\mid p-1\). Se nessun elemento ha esponente \(h\):
+    \(N(h)=0\). Se \(a\) ha esponente \(h\): i valori \(a,a^2,\ldots,a^h\)
+    sono \(h\) soluzioni distinte di \(x^h\equiv1\pmod p\). Per il
+    <strong>Teorema di Lagrange (5-5)</strong> ci sono al pi&ugrave; \(h\) soluzioni,
+    quindi queste sono tutte. Tra esse, quelle con esponente esattamente \(h\)
+    sono le \(a^r\) con \(\gcd(r,h)=1\) (Cor. 7-1): esattamente \(\phi(h)\)
+    elementi. Dunque \(N(h)\in\{0,\phi(h)\}\).<br><br>
+    <strong>Passo 3.</strong> Per il <strong>Teorema 6-1</strong>:
+    \(\sum_{h\mid p-1}\phi(h)=p-1\). Confrontando con (7-2-1):
+    \[\sum_{h\mid p-1}N(h)=p-1=\sum_{h\mid p-1}\phi(h).\]
+    Poich&eacute; \(N(h)\leq\phi(h)\) per ogni \(h\), deve valere
+    \(N(h)=\phi(h)\) per ogni \(h\mid p-1\). In particolare
+    \(N(p-1)=\phi(p-1)>0\): le radici primitive esistono! <span class="qed">&#9632;</span>
+  </div>
+</div>
+
+<div>
+  <div class="vis">
+    <svg viewBox="0 0 310 220" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="16" text-anchor="middle" font-family="Staatliches,sans-serif"
+        font-size="14" fill="#15102a" letter-spacing=".04em">N(h)=&#120601;(h) per p=11, p&minus;1=10</text>
+      <text x="155" y="30" text-anchor="middle" font-family="Fira Code,monospace"
+        font-size="9" fill="#888">Divisori di 10: {1, 2, 5, 10}</text>
+      <!-- h=1 bar -->
+      <text x="40" y="50" text-anchor="middle" font-family="Fira Code,monospace" font-size="11" fill="#15102a" font-weight="bold">h=1</text>
+      <rect x="12" y="158" width="56" height="22" rx="2" fill="#2a1c8a"/>
+      <text x="40" y="173" text-anchor="middle" font-family="Fira Code,monospace" font-size="9" fill="white">N=&#120601;=1</text>
+      <text x="40" y="192" text-anchor="middle" font-family="Fira Code,monospace" font-size="9" fill="#666">{1}</text>
+      <!-- h=2 bar -->
+      <text x="115" y="50" text-anchor="middle" font-family="Fira Code,monospace" font-size="11" fill="#15102a" font-weight="bold">h=2</text>
+      <rect x="87" y="158" width="56" height="22" rx="2" fill="#2a1c8a"/>
+      <text x="115" y="173" text-anchor="middle" font-family="Fira Code,monospace" font-size="9" fill="white">N=&#120601;=1</text>
+      <text x="115" y="192" text-anchor="middle" font-family="Fira Code,monospace" font-size="9" fill="#666">{10}</text>
+      <!-- h=5 bar -->
+      <text x="200" y="50" text-anchor="middle" font-family="Fira Code,monospace" font-size="11" fill="#15102a" font-weight="bold">h=5</text>
+      <rect x="166" y="98" width="68" height="82" rx="2" fill="#4035cc"/>
+      <text x="200" y="144" text-anchor="middle" font-family="Fira Code,monospace" font-size="9" fill="white">N=&#120601;=4</text>
+      <text x="200" y="192" text-anchor="middle" font-family="Fira Code,monospace" font-size="9" fill="#666">{3,4,5,9}</text>
+      <!-- h=10 bar (primitive roots) -->
+      <text x="280" y="50" text-anchor="middle" font-family="Fira Code,monospace" font-size="11" fill="#8c1428" font-weight="bold">h=10&#9733;</text>
+      <rect x="250" y="98" width="58" height="82" rx="2" fill="#8c1428"/>
+      <text x="279" y="134" text-anchor="middle" font-family="Fira Code,monospace" font-size="9" fill="white">N=&#120601;=4</text>
+      <text x="279" y="148" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#ffd8d8">radici</text>
+      <text x="279" y="160" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#ffd8d8">primitive</text>
+      <text x="279" y="192" text-anchor="middle" font-family="Fira Code,monospace" font-size="9" fill="#8c1428">{2,6,7,8}</text>
+      <line x1="8" y1="181" x2="314" y2="181" stroke="#c0b8e0" stroke-width="1"/>
+      <text x="155" y="210" text-anchor="middle" font-family="Fira Code,monospace" font-size="9" fill="#15102a">1+1+4+4=10=p&minus;1 &#10003;</text>
+    </svg>
+    <figcaption>Per \(p=11\): \(N(h)=\phi(h)\) per ogni \(h\mid10\). Le radici primitive (in rosso) hanno esponente massimo \(h=10=p-1\).</figcaption>
+  </div>
+
+  <h4 class="sub">Tabella: Radici Primitive per Piccoli Primi</h4>
+  <table>
+    <thead><tr><th>p</th><th>p&minus;1</th><th>&#120601;(p&minus;1)</th><th>Radici Primitive mod p</th></tr></thead>
+    <tbody>
+      <tr><td>2</td><td>1</td><td>1</td><td class="prim">{1}</td></tr>
+      <tr><td>3</td><td>2</td><td>1</td><td class="prim">{2}</td></tr>
+      <tr><td>5</td><td>4</td><td>2</td><td class="prim">{2, 3}</td></tr>
+      <tr><td>7</td><td>6</td><td>2</td><td class="prim">{3, 5}</td></tr>
+      <tr><td>11</td><td>10</td><td>4</td><td class="prim">{2, 6, 7, 8}</td></tr>
+      <tr><td>13</td><td>12</td><td>4</td><td class="prim">{2, 6, 7, 11}</td></tr>
+      <tr><td>17</td><td>16</td><td>8</td><td class="prim">{3,5,6,7,10,11,12,14}</td></tr>
+      <tr><td>19</td><td>18</td><td>6</td><td class="prim">{2,3,10,13,14,15}</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Applicazione Diffie-Hellman -->
+<div class="full">
+  <h4 class="sub">Applicazione Crittografica: Protocollo Diffie&ndash;Hellman</h4>
+  <p>Il protocollo di scambio di chiavi Diffie&ndash;Hellman (1976) sfrutta
+  direttamente il Teorema 7-6. Fissato un primo grande \(p\) e una radice
+  primitiva \(g\) modulo \(p\) (la cui esistenza &egrave; garantita dal teorema),
+  Alice e Bob scambiano informazioni pubbliche per concordare una chiave
+  segreta senza mai trasmettere la chiave stessa. La sicurezza dipende
+  dalla difficolt&agrave; del Problema del Logaritmo Discreto (DLP).</p>
+
+  <div class="crypto-box">
+    <span class="step">&#9312; Parametri pubblici condivisi:</span>
+    <span class="math">primo p = 23,&nbsp;&nbsp;radice primitiva g = 5 (mod 23)</span>
+    <span class="step">&#9313; Alice sceglie a=6 (segreto), pubblica:</span>
+    <span class="math">A = g&#7491; mod p = 5&#8310; mod 23 = 8</span>
+    <span class="step">&#9314; Bob sceglie b=15 (segreto), pubblica:</span>
+    <span class="math">B = g&#7495; mod p = 5&#185;&#8309; mod 23 = 19</span>
+    <span class="step">&#9315; Chiave condivisa (Alice e Bob calcolano separatamente):</span>
+    <span class="math">Alice: B&#7491; = 19&#8310; mod 23 = <strong>2</strong></span>
+    <span class="math">Bob:&nbsp;&nbsp; A&#7495; = 8&#185;&#8309; mod 23 = <strong>2</strong>&nbsp; &#10003;</span>
+    <span class="step">&#9316; Sicurezza: trovare a=6 dato g&#7491;=8 (mod 23) &egrave; il DLP.</span>
+  </div>
+</div>
+
+<!-- Esercizi 7-2 -->
+<div class="full">
+  <h4 class="sub">Esercizi &sect;7-2 &mdash; Soluzioni Complete</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+
+    <div class="ex">
+      <span class="exl">Esercizio 1 (&#9733;) &mdash; Ordine di a mod mn</span>
+      Se \(\gcd(m,n)=1\), \(a^h\equiv1\pmod m\), \(a^k\equiv1\pmod n\),
+      e \(j=\mathrm{lcm}(h,k)\), allora \(a^j\equiv1\pmod{mn}\).<br>
+      <em>Dim:</em> \(j\) &egrave; multiplo di \(h\) e di \(k\), quindi
+      \(a^j\equiv1\pmod m\) e \(\pmod n\). Poich&eacute; \(\gcd(m,n)=1\):
+      \(a^j\equiv1\pmod{mn}\). &#9632;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 2 (&#9733;&#9733;) &mdash; a dispari, n&#8805;3: a<sup>2<sup>n-2</sup></sup>&#8801;1 (mod 2<sup>n</sup>)</span>
+      <em>Induzione su n.</em> Base n=3: \(a^2=4k(k+1)+1\equiv1\pmod8\) &#10003;
+      (\(k(k+1)\) &egrave; pari). Passo: se \(a^{2^{n-3}}\equiv1\pmod{2^{n-1}}\),
+      allora \(a^{2^{n-3}}=1+q\cdot2^{n-1}\), e elevando al quadrato:
+      \(a^{2^{n-2}}=1+q\cdot2^n+\ldots\equiv1\pmod{2^n}\). &#9632;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 3 (&#9733;&#9733;) &mdash; Solo 2 e 4 tra i 2<sup>n</sup> hanno radici primitive</span>
+      Per \(2^n\) con \(n\geq3\): dall&rsquo;Es.2 ogni dispari soddisfa
+      \(a^{2^{n-2}}\equiv1\pmod{2^n}\) con \(2^{n-2}&lt;2^{n-1}=\phi(2^n)\).
+      Nessuno raggiunge l&rsquo;esponente massimo. &#9632;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 4 &mdash; gcd{&#120601;(m),&#120601;(n)}&gt;1 se m,n&gt;2</span>
+      Se m,n&gt;2: entrambi &#120601;(m) e &#120601;(n) sono pari (&#167;6-1 Es.4),
+      quindi \(\gcd(\phi(m),\phi(n))\geq2>1\). &#9632;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 5 (&#9733;) &mdash; Due fattori primi dispari &rarr; nessuna radice primitiva</span>
+      Siano p,q due fattori primi dispari distinti di m. Per Es.4:
+      \(\mathrm{lcm}(\phi(p^a),\phi(q^b))&lt;\phi(p^aq^b)\). Nessun elemento
+      raggiunge l&rsquo;esponente \(\phi(m)\). &#9632;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 6 (&#9733;&#9733;) &mdash; Solo 1,2,4,p<sup>r</sup>,2p<sup>r</sup></span>
+      &#10003; m=1,2,4: diretto.<br>
+      &#10003; m=p<sup>r</sup> (p dispari): Es. 7&ndash;12.<br>
+      &#10003; m=2p<sup>r</sup>: Es. 14.<br>
+      &#10007; Tutti gli altri: Es. 3 e 5. &#9632;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 15 &mdash; Radici primitive mod 6,7,8,9,10</span>
+      <strong>mod 6</strong>: 0 (due fattori primi).<br>
+      <strong>mod 7</strong>: 2 (&#10003; {3,5}).<br>
+      <strong>mod 8</strong>: 0 (Es.3).<br>
+      <strong>mod 9</strong>: 2 (&#10003; {2,5}).<br>
+      <strong>mod 10</strong>: 2 (&#10003; {3,7}).
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 16 &mdash; Esponenti mod 11, verifica N(h)=&#120601;(h)</span>
+      N(1)=1=&#120601;(1) &#10003; {1}<br>
+      N(2)=1=&#120601;(2) &#10003; {10&#8801;&minus;1}<br>
+      N(5)=4=&#120601;(5) &#10003; {3,4,5,9}<br>
+      N(10)=4=&#120601;(10) &#10003; {2,6,7,8}<br>
+      Somma = 10 = p&minus;1 &#10003;
+    </div>
+
+  </div>
+</div>
+
+<!-- Mappa concettuale -->
+<div class="full">
+  <h4 class="sub">Mappa Concettuale &mdash; Struttura del Capitolo 7</h4>
+  <div class="vis">
+    <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="am" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#2a1c8a"/>
+        </marker>
+        <marker id="am2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#8c1428"/>
+        </marker>
+      </defs>
+      <rect x="5" y="80" width="110" height="42" rx="4" fill="#15102a"/>
+      <text x="60" y="98" text-anchor="middle" fill="white" font-family="Staatliches,sans-serif" font-size="11" letter-spacing=".04em">Def 7-1</text>
+      <text x="60" y="113" text-anchor="middle" fill="#b0a8d8" font-family="Fira Code,monospace" font-size="8">Esponente di a</text>
+      <rect x="138" y="40" width="122" height="42" rx="4" fill="#2a1c8a"/>
+      <text x="199" y="58" text-anchor="middle" fill="white" font-family="Staatliches,sans-serif" font-size="11" letter-spacing=".04em">Thm 7-1, 7-2</text>
+      <text x="199" y="73" text-anchor="middle" fill="#c0b8ff" font-family="Fira Code,monospace" font-size="8">Esistenza, h|r</text>
+      <rect x="138" y="120" width="122" height="42" rx="4" fill="#15102a" opacity=".9"/>
+      <text x="199" y="138" text-anchor="middle" fill="white" font-family="Staatliches,sans-serif" font-size="11" letter-spacing=".04em">Def 7-2</text>
+      <text x="199" y="153" text-anchor="middle" fill="#b0a8d8" font-family="Fira Code,monospace" font-size="8">Radice Primitiva</text>
+      <rect x="280" y="80" width="128" height="42" rx="4" fill="#4035cc"/>
+      <text x="344" y="98" text-anchor="middle" fill="white" font-family="Staatliches,sans-serif" font-size="11" letter-spacing=".04em">Thm 7-3,4</text>
+      <text x="344" y="113" text-anchor="middle" fill="#d0c8ff" font-family="Fira Code,monospace" font-size="8">SRR, espon.(a&#7498;)</text>
+      <rect x="428" y="40" width="122" height="42" rx="4" fill="#6050d0"/>
+      <text x="489" y="58" text-anchor="middle" fill="white" font-family="Staatliches,sans-serif" font-size="11" letter-spacing=".04em">Cor 7-1</text>
+      <text x="489" y="73" text-anchor="middle" fill="#d0c8ff" font-family="Fira Code,monospace" font-size="8">g&#7497; prim. &#8596; gcd=1</text>
+      <rect x="428" y="120" width="122" height="42" rx="4" fill="#15102a" opacity=".85"/>
+      <text x="489" y="138" text-anchor="middle" fill="#c8900a" font-family="Staatliches,sans-serif" font-size="11" letter-spacing=".04em">Thm 7-5</text>
+      <text x="489" y="153" text-anchor="middle" fill="#b0a8d8" font-family="Fira Code,monospace" font-size="8">&#120601;(&#120601;(m)) rad. prim.</text>
+      <rect x="568" y="60" width="148" height="82" rx="4" fill="#8c1428"/>
+      <text x="642" y="88" text-anchor="middle" fill="white" font-family="Staatliches,sans-serif" font-size="16" letter-spacing=".04em">Thm 7-6</text>
+      <text x="642" y="106" text-anchor="middle" fill="#ffc0c8" font-family="Fira Code,monospace" font-size="8">&#8707; rad.prim. mod p</text>
+      <text x="642" y="120" text-anchor="middle" fill="#ffc0c8" font-family="Fira Code,monospace" font-size="8">N(h)=&#120601;(h) &#8704;h|p-1</text>
+      <text x="642" y="134" text-anchor="middle" fill="#ffc0c8" font-family="Fira Code,monospace" font-size="8">Thm 5-5 + Thm 6-1</text>
+      <line x1="115" y1="101" x2="136" y2="66" stroke="#2a1c8a" stroke-width="1.6" marker-end="url(#am)"/>
+      <line x1="115" y1="101" x2="136" y2="136" stroke="#2a1c8a" stroke-width="1.6" marker-end="url(#am)"/>
+      <line x1="260" y1="68" x2="278" y2="90" stroke="#4035cc" stroke-width="1.6" marker-end="url(#am)"/>
+      <line x1="260" y1="134" x2="278" y2="108" stroke="#4035cc" stroke-width="1.6" marker-end="url(#am)"/>
+      <line x1="408" y1="96" x2="426" y2="68" stroke="#6050d0" stroke-width="1.6" marker-end="url(#am)"/>
+      <line x1="408" y1="106" x2="426" y2="132" stroke="#6050d0" stroke-width="1.6" marker-end="url(#am)"/>
+      <line x1="550" y1="68" x2="566" y2="82" stroke="#8c1428" stroke-width="1.6" marker-end="url(#am2)"/>
+      <line x1="550" y1="136" x2="566" y2="120" stroke="#8c1428" stroke-width="1.6" marker-end="url(#am2)"/>
+      <text x="360" y="188" text-anchor="middle" font-family="Crimson Pro,serif"
+        font-size="10" fill="#888" font-style="italic">
+        Radici primitive: il culmine di sei capitoli di preparazione
+      </text>
+    </svg>
+  </div>
+</div>
+
+<!-- BIBLIOGRAFIA -->
+<div class="sb"><h3>&sect; Riferimenti Bibliografici</h3></div>
+<div class="full">
+  <div class="bib"><div class="bib-k">[And71]</div>Andrews, G.E. (1971). <em>Number Theory</em>. W.B. Saunders, Philadelphia. &mdash; <strong>Riferimento principale.</strong></div>
+  <div class="bib"><div class="bib-k">[Gau01]</div>Gauss, C.F. (1801). <em>Disquisitiones Arithmeticae</em>. Lipsia. &mdash; &sect;&sect;52&ndash;66: radici primitive, indici, reciprocit&agrave; quadratica.</div>
+  <div class="bib"><div class="bib-k">[HarWri08]</div>Hardy, G.H. &amp; Wright, E.M. (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford University Press.</div>
+  <div class="bib"><div class="bib-k">[Ire90]</div>Ireland, K. &amp; Rosen, M. (1990). <em>A Classical Introduction to Modern Number Theory</em> (2nd ed.). Springer. &mdash; Cap. 4: struttura di \((\mathbb{Z}/p\mathbb{Z})^*\).</div>
+  <div class="bib"><div class="bib-k">[Niv91]</div>Niven, I., Zuckerman, H.S. &amp; Montgomery, H.L. (1991). <em>An Introduction to the Theory of Numbers</em> (5th ed.). Wiley.</div>
+  <div class="bib"><div class="bib-k">[Apo76]</div>Apostol, T.M. (1976). <em>Introduction to Analytic Number Theory</em>. Springer.</div>
+  <div class="bib"><div class="bib-k">[DifHel76]</div>Diffie, W. &amp; Hellman, M. (1976). New directions in cryptography. <em>IEEE Trans. Inform. Theory</em> 22(6), 644&ndash;654.</div>
+  <div class="bib"><div class="bib-k">[ElG85]</div>ElGamal, T. (1985). A public key cryptosystem based on discrete logarithms. <em>IEEE Trans. Inform. Theory</em> 31(4), 469&ndash;472.</div>
+  <div class="bib"><div class="bib-k">[Ros11]</div>Rosen, K.H. (2011). <em>Elementary Number Theory</em> (6th ed.). Pearson.</div>
+  <div class="bib"><div class="bib-k">[Knu97]</div>Knuth, D.E. (1997). <em>The Art of Computer Programming, Vol. 2</em> (3rd ed.). Addison-Wesley.</div>
+</div>
+
+</div><!-- end two-col -->
+
+<footer>
+  Studio redatto da <strong>Alberto Oliva</strong> &mdash;
+  <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a> &middot;
+  Rif.: G.E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971) &mdash; Capitolo 7 &middot;
+  Aprile 2026
+</footer>
+</body>
+</html>

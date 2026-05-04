@@ -54,6 +54,15 @@ div[data-testid="stHorizontalBlock"] .stButton > button {
     line-height: 1 !important;
 }
 
+/* ── Pulsantoni navigazione globale ── */
+.global-nav-btn button {
+    height: 56px !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    border-radius: 14px !important;
+    letter-spacing: 0.04em !important;
+}
+
 /* ── Navigator bar ── */
 .bnav {
     display: flex; align-items: center; gap: 0;
@@ -131,11 +140,8 @@ def _extract_text(html_path: str) -> str:
     try:
         with open(html_path, "r", encoding="utf-8") as f:
             html = f.read()
-        # Rimuove script e style
         html = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
-        # Rimuove tag HTML
         text = re.sub(r"<[^>]+>", " ", html)
-        # Comprime spazi
         text = re.sub(r"\s+", " ", text).strip()
         return text.lower()
     except:
@@ -216,18 +222,33 @@ def main():
 
     categories = list(catalog.keys())
 
+    # ── Lista globale ordinata per data (più recente prima) ───────────────
+    all_docs_sorted = sorted(
+        [doc for docs in catalog.values() for doc in docs],
+        key=lambda d: d["date"] or date.min,
+        reverse=True
+    )
+
     # Session State
     ss = st.session_state
-    if "nav_cat" not in ss or ss.nav_cat not in catalog:
-        ss.nav_cat = categories[0]
-    if "nav_idx" not in ss:
-        ss.nav_idx = 0
+
+    # global_idx: indice nella lista globale cronologica (0 = più recente)
+    if "global_idx" not in ss:
+        ss.global_idx = 0  # apre sull'articolo più recente
+
+    # Clamp per sicurezza
+    ss.global_idx = max(0, min(ss.global_idx, len(all_docs_sorted) - 1))
+
+    # L'articolo corrente è sempre determinato dall'indice globale
+    doc = all_docs_sorted[ss.global_idx]
+
+    # La categoria attiva segue automaticamente l'articolo corrente
+    cat = doc["category"]
 
     # ── Sidebar: Filtri ────────────────────────────────────────────────────
     with st.sidebar:
         st.markdown("### 🔍 Filtri")
 
-        # Radio: dove cercare
         search_mode = st.radio(
             "Cerca in:",
             options=["Titolo", "Testo articolo"],
@@ -239,16 +260,13 @@ def main():
         if search_mode == "Testo articolo":
             st.caption("⚠️ La ricerca nel testo può essere più lenta con molti articoli.")
 
-        # Campo testo
         label = "Cerca nel titolo" if search_mode == "Titolo" else "Cerca nel testo"
         query = st.text_input(label, key="search_query").strip().lower()
 
         st.divider()
 
-        # Raccoglie tutti i doc per il conteggio totale
         all_docs_flat = [doc for docs in catalog.values() for doc in docs]
 
-        # Applica filtro
         if query:
             if search_mode == "Titolo":
                 matched = [d for d in all_docs_flat if query in d["title"].lower()]
@@ -260,56 +278,91 @@ def main():
             matched = None
             st.markdown(f"📊 **{len(all_docs_flat)} articoli totali** trovati")
 
-    # ── Determina categoria e docs attivi ─────────────────────────────────
-    cat = ss.nav_cat
-    docs_in_cat = catalog[cat]
-
-    # Se c'è una ricerca attiva, filtra per categoria corrente
-    if matched is not None:
-        docs = [d for d in matched if d["category"] == cat]
-    else:
-        docs = docs_in_cat
-
-    if not docs:
-        # Categoria attiva ma nessun risultato: mostra avviso
-        pass
-
-    idx = min(ss.nav_idx, max(len(docs) - 1, 0))
-
     # ── Header ─────────────────────────────────────────────────────────────
     st.markdown('<h1 style="margin-bottom:0; margin-top:0;">📰 Archivio Notizie</h1>', unsafe_allow_html=True)
     st.markdown('<p style="color:#64748b; margin-top:2px; margin-bottom:6px;">Politica • Scienza • Economia • Esteri • Approfondimenti</p>', unsafe_allow_html=True)
+
+    # ── PULSANTONI NAVIGAZIONE GLOBALE ─────────────────────────────────────
+    total = len(all_docs_sorted)
+    g = ss.global_idx
+
+    btn_left, btn_info, btn_right = st.columns([1, 3, 1])
+
+    with btn_left:
+        st.markdown('<div class="global-nav-btn">', unsafe_allow_html=True)
+        if st.button(
+            "← Più recente",
+            key="gbtn_prev",
+            use_container_width=True,
+            disabled=(g == 0),
+            help="Articolo più recente"
+        ):
+            ss.global_idx = g - 1
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with btn_info:
+        st.markdown(
+            f"""<div style="
+                text-align:center; padding:10px 0 4px 0;
+                font-family:'IBM Plex Mono',monospace;
+                font-size:0.7rem; color:#64748b; letter-spacing:0.06em;
+            ">
+                <span style="font-size:1rem; font-weight:700; color:#0f172a;">{g+1}</span>
+                &nbsp;/&nbsp;{total}&nbsp;&nbsp;·&nbsp;&nbsp;
+                <span style="
+                    background:#F5CC27; color:#000; border-radius:6px;
+                    padding:2px 8px; font-weight:700; letter-spacing:0.1em;
+                ">{cat}</span>
+                &nbsp;&nbsp;·&nbsp;&nbsp;{doc['date_label']}
+            </div>""",
+            unsafe_allow_html=True
+        )
+
+    with btn_right:
+        st.markdown('<div class="global-nav-btn">', unsafe_allow_html=True)
+        if st.button(
+            "Più vecchio →",
+            key="gbtn_next",
+            use_container_width=True,
+            disabled=(g == total - 1),
+            help="Articolo più vecchio"
+        ):
+            ss.global_idx = g + 1
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    st.divider()
 
     # ── Category Pills ─────────────────────────────────────────────────────
     cols = st.columns(len(categories))
     for i, c in enumerate(categories):
         is_active = (c == cat)
-        # Conta risultati per categoria se ricerca attiva
         if matched is not None:
             n = len([d for d in matched if d["category"] == c])
-            label = f"{c} ({n})"
+            pill_label = f"{c} ({n})"
         else:
-            label = c
+            pill_label = c
         if cols[i].button(
-            label,
+            pill_label,
             key=f"cat_{c}",
             use_container_width=True,
             type="primary" if is_active else "secondary"
         ):
-            ss.nav_cat = c
-            ss.nav_idx = 0
+            # Salta al primo articolo di quella categoria nella lista globale
+            for gi, gd in enumerate(all_docs_sorted):
+                if gd["category"] == c:
+                    ss.global_idx = gi
+                    break
             st.rerun()
 
     st.divider()
 
-    # ── Nessun risultato ───────────────────────────────────────────────────
-    if not docs:
-        st.warning(f"Nessun articolo trovato in **{cat}** per la ricerca «{query}».")
-        return
+    # ── Navigator Bar (info dettaglio) ─────────────────────────────────────
+    # Posizione relativa nella categoria corrente
+    docs_in_cat = catalog[cat]
+    idx_in_cat = next((i for i, d in enumerate(docs_in_cat) if d["full_path"] == doc["full_path"]), 0)
 
-    doc = docs[idx]
-
-    # ── Navigator Bar ──────────────────────────────────────────────────────
     st.markdown(f"""
     <div class="bnav" style="margin-bottom:10px;">
         <div class="bnav-date">{doc['date_label']}</div>
@@ -318,28 +371,9 @@ def main():
         <div class="bnav-sep"></div>
         <div class="bnav-title">{doc['title']}</div>
         <div class="bnav-sep"></div>
-        <div class="bnav-counter">{idx+1} / {len(docs)}</div>
+        <div class="bnav-counter">{idx_in_cat+1} / {len(docs_in_cat)} in categoria</div>
     </div>
     """, unsafe_allow_html=True)
-
-    # Pulsanti di navigazione
-    nc1, nc2, nc3, nc4 = st.columns(4)
-    with nc1:
-        if st.button("‹ Precedente", use_container_width=True, disabled=(idx >= len(docs)-1), key="btn_prev"):
-            ss.nav_idx = idx + 1
-            st.rerun()
-    with nc2:
-        if st.button("↑ Più recente", use_container_width=True, disabled=(idx == 0), key="btn_top"):
-            ss.nav_idx = 0
-            st.rerun()
-    with nc3:
-        if st.button("↓ Più vecchio", use_container_width=True, disabled=(idx == len(docs)-1), key="btn_bot"):
-            ss.nav_idx = len(docs) - 1
-            st.rerun()
-    with nc4:
-        if st.button("Successivo ›", use_container_width=True, disabled=(idx <= 0), key="btn_next"):
-            ss.nav_idx = idx - 1
-            st.rerun()
 
     st.divider()
 

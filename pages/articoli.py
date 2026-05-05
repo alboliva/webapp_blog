@@ -209,7 +209,21 @@ with st.sidebar:
     search = st.text_input(label, placeholder="es. riforma, clima, elezioni...", key="search_query")
 
     categorie = sorted(df["Categoria"].unique())
-    selected_cats = st.multiselect("Argomenti", options=categorie, default=categorie)
+
+    # Pulsante "Deseleziona tutti" affiancato al label Argomenti
+    lbl_col, btn_col = st.columns([3, 1])
+    lbl_col.markdown("**Argomenti**")
+    if btn_col.button("✕", key="clear_cats", use_container_width=True, help="Deseleziona tutti gli argomenti"):
+        st.session_state["selected_cats_ms"] = []
+        st.rerun()
+
+    selected_cats = st.multiselect(
+        label="",
+        options=categorie,
+        default=st.session_state.get("selected_cats_ms", categorie),
+        key="selected_cats_ms",
+        label_visibility="collapsed"
+    )
 
     st.divider()
     st.caption(f"📊 **{len(df)} articoli totali** trovati")

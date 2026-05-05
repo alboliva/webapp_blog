@@ -140,7 +140,8 @@ def scan_articoli(root_dir):
         if date_match:
             try:
                 data_obj = datetime(int(date_match.group(1)), int(date_match.group(2)), int(date_match.group(3)))
-                data_str = data_obj.strftime("%d %b %Y")
+                # Anno a due cifre: %y invece di %Y
+                data_str = data_obj.strftime("%d %b %y")
             except:
                 pass
 
@@ -172,11 +173,8 @@ def _extract_text(percorso: str) -> str:
     try:
         with open(percorso, "r", encoding="utf-8") as f:
             html = f.read()
-        # Rimuove script e style
         html = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
-        # Rimuove tag HTML
         text = re.sub(r"<[^>]+>", " ", html)
-        # Comprime spazi
         text = re.sub(r"\s+", " ", text).strip()
         return text.lower()
     except:
@@ -196,7 +194,6 @@ if df.empty:
 with st.sidebar:
     st.header("🔎 Filtri")
 
-    # Radio: dove cercare
     search_mode = st.radio(
         "Cerca in:",
         options=["Titolo", "Testo articolo"],
@@ -297,16 +294,17 @@ with col_viewer:
             with open(selected_file["Percorso"], "r", encoding="utf-8") as f:
                 html_content = f.read()
 
-            dl_col, btn_col = st.columns([3, 1])
-            with dl_col:
-                st.markdown(
-                    f'<div class="preview-title">📄 {selected_file["Titolo"]}</div>'
-                    f'<div class="preview-meta">{selected_file["Data_str"]} · '
-                    f'<span class="cat-badge">{selected_file["Categoria"]}</span></div>',
-                    unsafe_allow_html=True
-                )
-            with btn_col:
-                st.markdown("<br>", unsafe_allow_html=True)
+            # ── Header: titolo + meta + pulsanti affiancati ──────────────
+            st.markdown(
+                f'<div class="preview-title">📄 {selected_file["Titolo"]}</div>'
+                f'<div class="preview-meta">{selected_file["Data_str"]} · '
+                f'<span class="cat-badge">{selected_file["Categoria"]}</span></div>',
+                unsafe_allow_html=True
+            )
+
+            btn_col1, btn_col2 = st.columns([1, 1])
+
+            with btn_col1:
                 st.download_button(
                     "⬇️ Scarica",
                     data=html_content.encode("utf-8"),
@@ -315,6 +313,15 @@ with col_viewer:
                     use_container_width=True,
                     key="dl_preview"
                 )
+
+            with btn_col2:
+                # Pulsante APRI: imposta il percorso nell'articolo corrente
+                # in session_state e naviga alla pagina principale (app.py)
+                if st.button("🔗 Apri in Archivio", use_container_width=True, key="btn_apri"):
+                    # Salva il percorso selezionato: app.py lo userà per
+                    # trovare l'indice globale corrispondente e mostrare l'articolo
+                    st.session_state["open_article_path"] = selected_file["Percorso"]
+                    st.switch_page("app.py")
 
             inject = """
             <style>

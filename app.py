@@ -180,7 +180,7 @@ def scan_articoli(root: str) -> dict:
                 "full_path": full_path,
                 "pdf_path": pdf_path,
                 "date": d,
-                "date_label": d.strftime("%d %b %Y") if d else "—",
+                "date_label": d.strftime("%d %b %y") if d else "—",  # anno a 2 cifre
                 "title": _human_title(fname),
                 "size_html": _fmt_size(full_path),
                 "size_pdf": _fmt_size(pdf_path) if pdf_path else None,
@@ -231,6 +231,18 @@ def main():
 
     # Session State
     ss = st.session_state
+
+    # ── Gestione redirect da pagina articoli (pulsante APRI) ──────────────
+    # Se articoli.py ha impostato open_article_path, troviamo l'indice globale
+    # corrispondente e lo usiamo come punto di partenza, poi puliamo la chiave.
+    if "open_article_path" in ss and ss["open_article_path"]:
+        target_path = ss.pop("open_article_path")
+        found_idx = next(
+            (i for i, d in enumerate(all_docs_sorted) if d["full_path"] == target_path),
+            None
+        )
+        if found_idx is not None:
+            ss.global_idx = found_idx
 
     # global_idx: indice nella lista globale cronologica (0 = più recente)
     if "global_idx" not in ss:
@@ -349,7 +361,6 @@ def main():
             use_container_width=True,
             type="primary" if is_active else "secondary"
         ):
-            # Salta al primo articolo di quella categoria nella lista globale
             for gi, gd in enumerate(all_docs_sorted):
                 if gd["category"] == c:
                     ss.global_idx = gi
@@ -359,7 +370,6 @@ def main():
     st.divider()
 
     # ── Navigator Bar (info dettaglio) ─────────────────────────────────────
-    # Posizione relativa nella categoria corrente
     docs_in_cat = catalog[cat]
     idx_in_cat = next((i for i, d in enumerate(docs_in_cat) if d["full_path"] == doc["full_path"]), 0)
 

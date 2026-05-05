@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crisi Petrolifera 2026 — Analisi Scientifica Europa & Italia</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans',sans-serif;background:#ffffff;color:#1a2035;font-size:14px;line-height:1.7}
+:root{--acc:#B57A14;--acc2:#8B5E08;--red:#C0392B;--green:#1A6B3A;--blue:#1A4E8A;--purple:#6C3483;--orange:#D4781A;--bg:#ffffff;--bg2:#F7F8FC;--bg3:#F0F2F8;--bdr:#D8DDED;--bdr2:#B0BDD8;--txt:#1a2035;--txt2:#3a4a65;--txt3:#6a7a95}
+.hdr{background:#F4F6FB;border-bottom:2px solid var(--acc);padding:32px 40px 24px;position:relative}
+.hdr::after{content:'';position:absolute;right:0;top:0;bottom:0;width:280px;background:radial-gradient(ellipse at 80% 50%,rgba(181,122,20,0.08) 0%,transparent 70%);pointer-events:none}
+.tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--acc);text-transform:uppercase;margin-bottom:12px}
+.hdr h1{font-family:'Playfair Display',serif;font-size:clamp(22px,3.5vw,40px);font-weight:900;color:var(--txt);line-height:1.18;margin-bottom:8px}
+.hdr h1 em{font-style:italic;color:var(--acc)}
+.hdr-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--txt3);margin-bottom:18px;letter-spacing:.5px}
+.meta-row{display:flex;gap:28px;flex-wrap:wrap}
+.meta{display:flex;flex-direction:column;gap:2px}
+.meta-l{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:1.5px}
+.meta-v{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--acc2);font-weight:500}
+.abst{border-left:3px solid var(--acc);background:#FEFAEF;padding:16px 20px;margin:20px 40px;border-radius:0 8px 8px 0}
+.abst::before{content:'Abstract';font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--acc);display:block;margin-bottom:8px;text-transform:uppercase}
+.abst p{font-size:13px;color:var(--txt2);font-style:italic;line-height:1.75}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:18px 40px;background:var(--bg2);border-top:.5px solid var(--bdr);border-bottom:.5px solid var(--bdr)}
+.kpi{background:#fff;border:.5px solid var(--bdr);border-radius:8px;padding:14px 10px;text-align:center;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.kpi.kr::after{background:var(--red)}.kpi.kg::after{background:var(--green)}.kpi.kb::after{background:var(--blue)}.kpi.ka::after{background:var(--acc)}.kpi.kp::after{background:var(--purple)}
+.kpi-v{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;margin-bottom:4px}
+.kpi.kr .kpi-v{color:var(--red)}.kpi.kg .kpi-v{color:var(--green)}.kpi.kb .kpi-v{color:var(--blue)}.kpi.ka .kpi-v{color:var(--acc)}.kpi.kp .kpi-v{color:var(--purple)}
+.kpi-l{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;line-height:1.3}
+.kpi-d{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--txt3);margin-top:3px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:0 40px 40px}
+.col{padding:22px 16px}
+.col-l{border-right:.5px solid var(--bdr)}
+.sec-h{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:10px;border-bottom:.5px solid var(--bdr)}
+.sec-n{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--acc);background:#FEF7E6;border:.5px solid #E8C56A;padding:3px 8px;border-radius:4px;letter-spacing:1.5px}
+.sec-t{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--txt)}
+.ch-box{background:var(--bg2);border:.5px solid var(--bdr);border-radius:8px;padding:14px;margin-bottom:18px}
+.ch-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--acc2);text-transform:uppercase;margin-bottom:4px}
+.ch-sub{font-size:11px;color:var(--txt3);margin-bottom:10px}
+.prose{font-size:13px;color:var(--txt2);line-height:1.78;margin-bottom:14px}
+.prose strong{color:var(--txt);font-weight:600}
+.prose em{color:var(--acc2);font-style:normal}
+.fmla{background:#FEFCE8;border:.5px solid #D4B84A;border-radius:8px;padding:12px 16px;margin:10px 0;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7A5C08;line-height:1.6}
+.fmla-d{font-size:11px;color:var(--txt3);margin-top:6px;font-style:italic;font-family:'IBM Plex Sans',sans-serif}
+.risk-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.risk-i{background:var(--bg2);border:.5px solid var(--bdr);border-radius:8px;padding:10px 12px}
+.risk-n{font-size:12px;color:var(--txt2);margin-bottom:5px}
+.risk-t{height:7px;background:var(--bdr);border-radius:4px;overflow:hidden}
+.risk-f{height:100%;border-radius:4px}
+.risk-ll{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--txt3);margin-top:3px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.b{padding:5px 14px;border-radius:20px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;border:.5px solid}
+.b-g{border-color:var(--green);color:var(--green);background:#F0FAF4}
+.b-a{border-color:var(--acc);color:var(--acc2);background:#FEFAEF}
+.b-r{border-color:var(--red);color:var(--red);background:#FEF0EE}
+.leg{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;font-size:11px;color:var(--txt2)}
+.ls{display:flex;align-items:center;gap:5px}
+.lc{width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0}
+.dtbl{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:11px;margin:10px 0}
+.dtbl th{background:var(--bg3);color:var(--acc2);padding:8px 10px;text-align:left;border-bottom:1.5px solid var(--bdr2);font-size:10px;text-transform:uppercase;letter-spacing:1px}
+.dtbl td{padding:7px 10px;border-bottom:.5px solid var(--bdr);color:var(--txt2)}
+.dtbl tr:hover td{background:rgba(0,0,0,.02)}
+td.up{color:var(--red);font-weight:600}td.dn{color:var(--green);font-weight:600}td.nt{color:var(--blue)}
+.fw{padding:22px 56px;border-top:.5px solid var(--bdr)}
+.fw-inner{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.sim-wrap{margin:0 40px 40px;border:1.5px solid var(--acc);border-radius:12px;padding:24px;background:var(--bg2);position:relative}
+.sim-wrap::before{content:'◈  Simulatore interattivo';font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--acc);position:absolute;top:-9px;left:18px;background:#fff;padding:0 8px;text-transform:uppercase}
+.sim-t{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:5px;color:var(--txt)}
+.sim-d{font-size:12px;color:var(--txt3);margin-bottom:18px}
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.sim-ins{display:flex;flex-direction:column;gap:14px}
+.sim-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;margin-bottom:5px}
+.sim-sel{width:100%;background:#fff;border:.5px solid var(--bdr2);color:var(--txt);padding:10px 12px;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;outline:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23B57A14' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.sim-sel:focus{border-color:var(--acc)}
+.rw{display:flex;align-items:center;gap:12px}
+input[type=range]{flex:1;-webkit-appearance:none;background:var(--bg3);border-radius:4px;height:5px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(181,122,20,.3)}
+.rv{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--acc2);min-width:44px;text-align:right;font-weight:600}
+.sim-btn{background:linear-gradient(135deg,var(--acc) 0%,var(--acc2) 100%);color:#fff;border:none;padding:12px 20px;border-radius:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:all .2s;width:100%;margin-top:6px}
+.sim-btn:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(181,122,20,.28)}
+.sim-btn:active{transform:translateY(0)}
+.sim-outs{display:flex;flex-direction:column;gap:7px}
+.oc{background:#fff;border:.5px solid var(--bdr);border-radius:7px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;transition:border-color .2s}
+.oc.warn{border-color:#D4A82E}.oc.alrt{border-color:var(--red)}.oc.good{border-color:var(--green)}
+.oc-l{font-size:11px;color:var(--txt2)}
+.oc-v{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600}
+.oc-v.up{color:var(--red)}.oc-v.dn{color:var(--green)}.oc-v.nt{color:var(--blue)}
+.sim-note{font-size:11px;color:var(--txt3);margin-top:14px;padding-top:12px;border-top:.5px solid var(--bdr);font-style:italic;line-height:1.6}
+.refs{background:var(--bg2);border-top:2px solid var(--bdr);padding:28px 40px}
+.refs-t{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:16px;color:var(--txt)}
+.refs-g{display:grid;grid-template-columns:1fr 1fr;gap:7px;list-style:none;counter-reset:rc}
+.refs-g li{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--txt3);padding-left:28px;position:relative;counter-increment:rc;line-height:1.55}
+.refs-g li::before{content:'['counter(rc)']';position:absolute;left:0;color:var(--acc);font-weight:600}
+@media(max-width:900px){
+  .two-col,.sim-grid,.fw-inner,.refs-g,.kpi-row{grid-template-columns:1fr}
+  .col-l{border-right:none;border-bottom:.5px solid var(--bdr)}
+  .kpi-row{padding:16px 20px}.hdr,.abst,.fw,.refs,.sim-wrap{padding-left:20px;padding-right:20px}
+  .two-col{padding:0 20px 20px}
+}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="tag">Paper Scientifico · Analisi Economico-Energetica · Maggio 2026</div>
+  <h1>Crisi Petrolifera 2026:<br><em>Vulnerabilità, Scenari & Impatti</em><br>per Europa e Italia</h1>
+  <div class="hdr-sub">Dati primari: IEA OMR Apr 2026 · Eurostat · ISTAT · BMTI · Confagricoltura · CIA Puglia · DGISSEG/MISE</div>
+  <div class="meta-row">
+    <div class="meta"><span class="meta-l">Data analisi</span><span class="meta-v">05 Maggio 2026</span></div>
+    <div class="meta"><span class="meta-l">Orizzonte</span><span class="meta-v">6 mesi (Mag–Nov 2026)</span></div>
+    <div class="meta"><span class="meta-l">Shock supply</span><span class="meta-v">−10.1 Mb/g (Mar 2026)</span></div>
+    <div class="meta"><span class="meta-l">Focus</span><span class="meta-v">EU · Italia · Puglia</span></div>
+    <div class="meta"><span class="meta-l">Probabilità scenari</span><span class="meta-v">Base 40% · Tug 45% · Worst 15%</span></div>
+  </div>
+</header>
+
+<div class="abst">
+  <p>La chiusura parziale dello Stretto di Hormuz (febbraio–marzo 2026), conseguenza del conflitto Iran–USA/Israele, ha causato lo shock petrolifero più severo dal 1973: perdita cumulativa &gt;360 milioni di barili in marzo, offerta globale −10,1 Mb/g (IEA OMR April 2026). L'Italia, importatore netto al 93%, fronteggia vulnerabilità asimmetriche: scorte jet fuel ≤6 settimane (IEA, aprile), diesel +19% YoY, urea +75% in 2 mesi. Attraverso modelli supply-demand shock, analisi di scenari probabilistici, elasticità input-output e analogie storiche (1973, 1990, 2022), questo studio quantifica rischi settoriali e proietta prezzi per novembre 2026, con focus su aviazione, trasporti, agricoltura e olivicoltura pugliese.</p>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi kr"><div class="kpi-v">−10.1</div><div class="kpi-l">Mb/g shock supply</div><div class="kpi-d">Mar 2026 (IEA OMR)</div></div>
+  <div class="kpi ka"><div class="kpi-v">~145</div><div class="kpi-l">$/bbl Brent</div><div class="kpi-d">Apr 2026 (+61% YoY)</div></div>
+  <div class="kpi kb"><div class="kpi-v">2.14</div><div class="kpi-l">€/L benzina IT</div><div class="kpi-d">Apr 2026 (+15% YoY)</div></div>
+  <div class="kpi kg"><div class="kpi-v">6 wk</div><div class="kpi-l">Scorte jet EU</div><div class="kpi-d">Mid-Apr 2026 (IEA)</div></div>
+  <div class="kpi kp"><div class="kpi-v">360+</div><div class="kpi-l">Mb perdita cumulata</div><div class="kpi-d">Marzo 2026 (IEA)</div></div>
+</div>
+
+<div class="two-col">
+<div class="col col-l">
+
+  <div class="sec-h"><span class="sec-n">§ 01</span><span class="sec-t">Import greggio Italia 2025</span></div>
+  <p class="prose">L'Italia importa circa <strong>1.105–1.128 mila bbl/giorno</strong>. Post-2022 la Russia è crollata a &lt;1%. Principali fornitori: <em>Africa/Libia ~39%</em>, Azerbaijan 17%, Kazakhstan 13% — tutti su rotte diverse ma strutturalmente vulnerabili a shock geopolitici.</p>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 1 — Origini import greggio Italia 2025 (%)</div>
+    <div class="ch-sub">Fonte: ISTAT/Eurostat Energy Statistics 2025</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#B57A14"></span>Libia/Africa N 24%</span>
+      <span class="ls"><span class="lc" style="background:#D4A82E"></span>Africa Subsah. 17%</span>
+      <span class="ls"><span class="lc" style="background:#1A4E8A"></span>Azerbaijan 17%</span>
+      <span class="ls"><span class="lc" style="background:#6C3483"></span>Kazakhstan 13%</span>
+      <span class="ls"><span class="lc" style="background:#1A6B3A"></span>USA 9%</span>
+      <span class="ls"><span class="lc" style="background:#C0392B"></span>Altro ME 12%</span>
+      <span class="ls"><span class="lc" style="background:#888"></span>Norv./Russia 8%</span>
+    </div>
+    <div style="position:relative;width:100%;height:210px"><canvas id="c1" role="img" aria-label="Donut chart origini import greggio Italia 2025: Libia 24, Africa subsahariana 17, Azerbaijan 17, Kazakhstan 13, USA 9, Altro ME 12, Norvegia Russia 8">Libia 24%, Africa Subsah. 17%, Azerbaijan 17%, Kazakhstan 13%, USA 9%, Altro ME 12%, Norvegia/Russia 8%.</canvas></div>
+  </div>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 02</span><span class="sec-t">Confronto struttura import EU 2025</span></div>
+  <p class="prose">Germania e Francia dipendono maggiormente da Norvegia e USA — fonti strutturalmente più stabili. L'Italia è più esposta a rotte mediterranee/caspio, con minore capacità di raffinazione domestica rispetto a DE e FR.</p>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 2 — IT vs DE vs FR per fonte (%)</div>
+    <div class="ch-sub">Fonte: Eurostat Energy Statistics 2025</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#B57A14"></span>Italia</span>
+      <span class="ls"><span class="lc" style="background:#1A4E8A"></span>Germania</span>
+      <span class="ls"><span class="lc" style="background:#1A6B3A"></span>Francia</span>
+    </div>
+    <div style="position:relative;width:100%;height:230px"><canvas id="c2" role="img" aria-label="Grouped bar chart confronto struttura import petrolio EU 2025. Italia più esposta ad Africa e Azerbaijan. Germania e Francia più dipendenti da Norvegia e USA.">Confronto struttura import petrolio EU 2025.</canvas></div>
+  </div>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 03</span><span class="sec-t">Modello supply shock — Hormuz 2026</span></div>
+  <div class="fmla">
+    ΔP* = −(1/ε_D) · (ΔS/S) · P₀
+    <div class="fmla-d">ε_D ≈ −0.05 (domanda inelastica breve termine, IEA); ΔS/S = −8% (marzo 2026); P₀ = 90 $/bbl pre-crisi → P* teorico ≈ 144 $/bbl — allineato con i dati osservati di aprile (145 $/bbl, IEA OMR).</div>
+  </div>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 3 — Offerta globale petrolio Mb/g (2024–Apr 2026)</div>
+    <div class="ch-sub">Fonte: IEA Oil Market Report April 2026</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#1A4E8A"></span>Offerta effettiva</span>
+      <span class="ls"><span style="width:16px;height:2px;background:#B57A14;display:inline-block;border-top:1px dashed #B57A14"></span>&nbsp;Trend pre-crisi</span>
+    </div>
+    <div style="position:relative;width:100%;height:215px"><canvas id="c3" role="img" aria-label="Line chart offerta globale petrolio. Crolla da 103.1 Mb/g gennaio 2026 a 92.7 a marzo 2026.">Offerta globale petrolio: crollo da 103.1 a 92.7 Mb/g a marzo 2026.</canvas></div>
+  </div>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 04</span><span class="sec-t">Prezzi Brent & benzina Italia 2022–2026</span></div>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 4 — Brent $/bbl (sx) & benzina €/L (dx) — asse doppio</div>
+    <div class="ch-sub">Fonte: IEA · DGISSEG/MISE · Bloomberg 2022–Apr 2026</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#B57A14"></span>Brent $/bbl</span>
+      <span class="ls"><span class="lc" style="background:#1A6B3A"></span>Benzina IT €/L</span>
+    </div>
+    <div style="position:relative;width:100%;height:225px"><canvas id="c4" role="img" aria-label="Dual axis line chart. Brent sale da 89 a 145 dollari tra gennaio e aprile 2026. Benzina sale da 1.81 a 2.14 euro al litro.">Prezzi Brent e benzina Italia 2022-2026.</canvas></div>
+  </div>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 05</span><span class="sec-t">Mappa rischio settoriale</span></div>
+  <div class="risk-g">
+    <div class="risk-i"><div class="risk-n">Jet fuel / Aviazione</div><div class="risk-t"><div class="risk-f" style="width:92%;background:#C0392B"></div></div><div class="risk-ll">CRITICO — 6 settimane scorte (IEA)</div></div>
+    <div class="risk-i"><div class="risk-n">Trasporto su gomma</div><div class="risk-t"><div class="risk-f" style="width:72%;background:#D4781A"></div></div><div class="risk-ll">ALTO — prezzi +19% YoY</div></div>
+    <div class="risk-i"><div class="risk-n">Energia elettrica</div><div class="risk-t"><div class="risk-f" style="width:40%;background:#D4A82E"></div></div><div class="risk-ll">MEDIO — TAP/Algeria coprono</div></div>
+    <div class="risk-i"><div class="risk-n">Bunker navale</div><div class="risk-t"><div class="risk-f" style="width:58%;background:#D4781A"></div></div><div class="risk-ll">MEDIO-ALTO — shift LNG lento</div></div>
+    <div class="risk-i"><div class="risk-n">Agricoltura (gasolio)</div><div class="risk-t"><div class="risk-f" style="width:82%;background:#C0392B"></div></div><div class="risk-ll">ALTO — 1.67 €/L Puglia (CIA, apr 2026)</div></div>
+    <div class="risk-i"><div class="risk-n">Fertilizzanti (urea)</div><div class="risk-t"><div class="risk-f" style="width:75%;background:#D4781A"></div></div><div class="risk-ll">ALTO — Urea +75% in 2 mesi</div></div>
+  </div>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 06</span><span class="sec-t">Gasolio agricolo & urea — evoluzione</span></div>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 5 — Gasolio €/L (sx) & urea €/t (dx) · Nov 2025–Apr 2026</div>
+    <div class="ch-sub">Fonte: Confagricoltura/BMTI 2026</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#C0392B"></span>Gasolio agri €/L</span>
+      <span class="ls"><span class="lc" style="background:#6C3483"></span>Urea €/t</span>
+    </div>
+    <div style="position:relative;width:100%;height:215px"><canvas id="c5" role="img" aria-label="Combined bar line chart. Gasolio agricolo sale da 0.88 a 1.67 euro al litro. Urea da 540 a 825 euro per tonnellata.">Gasolio agricolo e urea: rincari 2025-2026.</canvas></div>
+  </div>
+
+</div><!-- /col-l -->
+<div class="col">
+
+  <div class="sec-h"><span class="sec-n">§ 07</span><span class="sec-t">Scenari probabilistici — 6 mesi</span></div>
+  <div class="badges">
+    <span class="b b-g">Base 40%</span>
+    <span class="b b-a">Tug-of-War 45%</span>
+    <span class="b b-r">Worst 15%</span>
+  </div>
+  <p class="prose">Lo scenario <em>tug-of-war</em> (45%) è il più probabile: gli USA usano la leva militare-energetica su Saudi/UAE stabilizzando parzialmente, ma l'Europa paga prezzi alti fino al Q3 come "compensazione". Il <strong>best case</strong> (40%) prevede riapertura parziale Hormuz entro luglio e Brent 70–90 $/bbl a novembre.</p>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 6 — Fan chart scenari Brent $/bbl (Mag–Nov 2026)</div>
+    <div class="ch-sub">Probabilità: Base 40% · Tug-of-War 45% · Worst 15% · Fonte: analisi autore su IEA OMR</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#1A6B3A"></span>Base 40%</span>
+      <span class="ls"><span class="lc" style="background:#B57A14"></span>Tug-of-War 45%</span>
+      <span class="ls"><span class="lc" style="background:#C0392B"></span>Worst 15%</span>
+    </div>
+    <div style="position:relative;width:100%;height:245px"><canvas id="c6" role="img" aria-label="Fan chart scenari Brent. Base porta a 80 dollari a novembre, tug-of-war a 108, worst a 142.">Fan chart scenari Brent maggio-novembre 2026.</canvas></div>
+  </div>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 08</span><span class="sec-t">Proiezione benzina €/L — 3 scenari</span></div>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 7 — Benzina self-service Italia (Mag–Nov 2026)</div>
+    <div class="ch-sub">Elasticità trasmissione greggio ≈ 0.4–0.6 · Fonte: DGISSEG/MISE + modello autore</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#1A6B3A"></span>Base</span>
+      <span class="ls"><span class="lc" style="background:#B57A14"></span>Tug-of-War</span>
+      <span class="ls"><span class="lc" style="background:#C0392B"></span>Worst</span>
+    </div>
+    <div style="position:relative;width:100%;height:215px"><canvas id="c7" role="img" aria-label="Line chart proiezione benzina. Base scende a 1.70 a novembre, tug-of-war sale a 2.28, worst a 2.65.">Proiezione benzina Italia 3 scenari.</canvas></div>
+  </div>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 09</span><span class="sec-t">Analogie storiche — impatto PIL OCSE</span></div>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 8 — % var. PIL OCSE nei 4 trim. post-shock</div>
+    <div class="ch-sub">Fonte: IEA/OCSE Historical; 2026 = stima autore (*)</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#1A4E8A"></span>Q1 post-shock</span>
+      <span class="ls"><span class="lc" style="background:#B57A14"></span>Q4 post-shock</span>
+    </div>
+    <div style="position:relative;width:100%;height:205px"><canvas id="c8" role="img" aria-label="Bar chart impatto PIL OCSE per crisi petrolifere storiche. Crisi 1973 meno 2.5 a Q1 e meno 2.8 a Q4. Hormuz 2026 stimato meno 0.5 e meno 1.2.">Impatto PIL OCSE crisi petrolifere storiche.</canvas></div>
+  </div>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 10</span><span class="sec-t">Radar vulnerabilità: Italia vs EU media</span></div>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 9 — Spider chart vulnerabilità energetica (score 0–10)</div>
+    <div class="ch-sub">Fonte: IEA/Eurostat 2025; elaborazione autore</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#B57A14"></span>Italia</span>
+      <span class="ls"><span class="lc" style="background:#1A4E8A"></span>Media EU</span>
+    </div>
+    <div style="position:relative;width:100%;height:265px"><canvas id="c9" role="img" aria-label="Radar chart vulnerabilità energetica. Italia punteggio alto in dipendenza import 9 e esposizione Hormuz 7. Media EU più equilibrata.">Radar vulnerabilità energetica Italia vs EU.</canvas></div>
+  </div>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 11</span><span class="sec-t">Puglia — costi olivicoltura 2026</span></div>
+  <p class="prose">La Puglia è <strong>terza regione IT</strong> per VA agricolo (3.531 M€, +6,9% nel 2024), prima per olivicoltura (45,1% produzione nazionale, ~370.000 ha). Gasolio: da 0,85 €/L a <em>1,67 €/L in 3 giorni</em> (aprile). CIA Puglia: "agricoltura a rischio stop". Coldiretti: ~25 M€ extra ogni +0,30 €/L.</p>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 10 — Var. % costi produzione olivicoltura pugliese vs 2025</div>
+    <div class="ch-sub">Fonte: Coldiretti/CIA Puglia, ISTAT apr 2026</div>
+    <div style="position:relative;width:100%;height:225px"><canvas id="c10" role="img" aria-label="Horizontal bar chart variazione costi olivicoltura pugliese. Fertilizzanti urea +75, gasolio meccanizzazione +70, antiXylella +68, irrigazione +62, serre +45, trasporto +22.">Variazione costi olivicoltura pugliese 2026.</canvas></div>
+  </div>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 12</span><span class="sec-t">Scorte jet fuel EU & riserve strategiche</span></div>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 11 — Scorte jet fuel EU (settimane) · Soglia critica: 4 wk</div>
+    <div class="ch-sub">Fonte: IEA OMR April 2026</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#1A4E8A"></span>Scorte (settimane)</span>
+      <span class="ls"><span style="width:16px;height:2px;background:#C0392B;display:inline-block"></span>&nbsp;Soglia critica</span>
+    </div>
+    <div style="position:relative;width:100%;height:185px"><canvas id="c11" role="img" aria-label="Bar chart scorte jet fuel EU. Gennaio 14 settimane, aprile 6, giugno stimato 4.5.">Scorte jet fuel EU 2026.</canvas></div>
+  </div>
+
+  <table class="dtbl">
+    <thead><tr><th>Paese/Ente</th><th>Riserve strat.</th><th>Giorni cop.</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>IEA totale</td><td class="up">400 Mb</td><td class="nt">~30–60</td><td class="up">Rilascio avviato</td></tr>
+      <tr><td>Italia</td><td class="up">9–10 Mb</td><td class="nt">~60–90</td><td class="nt">Rilascio Mar 2026</td></tr>
+      <tr><td>Germania</td><td class="nt">—</td><td class="nt">~90</td><td class="dn">Stabile</td></tr>
+      <tr><td>Francia</td><td class="nt">—</td><td class="nt">~90</td><td class="dn">Stabile</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-h" style="margin-top:22px"><span class="sec-n">§ 13</span><span class="sec-t">Contango futures Brent — struttura Apr 2026</span></div>
+  <div class="fmla">
+    F(T) = S₀ · e^(r + c − y)T
+    <div class="fmla-d">Contango post-shock: S₀ = 145 $/bbl; convenience yield (y) basso → forte contango. Forward 12M ≈ 110 $/bbl. Struttura incentiva drawdown riserve strategiche (vendita spot alta + riacquisto forward più basso).</div>
+  </div>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 12 — Curva futures Brent: spot → 24M</div>
+    <div class="ch-sub">Fonte: Bloomberg/ICE modello autore; pre-crisi = luglio 2025</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#C0392B"></span>Apr 2026 (crisi)</span>
+      <span class="ls"><span class="lc" style="background:#1A4E8A"></span>Lug 2025 (pre-crisi)</span>
+    </div>
+    <div style="position:relative;width:100%;height:195px"><canvas id="c12" role="img" aria-label="Line chart struttura futures Brent. Aprile 2026 spot 145 dollari scende a 102 a 24 mesi contango. Pre-crisi luglio 2025 struttura piatta 82-86 dollari.">Curva futures Brent contango aprile 2026.</canvas></div>
+  </div>
+
+</div><!-- /col-r -->
+</div><!-- /two-col -->
+
+<div class="fw">
+  <div class="sec-h"><span class="sec-n">§ 14</span><span class="sec-t">Proiezioni comparate settoriali — 3 scenari (Nov 2026 vs Apr 2026)</span></div>
+  <div class="ch-box">
+    <div class="ch-lbl">Fig. 13 — Variazione % costi settoriali per scenario</div>
+    <div class="ch-sub">Benchmark = Aprile 2026 · Fonte: modello autore su IEA/Eurostat/DGISSEG</div>
+    <div class="leg">
+      <span class="ls"><span class="lc" style="background:#1A6B3A"></span>Base %</span>
+      <span class="ls"><span class="lc" style="background:#B57A14"></span>Tug-of-War %</span>
+      <span class="ls"><span class="lc" style="background:#C0392B"></span>Worst %</span>
+    </div>
+    <div style="position:relative;width:100%;height:240px"><canvas id="c13" role="img" aria-label="Grouped bar chart variazione percentuale costi settoriali 3 scenari. Worst case jet fuel +60, gasolio agricolo +70, diesel +38.">Proiezioni settoriali comparate 3 scenari novembre 2026.</canvas></div>
+  </div>
+
+  <div class="fw-inner" style="margin-top:22px">
+    <div>
+      <div class="sec-h"><span class="sec-n">§ 15</span><span class="sec-t">Game theory — Nash equilibrium energetico</span></div>
+      <div class="fmla">
+        U_EU = −ζ·P_energy − η·Dipendenza<br>
+        U_USA = α·S_EU + β·P_oil − γ·C_mil<br>
+        U_OPEC = δ·P_oil − ε·Risk_sanzioni
+        <div class="fmla-d">Nash equilibrium instabile: EU ha funzione dominata. Strategia ottimale per l'Italia = diversificazione accelerata (riduzione η via TAP, rinnovabili, Algeria).</div>
+      </div>
+      <table class="dtbl" style="margin-top:12px">
+        <thead><tr><th>Strategia</th><th>Utilità EU</th><th>Utilità USA</th></tr></thead>
+        <tbody>
+          <tr><td>Entrambi cooperano</td><td class="dn">7/10</td><td class="dn">8/10</td></tr>
+          <tr><td>EU defects, USA coop</td><td class="nt">4/10</td><td class="nt">6/10</td></tr>
+          <tr><td>EU coop, USA defects</td><td class="up">2/10</td><td class="dn">7/10</td></tr>
+          <tr><td>Entrambi defectano</td><td class="up">1/10</td><td class="up">3/10</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="sec-h"><span class="sec-n">§ 16</span><span class="sec-t">Misure emergenza Italia — Gov. Meloni</span></div>
+      <table class="dtbl">
+        <thead><tr><th>Misura</th><th>Valore</th><th>Settori</th></tr></thead>
+        <tbody>
+          <tr><td>Release riserve strat.</td><td class="up">9–10 Mb</td><td>Tutti</td></tr>
+          <tr><td>Credito d'imposta gasolio agri</td><td class="up">20% — 30 M€</td><td>Agricoltura</td></tr>
+          <tr><td>Proroga taglio accise</td><td class="nt">~20–25 ¢/L</td><td>Tutti</td></tr>
+          <tr><td>Diplomazia Baku (TAP)</td><td class="dn">+9.5 bcm/a</td><td>Gas</td></tr>
+          <tr><td>Diplomazia Doha (Qatar)</td><td class="dn">LNG + sicurezza</td><td>Gas</td></tr>
+          <tr><td>Fondo regionale Sicilia</td><td class="nt">25 M€</td><td>Agri+pesca+trsp</td></tr>
+        </tbody>
+      </table>
+      <p class="prose" style="font-size:11px;margin-top:10px">Fonte: DL 42/2026 · Comunicati Gov. Meloni · Regione Puglia/Sicilia · ISTAT apr 2026</p>
+    </div>
+  </div>
+</div>
+
+<div class="sim-wrap">
+  <div class="sim-t">Simulatore scenari energetici Italia 2026</div>
+  <div class="sim-d">Seleziona scenario geopolitico, data e intensità crisi per ottenere stime quantitative su prezzi carburanti, energia e costi settoriali. Valori di partenza = dati reali aprile 2026 (IEA · DGISSEG · BMTI · CIA Puglia).</div>
+  <div class="sim-grid">
+    <div class="sim-ins">
+      <div>
+        <div class="sim-lbl">Scenario geopolitico</div>
+        <select class="sim-sel" id="sScen">
+          <option value="base">Base — stabilizzazione Hormuz (prob. 40%)</option>
+          <option value="tug" selected>Tug-of-War USA/OPEC (prob. 45%)</option>
+          <option value="severe">Severo — prolungamento crisi (prob. 15%)</option>
+          <option value="worst">Worst case — chiusura totale Hormuz</option>
+        </select>
+      </div>
+      <div>
+        <div class="sim-lbl">Data proiezione</div>
+        <select class="sim-sel" id="sDate">
+          <option value="2">Giugno 2026 (+1 mese)</option>
+          <option value="4" selected>Agosto 2026 (+3 mesi)</option>
+          <option value="6">Ottobre 2026 (+5 mesi)</option>
+          <option value="8">Dicembre 2026 (+7 mesi)</option>
+        </select>
+      </div>
+      <div>
+        <div class="sim-lbl">Brent attuale ($/bbl)</div>
+        <div class="rw"><input type="range" id="sBrent" min="90" max="200" value="145" step="1"><span class="rv" id="sBrentV">145</span></div>
+      </div>
+      <div>
+        <div class="sim-lbl">Intensità shock offerta (%)</div>
+        <div class="rw"><input type="range" id="sShock" min="2" max="20" value="8" step="1"><span class="rv" id="sShockV">8%</span></div>
+      </div>
+      <button class="sim-btn" onclick="runSim()">&#9654; Calcola scenario</button>
+    </div>
+    <div class="sim-outs" id="simOut">
+      <div class="oc" id="oc1"><span class="oc-l">&#9981; Benzina self-service (€/L)</span><span class="oc-v up" id="o1">—</span></div>
+      <div class="oc" id="oc2"><span class="oc-l">&#128666; Diesel (€/L)</span><span class="oc-v up" id="o2">—</span></div>
+      <div class="oc" id="oc3"><span class="oc-l">&#9889; Elettricità domestica (€/kWh)</span><span class="oc-v" id="o3">—</span></div>
+      <div class="oc" id="oc4"><span class="oc-l">&#128293; Gas naturale (€/Sm³)</span><span class="oc-v" id="o4">—</span></div>
+      <div class="oc" id="oc5"><span class="oc-l">&#128666; Trasporto gomma (var. % vs 2025)</span><span class="oc-v up" id="o5">—</span></div>
+      <div class="oc" id="oc6"><span class="oc-l">&#128674; Bunker navale VLSFO ($/ton)</span><span class="oc-v" id="o6">—</span></div>
+      <div class="oc" id="oc7"><span class="oc-l">&#9992; Jet fuel (€/L)</span><span class="oc-v" id="o7">—</span></div>
+      <div class="oc" id="oc8"><span class="oc-l">&#9992; Riduzione voli EU stimata (%)</span><span class="oc-v" id="o8">—</span></div>
+      <div class="oc" id="oc9"><span class="oc-l">&#127807; Gasolio agri Puglia (€/L)</span><span class="oc-v up" id="o9">—</span></div>
+    </div>
+  </div>
+  <div class="sim-note">&#9888; Nota metodologica: stime derivate da modelli di elasticità trasmissione prezzo (IEA, DGISSEG, Eurostat), calibrati su dati reali aprile 2026. Non sostituiscono previsioni ufficiali. Valori di partenza aprile 2026: benzina 2.14 €/L · diesel 1.89 €/L · elettricità 0.28 €/kWh · gas 1.12 €/Sm³ · jet fuel 1.20 €/L · bunker VLSFO ~950 $/t · gasolio agri Puglia 1.67 €/L. Elasticità: gas greggio→pompa ≈ 0.40–0.60; elettricità→gas ≈ 0.25–0.35.</div>
+</div>
+
+<div class="refs">
+  <div class="refs-t">Riferimenti bibliografici & fonti dati</div>
+  <ol class="refs-g">
+    <li>IEA Oil Market Report – April 2026 (14/04/2026). International Energy Agency, Paris.</li>
+    <li>IEA Oil Market Report – March 2026. IEA, Paris.</li>
+    <li>Eurostat Energy Statistics 2025 – Import by origin. European Commission, Luxembourg.</li>
+    <li>ISTAT – Andamento Economia Agricola 2024. Roma: Istituto Nazionale di Statistica.</li>
+    <li>ISTAT – Prezzi al Consumo, aprile 2026. Roma.</li>
+    <li>Confagricoltura – Centro Studi, Nota rincari energetici, 13 marzo 2026.</li>
+    <li>CIA Puglia – Comunicati ufficiali marzo–aprile 2026. Bari.</li>
+    <li>Coldiretti Puglia – Comunicati e esposti GdF Bari, marzo–aprile 2026.</li>
+    <li>CREA – "L'agricoltura pugliese conta 2026", 22 aprile 2026.</li>
+    <li>ISMEA/Olivonews – Filiera Olivicola, analisi prezzi 2026. Roma.</li>
+    <li>BMTI – Prezzi ortofrutta all'origine, aprile 2026.</li>
+    <li>Mediobanca – Industria dell'Olio d'Oliva 2024–2025. Milano.</li>
+    <li>DL 42/2026 – Credito d'imposta gasolio agricolo. GU Repubblica Italiana.</li>
+    <li>Bloomberg L.P. – Brent Crude Oil Futures, gen–apr 2026.</li>
+    <li>Reuters – Geopolitical Risk Monitor, Hormuz Strait, feb–apr 2026.</li>
+    <li>ISPRA – Consumi energetici finali per settore 2023–2024. Roma.</li>
+    <li>DGISSEG/MISE – Prezzi carburanti settimanali Italia 2022–2026.</li>
+    <li>Regione Puglia – Comunicati Assessore Paolicelli, marzo–aprile 2026.</li>
+    <li>Hamilton J.D. (2009). Causes and Consequences of the Oil Shock of 2007–08. Brookings Papers on Economic Activity, 40(1), 215–283.</li>
+    <li>Mearsheimer J.J. (2001). The Tragedy of Great Power Politics. W.W. Norton, New York.</li>
+  </ol>
+</div>
+
+<script>
+const gC='rgba(0,0,0,0.06)';const tC='#6a7a95';
+Chart.defaults.font.family="'IBM Plex Mono',monospace";Chart.defaults.font.size=10;Chart.defaults.plugins.legend.display=false;
+const C=(id,cfg)=>new Chart(document.getElementById(id).getContext('2d'),cfg);
+
+C('c1',{type:'doughnut',data:{labels:['Libia/Africa N','Africa Subsah.','Azerbaijan','Kazakhstan','USA','Altro ME','Norv./Russia'],datasets:[{data:[24,17,17,13,9,12,8],backgroundColor:['#B57A14','#D4A82E','#1A4E8A','#6C3483','#1A6B3A','#C0392B','#888'],borderColor:'#fff',borderWidth:2,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw}%`}}}}});
+
+C('c2',{type:'bar',data:{labels:['Africa/Libia','Azerbaijan','USA','Norvegia','Kazakhstan','Russia'],datasets:[{label:'IT',data:[39,17,9,3,13,1],backgroundColor:'rgba(181,122,20,0.85)',borderSkipped:false,borderRadius:3},{label:'DE',data:[4,5,18,20,13,2],backgroundColor:'rgba(26,78,138,0.75)',borderSkipped:false,borderRadius:3},{label:'FR',data:[12,4,16,18,10,2],backgroundColor:'rgba(26,107,58,0.75)',borderSkipped:false,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gC},ticks:{color:tC,maxRotation:30}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>v+'%'},max:50}}}});
+
+C('c3',{type:'line',data:{labels:['Gen 24','Apr 24','Lug 24','Ott 24','Gen 25','Apr 25','Lug 25','Ott 25','Gen 26','Feb 26','Mar 26','Apr 26'],datasets:[{data:[100.8,101.2,101.5,101.8,102.1,102.4,102.6,102.9,103.1,102.8,92.7,93.1],borderColor:'#1A4E8A',backgroundColor:'rgba(26,78,138,0.07)',fill:true,tension:0.35,pointRadius:ctx=>ctx.dataIndex>=8?5:3,pointBackgroundColor:ctx=>ctx.dataIndex>=8?'#C0392B':'#1A4E8A',pointBorderColor:'transparent'},{data:[100.8,101.2,101.5,101.8,102.1,102.4,102.6,102.9,103.1,103.4,103.6,103.8],borderColor:'#B57A14',borderDash:[5,4],pointRadius:0,fill:false,tension:0.35}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gC},ticks:{color:tC,maxRotation:30}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>v+' Mb'},min:90,max:106}}}});
+
+C('c4',{type:'line',data:{labels:['Gen 22','Lug 22','Gen 23','Lug 23','Gen 24','Lug 24','Gen 25','Lug 25','Gen 26','Feb 26','Mar 26','Apr 26'],datasets:[{label:'Brent',data:[83,105,87,79,78,86,78,81,89,112,145,143],borderColor:'#B57A14',backgroundColor:'rgba(181,122,20,0.06)',fill:true,tension:0.4,yAxisID:'y1',pointRadius:3},{label:'Benzina',data:[1.65,2.12,1.82,1.69,1.71,1.76,1.73,1.79,1.81,1.88,2.05,2.14],borderColor:'#1A6B3A',backgroundColor:'rgba(26,107,58,0.06)',fill:true,tension:0.4,yAxisID:'y2',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gC},ticks:{color:tC,maxRotation:30}},y1:{type:'linear',position:'left',grid:{color:gC},ticks:{color:'#8B5E08',callback:v=>'$'+v},title:{display:true,text:'Brent $/bbl',color:'#8B5E08',font:{size:10}}},y2:{type:'linear',position:'right',grid:{drawOnChartArea:false},ticks:{color:'#1A6B3A',callback:v=>'€'+v.toFixed(2)},title:{display:true,text:'Benzina €/L',color:'#1A6B3A',font:{size:10}}}}}});
+
+C('c5',{type:'bar',data:{labels:['Nov 25','Dic 25','Gen 26','Feb 26','Mar 26','Apr 26'],datasets:[{label:'Gasolio',data:[0.88,0.87,0.86,0.95,1.45,1.67],backgroundColor:ctx=>ctx.raw>1.2?'rgba(192,57,43,0.85)':'rgba(181,122,20,0.75)',yAxisID:'y1',borderSkipped:false,borderRadius:3},{type:'line',label:'Urea',data:[540,545,548,560,780,825],borderColor:'#6C3483',backgroundColor:'rgba(108,52,131,0.07)',fill:true,tension:0.4,yAxisID:'y2',pointRadius:4,pointBackgroundColor:'#6C3483'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gC},ticks:{color:tC}},y1:{position:'left',grid:{color:gC},ticks:{color:tC,callback:v=>'€'+v.toFixed(2)},min:0.5},y2:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#6C3483',callback:v=>'€'+v},min:400}}}});
+
+const mFan=['Mag 26','Giu 26','Lug 26','Ago 26','Set 26','Ott 26','Nov 26'];
+C('c6',{type:'line',data:{labels:mFan,datasets:[{data:[140,125,105,92,85,82,80],borderColor:'#1A6B3A',fill:false,tension:0.4,borderWidth:2,pointRadius:3},{data:[145,148,145,135,125,115,108],borderColor:'#B57A14',fill:false,tension:0.4,borderWidth:2.5,pointRadius:3},{data:[150,160,170,165,158,150,142],borderColor:'#C0392B',fill:false,tension:0.4,borderWidth:2,pointRadius:3,borderDash:[4,3]},{data:[150,150,150,150,150,150,150],borderColor:'rgba(192,57,43,0.35)',borderDash:[8,4],fill:false,pointRadius:0,borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gC},ticks:{color:tC}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>'$'+v},min:70,max:180}}}});
+
+C('c7',{type:'line',data:{labels:['Apr 26',...mFan],datasets:[{data:[2.14,2.10,1.98,1.88,1.80,1.78,1.72,1.70],borderColor:'#1A6B3A',fill:false,tension:0.4,borderWidth:2,pointRadius:3},{data:[2.14,2.22,2.30,2.38,2.45,2.40,2.35,2.28],borderColor:'#B57A14',fill:false,tension:0.4,borderWidth:2.5,pointRadius:3},{data:[2.14,2.35,2.55,2.75,2.80,2.78,2.72,2.65],borderColor:'#C0392B',fill:false,tension:0.4,borderWidth:2,pointRadius:3,borderDash:[4,3]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gC},ticks:{color:tC}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>'€'+v.toFixed(2)},min:1.5,max:3.0}}}});
+
+C('c8',{type:'bar',data:{labels:['1973–74','Gulf War 1990','Crisi 2008','Russia 2022','Hormuz 2026*'],datasets:[{label:'Q1 post',data:[-2.5,-0.8,-2.1,0.3,-0.5],backgroundColor:ctx=>ctx.raw<0?'rgba(192,57,43,0.8)':'rgba(26,107,58,0.75)',borderSkipped:false,borderRadius:3},{label:'Q4 post',data:[-2.8,-0.3,-1.8,1.2,-1.2],backgroundColor:ctx=>ctx.raw<0?'rgba(181,122,20,0.8)':'rgba(26,78,138,0.7)',borderSkipped:false,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{color:tC,boxWidth:10,padding:10}}},scales:{x:{grid:{color:gC},ticks:{color:tC,maxRotation:20,font:{size:9}}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>v+'%'}}}}});
+
+C('c9',{type:'radar',data:{labels:['Dipend. import','Espos. Hormuz','Riserve strat.','Diversif. fonti','Cap. raffinaz.','Rinnovabili','Riserve gas','Resilienza policy'],datasets:[{label:'Italia',data:[9,7,5,6,5,6,5,6],borderColor:'#B57A14',backgroundColor:'rgba(181,122,20,0.08)',pointBackgroundColor:'#B57A14',borderWidth:2},{label:'Media EU',data:[7,5,6,7,7,6,7,7],borderColor:'#1A4E8A',backgroundColor:'rgba(26,78,138,0.06)',pointBackgroundColor:'#1A4E8A',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{color:tC,boxWidth:10,padding:10}}},scales:{r:{min:0,max:10,ticks:{stepSize:2,backdropColor:'transparent',color:tC,font:{size:9}},grid:{color:gC},pointLabels:{color:tC,font:{size:10}}}}}});
+
+C('c10',{type:'bar',data:{labels:['Fertilizzanti (urea)','Gasolio meccaniz.','Tratt. antiXylella','Irrigazione pompe','Energia serre','Trasporto export'],datasets:[{data:[75,70,68,62,45,22],backgroundColor:ctx=>ctx.raw>65?'rgba(192,57,43,0.85)':ctx.raw>45?'rgba(212,120,26,0.8)':'rgba(181,122,20,0.75)',borderSkipped:false,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`+${c.raw}%`}}},scales:{x:{grid:{color:gC},ticks:{color:tC,callback:v=>'+'+v+'%'},max:90},y:{grid:{color:gC},ticks:{color:tC,font:{size:10}}}}}});
+
+C('c11',{type:'bar',data:{labels:['Gen 26','Feb 26','Mar 26','Apr 26','Mag 26*','Giu 26*'],datasets:[{data:[14,12,9,6,5,4.5],backgroundColor:ctx=>ctx.raw<=6?'rgba(192,57,43,0.8)':ctx.raw<=9?'rgba(181,122,20,0.75)':'rgba(26,78,138,0.7)',borderSkipped:false,borderRadius:3},{type:'line',data:[4,4,4,4,4,4],borderColor:'rgba(192,57,43,0.6)',borderDash:[5,3],pointRadius:0,fill:false,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gC},ticks:{color:tC}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>v+' wk'},min:0,max:16}}}});
+
+C('c12',{type:'line',data:{labels:['Spot','1M','2M','3M','6M','9M','12M','18M','24M'],datasets:[{data:[145,140,133,127,118,114,110,105,102],borderColor:'#C0392B',backgroundColor:'rgba(192,57,43,0.06)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#C0392B'},{data:[82,82,83,83,84,84,85,85,86],borderColor:'#1A4E8A',fill:false,tension:0.3,pointRadius:3,pointBackgroundColor:'#1A4E8A',borderDash:[4,3]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gC},ticks:{color:tC}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>'$'+v}}}}});
+
+C('c13',{type:'bar',data:{labels:['Benzina','Diesel','Jet fuel','Bunker nav.','Elettricità','Gas riscald.','Trsp. gomma','Gas. agri'],datasets:[{label:'Base %',data:[-16,-12,-5,-8,5,3,-10,-15],backgroundColor:'rgba(26,107,58,0.75)',borderSkipped:false,borderRadius:3},{label:'Tug-of-War %',data:[14,19,28,22,12,15,22,35],backgroundColor:'rgba(181,122,20,0.8)',borderSkipped:false,borderRadius:3},{label:'Worst %',data:[31,38,60,50,22,28,45,70],backgroundColor:'rgba(192,57,43,0.8)',borderSkipped:false,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{color:tC,boxWidth:10,padding:10}}},scales:{x:{grid:{color:gC},ticks:{color:tC,maxRotation:30,font:{size:9}}},y:{grid:{color:gC},ticks:{color:tC,callback:v=>(v>=0?'+':'')+v+'%'}}}}});
+
+document.getElementById('sBrent').oninput=function(){document.getElementById('sBrentV').textContent=this.value};
+document.getElementById('sShock').oninput=function(){document.getElementById('sShockV').textContent=this.value+'%'};
+
+function runSim(){
+  const sc=document.getElementById('sScen').value;
+  const t=parseFloat(document.getElementById('sDate').value);
+  const brent=parseFloat(document.getElementById('sBrent').value);
+  const shock=parseFloat(document.getElementById('sShock').value);
+  const bAdj=(brent-145)/145*0.4;
+  const sAdj=(shock-8)/100*0.5;
+  const M={base:{p:-0.028,d:-0.025,e:0.008,g:0.006,tr:-0.020,sh:-0.020,j:-0.015,fl:-0.5,ga:-0.030},tug:{p:0.020,d:0.022,e:0.020,g:0.025,tr:0.030,sh:0.025,j:0.045,fl:1.5,ga:0.042},severe:{p:0.040,d:0.045,e:0.035,g:0.040,tr:0.055,sh:0.050,j:0.080,fl:3.0,ga:0.065},worst:{p:0.070,d:0.075,e:0.055,g:0.065,tr:0.085,sh:0.080,j:0.130,fl:6.0,ga:0.100}};
+  const m=M[sc];
+  const proj=(base,rate,ex)=>base*(1+(rate+(ex||0)+bAdj/12)*t);
+  const petrol=proj(1.926,m.p,sAdj*0.4);
+  const diesel=proj(2.04,m.d,sAdj*0.45);
+  const elec=proj(0.28,m.e,sAdj*0.2);
+  const gas=proj(1.12,m.g,sAdj*0.3);
+  const jet=proj(1.20,m.j,sAdj*0.6);
+  const ship=proj(950,m.sh,sAdj*0.5);
+  const gasolio=proj(1.67,m.ga,sAdj*0.5);
+  const truck=(m.tr+sAdj*0.5+bAdj/12)*t*100;
+  const flights=Math.min(Math.abs(m.fl)*t*(shock/8),35);
+  const lvl=sc==='worst'?'alrt':sc==='severe'?'warn':sc==='base'?'good':'warn';
+  const setO=(id,cid,val,cls)=>{
+    document.getElementById(id).textContent=val;
+    document.getElementById(id).className='oc-v '+cls;
+    document.getElementById(cid).className='oc '+lvl
+  };
+  setO('o1','oc1','€ '+petrol.toFixed(2),petrol>2.14?'up':'dn');
+  setO('o2','oc2','€ '+diesel.toFixed(2),diesel>1.89?'up':'dn');
+  setO('o3','oc3','€ '+elec.toFixed(3),elec>0.28?'up':'dn');
+  setO('o4','oc4','€ '+gas.toFixed(3),gas>1.12?'up':'dn');
+  setO('o5','oc5',(truck>=0?'+':'')+truck.toFixed(1)+'%',truck>0?'up':'dn');
+  setO('o6','oc6','$ '+Math.round(ship),ship>950?'up':'dn');
+  setO('o7','oc7','€ '+jet.toFixed(2),jet>1.20?'up':'dn');
+  setO('o8','oc8','−'+flights.toFixed(1)+'%','up');
+  setO('o9','oc9','€ '+gasolio.toFixed(2),gasolio>1.67?'up':'dn');
+}
+runSim();
+</script>
+</body>
+</html>

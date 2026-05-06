@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capitolo 11 — Somme di Quadrati | Andrews Number Theory</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Oswald:wght@300;400;500;600;700&family=Inconsolata:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#f7f3ee; --ink:#0e0a06; --cream:#ede7dc;
+  --night:#0c0806; --sepia:#1e1208; --mahogany:#3a1808;
+  --rust:#8a2800; --ember:#c84010; --flame:#e86020;
+  --gold:#b07808; --amber:#d09010; --honey:#e8b830;
+  --indigo:#1e3070; --cobalt:#2850b0; --sky:#6080d0;
+  --teal:#107060; --sage:#408060;
+  --rule:#c0a880;
+  --thm:#fff8ee; --proof:#faf6f0; --defn:#eef8f0;
+  --ex:#fdf0e4; --hist:#0c0806; --id:#f0f4ff;
+  --cor:#f0fff4; --waring:#fff0f8;
+  --shadow:0 2px 16px rgba(58,24,8,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);
+  font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;line-height:1.82;}
+
+header{
+  position:relative;background:var(--night);
+  padding:4.2rem 4rem 3rem;text-align:center;overflow:hidden;
+  border-bottom:4px solid var(--amber);
+}
+header::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 60%,rgba(138,40,0,.4) 0%,transparent 70%),
+    radial-gradient(ellipse 80% 60% at 80% 40%,rgba(30,48,112,.35) 0%,transparent 70%),
+    repeating-conic-gradient(rgba(200,64,16,.04) 0deg 4deg,transparent 4deg 8deg) center/60px 60px;
+}
+header::after{
+  content:'x\B2 + y\B2 + z\B2 + w\B2 = n';
+  position:absolute;right:2.5rem;bottom:1.2rem;
+  font-family:'Inconsolata',monospace;font-size:.88rem;
+  color:rgba(232,180,48,.14);letter-spacing:.12em;pointer-events:none;
+}
+.ctag{font-family:'Inconsolata',monospace;font-size:.67rem;letter-spacing:.3em;
+  color:var(--honey);text-transform:uppercase;display:block;margin-bottom:1rem;
+  position:relative;z-index:1;}
+header h1{font-family:'Oswald',sans-serif;font-size:3.6rem;font-weight:600;
+  letter-spacing:.06em;color:#fff;line-height:1.08;margin-bottom:.4rem;
+  position:relative;z-index:1;}
+header .sub{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.12rem;color:var(--sky);margin-bottom:1.6rem;
+  position:relative;z-index:1;}
+.meta{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;
+  font-size:.82rem;color:#605040;border-top:1px solid rgba(138,40,0,.2);
+  padding-top:1rem;position:relative;z-index:1;}
+.meta strong{color:var(--amber);}
+.meta a{color:var(--sky);text-decoration:none;}
+
+.abstract{background:var(--cream);border-left:5px solid var(--mahogany);
+  border-right:5px solid var(--mahogany);max-width:900px;margin:2rem auto;
+  padding:1.6rem 2.4rem;font-style:italic;font-size:.97rem;color:#180c06;}
+.abstract strong{font-style:normal;color:var(--rust);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;
+  max-width:1300px;margin:0 auto;padding:2.4rem 3.2rem;}
+.full{grid-column:1/-1;}
+@media(max-width:900px){
+  .two-col{grid-template-columns:1fr;padding:1.4rem 1.6rem;}
+  header{padding:2.4rem 1.6rem;}
+  header h1{font-size:2.6rem;}
+}
+
+.sb{grid-column:1/-1;display:flex;align-items:center;gap:1.2rem;
+  margin:2.4rem 0 .8rem;padding-top:1.2rem;border-top:2px solid var(--rule);}
+.sb h3{font-family:'Oswald',sans-serif;font-size:1.5rem;font-weight:500;
+  letter-spacing:.05em;color:var(--mahogany);white-space:nowrap;}
+.sb::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+p{margin-bottom:1em;text-align:justify;hyphens:auto;}
+h4.sub{font-family:'Cormorant Garamond',serif;font-size:1.08rem;
+  color:var(--rust);font-style:italic;font-weight:600;
+  margin:1.4rem 0 .55rem;padding-bottom:.2rem;border-bottom:1px dotted var(--rule);}
+
+/* Box types */
+.thm{background:var(--thm);border:1px solid #d8c090;border-left:5px solid var(--mahogany);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.thm .lbl{font-family:'Inconsolata',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--mahogany);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+.thm .stmt{font-style:italic;font-size:.97rem;color:#180c06;}
+
+.id-box{background:var(--id);border:1px solid #c0d0f0;border-left:5px solid var(--indigo);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.id-box .lbl{font-family:'Inconsolata',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--indigo);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+
+.cor-box{background:var(--cor);border:1px solid #88d8a0;border-left:5px solid var(--teal);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.cor-box .lbl{font-family:'Inconsolata',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--teal);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+
+.waring{background:var(--waring);border:1px solid #e0b0d0;border-left:5px solid #a02060;
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;}
+.waring .lbl{font-family:'Inconsolata',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:#a02060;text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+
+.defn{background:var(--defn);border:1px solid #88c8a0;border-left:5px solid var(--teal);
+  padding:.95rem 1.3rem;margin:1rem 0;font-size:.96rem;}
+.defn .lbl{font-family:'Inconsolata',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--teal);text-transform:uppercase;display:block;margin-bottom:.35rem;}
+
+.proof{background:var(--proof);border:1px solid #d8c070;border-left:4px solid var(--gold);
+  padding:1rem 1.4rem;margin:.9rem 0 1.6rem;font-size:.93rem;}
+.proof-hdr{font-variant:small-caps;font-size:.76rem;letter-spacing:.1em;
+  color:var(--gold);display:block;margin-bottom:.5rem;}
+.qed{float:right;color:var(--gold);font-size:1.1rem;}
+
+.ex{background:var(--ex);border:1px solid #d0b060;border-left:4px solid var(--amber);
+  padding:.9rem 1.2rem;margin:.6rem 0;font-size:.93rem;}
+.ex .exl{font-family:'Inconsolata',monospace;font-size:.64rem;color:var(--amber);
+  letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.35rem;}
+
+.note{background:#fff8f0;border:1px dashed var(--flame);padding:.7rem 1.1rem;
+  font-size:.88rem;border-radius:3px;margin:.9rem 0;}
+.note::before{content:'💡 ';}
+.wow{background:#fffae0;border:1px solid var(--honey);border-left:4px solid var(--amber);
+  padding:.8rem 1.2rem;font-size:.9rem;border-radius:3px;margin:1rem 0;}
+.wow::before{content:'⭐ ';}
+.danger{background:#fff0f0;border:1px solid #e08080;border-left:4px solid var(--rust);
+  padding:.7rem 1.1rem;font-size:.88rem;margin:.9rem 0;}
+.danger::before{content:'🔓 ';}
+
+.hist{background:var(--hist);color:#c0a888;padding:1.4rem 1.6rem;
+  border-radius:4px;margin:1.3rem 0;font-size:.87rem;}
+.hist h4{font-family:'Oswald',sans-serif;font-size:1.15rem;font-weight:500;
+  letter-spacing:.04em;color:var(--honey);margin-bottom:.65rem;}
+.hist p{color:#a08868;text-align:left;}
+
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.9rem 0;}
+th{background:var(--sepia);color:#fff;padding:.5rem 1rem;
+  font-variant:small-caps;letter-spacing:.07em;}
+td{padding:.42rem 1rem;text-align:center;border-bottom:1px solid var(--rule);}
+tr:nth-child(even) td{background:rgba(58,24,8,.04);}
+td.yes{background:rgba(16,112,96,.12);font-weight:700;color:var(--teal);}
+td.no{background:rgba(138,40,0,.12);font-weight:700;color:var(--rust);}
+td.hi{background:rgba(58,24,8,.12);font-weight:700;color:var(--mahogany);}
+.mono{font-family:'Inconsolata',monospace;font-size:.82rem;}
+
+.vis{background:#fff;border:1px solid var(--rule);border-radius:5px;
+  padding:1.1rem;margin:1.1rem 0;text-align:center;box-shadow:var(--shadow);}
+.vis figcaption{font-size:.74rem;color:#888;margin-top:.5rem;font-style:italic;}
+.formula{text-align:center;margin:.95rem 0;padding:.55rem;
+  background:rgba(58,24,8,.04);border-radius:3px;font-size:1.04rem;}
+
+.bib{border-bottom:1px solid var(--rule);padding:.6rem 0;font-size:.87rem;}
+.bib-k{font-family:'Inconsolata',monospace;color:var(--mahogany);font-size:.72rem;margin-bottom:.12rem;}
+
+footer{background:var(--ink);color:#403020;text-align:center;padding:1.6rem;
+  font-size:.78rem;border-top:3px solid var(--amber);margin-top:3rem;}
+footer a{color:var(--amber);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="ctag">Studio di Teoria dei Numeri &middot; Capitolo 11</span>
+  <h1>SOMME DI QUADRATI</h1>
+  <div class="sub">George E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971)</div>
+  <div class="meta">
+    <span><strong>Autore:</strong> Alberto Oliva</span>
+    <span><strong>Email:</strong> <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a></span>
+    <span><strong>Riferimento:</strong> Andrews &mdash; <em>Number Theory</em>, Cap. 11</span>
+    <span><strong>Data:</strong> 06 Maggio 2026</span>
+  </div>
+</header>
+
+<div class="abstract">
+  <strong>Abstract.</strong>
+  Il Capitolo 11 completa il quadro sulle somme di quadrati aprendo la
+  Parte III (<em>Additivity</em>) del libro. La sezione &sect;11-1 caratterizza
+  completamente gli interi rappresentabili come somma di due quadrati
+  (Teorema 11-1): esattamente quelli la cui fattorizzazione non contiene
+  potenze dispari di primi \(q\equiv3\pmod4\). La dimostrazione usa
+  il Corollario 10-1 (ogni primo \(p\equiv1\pmod4\) &egrave; \(x^2+y^2\))
+  e l&rsquo;identit&agrave; di Brahmagupta-Fibonacci \((x^2+y^2)(v^2+w^2)=(xv+yw)^2+(xw-yv)^2\).
+  La sezione &sect;11-2 dimostra il celebre <strong>Teorema dei Quattro Quadrati
+  di Lagrange</strong> (Teorema 11-3): ogni intero positivo &egrave; somma di
+  quattro quadrati non negativi. La prova usa una discesa infinita
+  (&ldquo;descent&rdquo;) sul moltiplicatore \(k\): si parte da
+  \(kp=A^2+B^2+C^2+D^2\) e si mostra \(k=1\). Il capitolo si chiude
+  con il <strong>Problema di Waring</strong> e il <strong>Teorema di
+  Fermat</strong> \(x^n+y^n=z^n\).
+</div>
+
+<div class="two-col">
+
+<!-- STORIA -->
+<div class="sb"><h3>Contesto Storico &amp; Motivazioni</h3></div>
+
+<div>
+  <div class="hist">
+    <h4>DIOFANTO, BRAHMAGUPTA, FIBONACCI (III&ndash;XIII sec.)</h4>
+    <p>Diofanto di Alessandria (III sec. d.C.) sapeva che ogni intero
+    &egrave; somma di due, tre o quattro quadrati positivi. L&rsquo;identit&agrave;
+    \((x^2+y^2)(v^2+w^2)=(xv+yw)^2+(xw-yv)^2\) appare gi&agrave; nel
+    <em>Brahmasphutasiddhanta</em> di Brahmagupta (628 d.C.) e nel
+    <em>Liber Quadratorum</em> di Fibonacci (1225): se due interi sono
+    ciascuno somma di due quadrati, lo &egrave; anche il loro prodotto.
+    Questa identit&agrave; &egrave; il nucleo della dimostrazione del Teorema 11-1.</p>
+  </div>
+  <div class="hist" style="margin-top:.8rem;">
+    <h4>LAGRANGE E I QUATTRO QUADRATI (1770)</h4>
+    <p>Joseph-Louis Lagrange (1736&ndash;1813) dimostr&ograve; nel 1770 che ogni
+    intero positivo &egrave; somma di quattro quadrati interi non negativi.
+    La sua prova usa un argomento di discesa che Andrews riproduce
+    fedelmente: si trova \(kp=A^2+B^2+C^2+D^2\) con \(k&lt;p\),
+    poi si mostra che qualunque \(k&gt;1\) porta a un \(k'&lt;k\) con la stessa
+    propriet&agrave;, contraddicendo la minimalit&agrave;. La prova richiede
+    l&rsquo;identit&agrave; algebrica di Euler per le quattro somme (11-2-1).</p>
+  </div>
+</div>
+
+<div>
+  <div class="hist">
+    <h4>IL PROBLEMA DI WARING (1770)</h4>
+    <p>Edward Waring (1736&ndash;1798) afferm&ograve; nel 1770 (senza dimostrazione)
+    che ogni intero &egrave; somma di 9 cubi, di 19 biquadrati (quarte potenze),
+    e cos&igrave; via. Pi&ugrave; precisamente: per ogni \(m\geq2\) esiste \(N_m\) tale
+    che ogni intero positivo &egrave; somma di al pi&ugrave; \(N_m\) potenze \(m\)-esime.
+    Hilbert dimostr&ograve; l&rsquo;esistenza di \(N_m\) nel 1909 (con un integrale
+    25-uplo!). I valori esatti di \(N_m\) sono ancora oggetto di ricerca:
+    \(N_2=4\) (Lagrange), \(N_3=9\) (Dickson, 1939), \(N_4=19\) (Balasubramanian
+    et al., 1986).</p>
+  </div>
+  <div class="hist" style="margin-top:.8rem;">
+    <h4>L&rsquo;ULTIMO TEOREMA DI FERMAT (1637&ndash;1995)</h4>
+    <p>Andrews menziona la famosa nota a margine di Fermat nel suo
+    Diofanto: &ldquo;\(x^n+y^n=z^n\) non ha soluzioni intere per \(n>2\);
+    ho una dimostrazione meravigliosa che questo margine &egrave; troppo
+    piccolo per contenere.&rdquo; La dimostrazione di Fermat non &egrave; mai
+    stata trovata tra le sue carte. Il teorema fu dimostrato da
+    <strong>Andrew Wiles</strong> nel 1995, usando la teoria delle
+    curve ellittiche e le forme modulari &mdash; matematica del XX secolo
+    ben lontana dall&rsquo;elementare teoria dei numeri di Andrews.</p>
+  </div>
+</div>
+
+<!-- §11-1 -->
+<div class="sb"><h3>&sect; 11-1 &middot; Somme di Due Quadrati</h3></div>
+
+<div>
+  <h4 class="sub">Quando un intero &egrave; somma di due quadrati?</h4>
+  <p>Il Corollario 10-1 ci ha detto che ogni primo \(p\equiv1\pmod4\)
+  &egrave; somma di due quadrati. Ora vogliamo la risposta completa: per
+  quali interi positivi \(n\) esistono interi \(x,y\) con \(n=x^2+y^2\)?</p>
+
+  <p>La risposta dipende interamente dalla fattorizzazione di \(n\).
+  Scriviamo \(n=2^\alpha p_1^{\beta_1}\cdots p_r^{\beta_r}q_1^{\gamma_1}\cdots q_s^{\gamma_s}\)
+  dove \(p_i\equiv1\pmod4\) e \(q_j\equiv3\pmod4\). L&rsquo;ostacolo &egrave;
+  dato dai fattori \(q_j\): se uno di essi compare con esponente dispari,
+  \(n\) non pu&ograve; essere somma di due quadrati. Se tutti gli esponenti
+  \(\gamma_j\) sono pari, allora \(n\) lo &egrave;.</p>
+
+  <p>La chiave &egrave; l&rsquo;identit&agrave; di Brahmagupta-Fibonacci:</p>
+  <div class="formula">\[(x^2+y^2)(v^2+w^2)=(xv+yw)^2+(xw-yv)^2.\tag{11-1-1}\]</div>
+  <p>Questa dice che il prodotto di due somme di due quadrati &egrave;
+  ancora una somma di due quadrati. Combinata con i casi base
+  (\(2=1^2+1^2\), ogni primo \(p_i=x^2+y^2\), \(q_j^2=(q_j)^2+0^2\)),
+  permette di costruire la rappresentazione di \(n\) per induzione
+  sulla fattorizzazione.</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 11-1 &mdash; Caratterizzazione degli interi somma di due quadrati</span>
+    <div class="stmt">Un intero positivo \(n\) pu&ograve; essere rappresentato
+    come somma di due quadrati se e solo se la sua fattorizzazione
+    in potenze di primi distinti non contiene potenze dispari di primi
+    congruenti a 3 modulo 4.</div>
+  </div>
+
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Scriviamo \(n=2^\alpha p_1^{\beta_1}\cdots p_r^{\beta_r}q_1^{\gamma_1}\cdots q_s^{\gamma_s}\)
+    con \(p_i\equiv1\pmod4\) e \(q_j\equiv3\pmod4\).<br><br>
+
+    <strong>(\(\Rightarrow\)) Necessit&agrave;:</strong>
+    Supponiamo \(n=x^2+y^2\) e che un \(\gamma_i\) sia dispari, diciamo \(\gamma_1\) dispari.
+    Sia \(d=\gcd(x,y)\), \(n_1=n/d^2\), \(x_0=x/d\), \(y_0=y/d\)
+    con \(\gcd(x_0,y_0)=1\). Allora \(n_1=x_0^2+y_0^2\) e \(q_1\mid n_1\).
+    Poich&eacute; \(q_1\nmid x_0\) e \(q_1\nmid y_0\) (da \(\gcd(x_0,y_0)=1\)),
+    esiste \(u\) con \(x_0\equiv y_0 u\pmod{q_1}\) (Thm 5-1). Quindi:
+    \[0\equiv n_1=x_0^2+y_0^2\equiv y_0^2(1+u^2)\pmod{q_1}.\]
+    Poich&eacute; \(q_1\nmid y_0^2\): \(u^2\equiv-1\pmod{q_1}\).
+    Ma \(q_1\equiv3\pmod4\) implica \(\left(\frac{-1}{q_1}\right)=-1\)
+    (Thm 9-5): impossibile! Quindi tutti i \(\gamma_i\) devono essere pari.<br><br>
+
+    <strong>(\(\Leftarrow\)) Sufficienza:</strong>
+    Supponiamo tutti i \(\gamma_i=2\delta_i\) pari. Allora
+    \(n=2^\alpha p_1^{\beta_1}\cdots p_r^{\beta_r}(q_1^2)^{\delta_1}\cdots(q_s^2)^{\delta_s}\).
+    Ora:
+    <ul style="margin:.5em 0 .5em 1.5em;">
+      <li>\(2=1^2+1^2\)</li>
+      <li>Ogni \(p_i=x^2+y^2\) per il Corollario 10-1 (e per Thm 11-1-1
+          le potenze \(p_i^{\beta_i}\) sono ancora somme di due quadrati)</li>
+      <li>\(q_j^2=(q_j)^2+0^2\) &egrave; somma di due quadrati</li>
+    </ul>
+    Per l&rsquo;identit&agrave; (11-1-1), il prodotto di somme di due quadrati
+    &egrave; una somma di due quadrati. Quindi \(n\) &egrave; rappresentabile. <span class="qed">&#9632;</span>
+  </div>
+</div>
+
+<div>
+  <!-- SVG: visual classification of which n are sum of 2 squares -->
+  <div class="vis">
+    <svg viewBox="0 0 310 220" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle"
+        font-family="Oswald,sans-serif" font-size="13" fill="#1e1208"
+        letter-spacing=".05em">Quali n sono x&#178;+y&#178;? (n=1..25)</text>
+
+      <!-- Row 1: n=1..10 -->
+      <g font-family="Inconsolata,monospace" font-size="10">
+        <!-- YES cells -->
+        <rect x="8"   y="28" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="20"  y="44" text-anchor="middle" fill="#107060" font-weight="bold">1</text>
+
+        <rect x="34"  y="28" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="46"  y="44" text-anchor="middle" fill="#107060" font-weight="bold">2</text>
+
+        <rect x="60"  y="28" width="24" height="24" rx="3" fill="#fff0f0" stroke="#a04040" stroke-width="1"/>
+        <text x="72"  y="44" text-anchor="middle" fill="#802020">3</text>
+
+        <rect x="86"  y="28" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="98"  y="44" text-anchor="middle" fill="#107060" font-weight="bold">4</text>
+
+        <rect x="112" y="28" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="124" y="44" text-anchor="middle" fill="#107060" font-weight="bold">5</text>
+
+        <rect x="138" y="28" width="24" height="24" rx="3" fill="#fff0f0" stroke="#a04040" stroke-width="1"/>
+        <text x="150" y="44" text-anchor="middle" fill="#802020">6</text>
+
+        <rect x="164" y="28" width="24" height="24" rx="3" fill="#fff0f0" stroke="#a04040" stroke-width="1"/>
+        <text x="176" y="44" text-anchor="middle" fill="#802020">7</text>
+
+        <rect x="190" y="28" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="202" y="44" text-anchor="middle" fill="#107060" font-weight="bold">8</text>
+
+        <rect x="216" y="28" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="228" y="44" text-anchor="middle" fill="#107060" font-weight="bold">9</text>
+
+        <rect x="242" y="28" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="254" y="44" text-anchor="middle" fill="#107060" font-weight="bold">10</text>
+
+        <!-- n=11..20 -->
+        <rect x="8"   y="58" width="24" height="24" rx="3" fill="#fff0f0" stroke="#a04040" stroke-width="1"/>
+        <text x="20"  y="74" text-anchor="middle" fill="#802020">11</text>
+
+        <rect x="34"  y="58" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="46"  y="74" text-anchor="middle" fill="#107060" font-weight="bold">13</text>
+
+        <rect x="60"  y="58" width="24" height="24" rx="3" fill="#fff0f0" stroke="#a04040" stroke-width="1"/>
+        <text x="72"  y="74" text-anchor="middle" fill="#802020">14</text>
+
+        <rect x="86"  y="58" width="24" height="24" rx="3" fill="#fff0f0" stroke="#a04040" stroke-width="1"/>
+        <text x="98"  y="74" text-anchor="middle" fill="#802020">15</text>
+
+        <rect x="112" y="58" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="124" y="74" text-anchor="middle" fill="#107060" font-weight="bold">16</text>
+
+        <rect x="138" y="58" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="150" y="74" text-anchor="middle" fill="#107060" font-weight="bold">17</text>
+
+        <rect x="164" y="58" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="176" y="74" text-anchor="middle" fill="#107060" font-weight="bold">18</text>
+
+        <rect x="190" y="58" width="24" height="24" rx="3" fill="#fff0f0" stroke="#a04040" stroke-width="1"/>
+        <text x="202" y="74" text-anchor="middle" fill="#802020">19</text>
+
+        <rect x="216" y="58" width="24" height="24" rx="3" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+        <text x="228" y="74" text-anchor="middle" fill="#107060" font-weight="bold">20</text>
+
+        <rect x="242" y="58" width="24" height="24" rx="3" fill="#fff0f0" stroke="#a04040" stroke-width="1"/>
+        <text x="254" y="74" text-anchor="middle" fill="#802020">21</text>
+      </g>
+
+      <!-- Legend -->
+      <rect x="8"  y="95" width="14" height="14" rx="2" fill="#eef8f0" stroke="#407060" stroke-width="1"/>
+      <text x="26" y="107" font-family="Inconsolata,monospace" font-size="9" fill="#107060">s&#236; (x&#178;+y&#178;=n)</text>
+      <rect x="120" y="95" width="14" height="14" rx="2" fill="#fff0f0" stroke="#a04040" stroke-width="1"/>
+      <text x="138" y="107" font-family="Inconsolata,monospace" font-size="9" fill="#802020">no (q&#179;|n, q&#8801;3 mod4)</text>
+
+      <!-- Decompositions -->
+      <rect x="8" y="118" width="294" height="90" rx="3" fill="#1e1208"/>
+      <text x="155" y="133" text-anchor="middle" font-family="Inconsolata,monospace" font-size="9" fill="#e8b830">Decomposizioni:</text>
+      <text x="155" y="148" text-anchor="middle" font-family="Inconsolata,monospace" font-size="8.5" fill="#c0a880">1=1&#178;+0&#178; &nbsp; 2=1&#178;+1&#178; &nbsp; 4=2&#178;+0&#178; &nbsp; 5=1&#178;+2&#178;</text>
+      <text x="155" y="163" text-anchor="middle" font-family="Inconsolata,monospace" font-size="8.5" fill="#c0a880">8=2&#178;+2&#178; &nbsp; 9=3&#178;+0&#178; &nbsp; 10=1&#178;+3&#178; &nbsp; 13=2&#178;+3&#178;</text>
+      <text x="155" y="178" text-anchor="middle" font-family="Inconsolata,monospace" font-size="8.5" fill="#c0a880">16=4&#178;+0&#178; &nbsp; 17=1&#178;+4&#178; &nbsp; 18=3&#178;+3&#178; &nbsp; 20=2&#178;+4&#178;</text>
+      <text x="155" y="198" text-anchor="middle" font-family="Inconsolata,monospace" font-size="8" fill="#807060">3,6,7,11,14,15,19,21... hanno q&#8801;3(mod4) a potenza dispari: NO</text>
+    </svg>
+    <figcaption>Interi \(n=1,\ldots,21\) classificati come somma di due quadrati (verde) o no (rosso). Il criterio: nessun fattore primo \(\equiv3\pmod4\) con esponente dispari.</figcaption>
+  </div>
+
+  <h4 class="sub">Esempi e applicazioni del Teorema 11-1</h4>
+
+  <div class="ex">
+    <span class="exl">Esempio 11-1 &mdash; 315 non &egrave; somma di due quadrati</span>
+    \(315=3^2\cdot5\cdot7\). Il primo \(q=7\equiv3\pmod4\) ha esponente
+    \(\gamma=1\) (dispari). Per Thm 11-1: 315 <strong>non</strong> &egrave; somma di due quadrati. &#10007;
+  </div>
+
+  <div class="ex">
+    <span class="exl">Esempio 11-2 &mdash; 3185=5&#183;7&#178;&#183;13 &egrave; somma di due quadrati</span>
+    \(3185=5\cdot7^2\cdot13\). Il primo \(q=7\equiv3\pmod4\) ha esponente
+    \(\gamma=2\) (pari). Tutti i \(p_i\equiv1\pmod4\). Quindi 3185 &egrave; somma
+    di due quadrati. Costruiamo esplicitamente:<br>
+    \(5=2^2+1^2\), \(7^2=7^2+0^2\), \(13=3^2+2^2\).<br>
+    \(5\cdot7^2=(2^2+1^2)(7^2+0^2)=(14+0)^2+(0-7)^2=14^2+7^2\).<br>
+    \(3185=(14^2+7^2)(3^2+2^2)=(14\cdot3+7\cdot2)^2+(14\cdot2-7\cdot3)^2=56^2+7^2\). &#10003;
+  </div>
+
+  <div class="id-box">
+    <span class="lbl">Identit&agrave; di Brahmagupta-Fibonacci (628 d.C.)</span>
+    \[(x^2+y^2)(v^2+w^2)=(xv+yw)^2+(xw-yv)^2.\]
+    <em>Interpretazione:</em> se \(z_1=x+iy\) e \(z_2=v+iw\) sono numeri
+    complessi, allora \(|z_1z_2|^2=|z_1|^2|z_2|^2\), cio&egrave;
+    \((x^2+y^2)(v^2+w^2)=|z_1z_2|^2=|(xv-yw)+i(xw+yv)|^2\).
+    La moltiplicazione dei complessi fornisce la decomposizione!
+  </div>
+</div>
+
+<!-- Esercizi §11-1 -->
+<div class="full">
+  <h4 class="sub">Esercizi &sect;11-1 &mdash; Soluzioni</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+
+    <div class="ex">
+      <span class="exl">Esercizio 1 &mdash; 274625=5&#179;&#183;13&#179; come somma di due quadrati</span>
+      \(274625=5^3\cdot13^3\). Entrambi \(5,13\equiv1\pmod4\): &egrave; somma di due
+      quadrati. \(5=2^2+1^2\), \(13=3^2+2^2\).<br>
+      \(5^3=125=(10^2+5^2)\cdot5^{1/2}\)... usiamo l&rsquo;identit&agrave; ripetuta:
+      \(5^2=25=(4+3)^2+(2-6)^2\)... pi&ugrave; semplicemente:
+      \(5^3=5\cdot25=(2^2+1^2)(5^2+0^2)=10^2+5^2\).
+      \(13^3=13\cdot169=(3^2+2^2)(13^2+0^2)=39^2+26^2\).
+      \(274625=(10^2+5^2)(39^2+26^2)=(390+130)^2+(260-195)^2=520^2+65^2\). &#10003;<br>
+      Verifica: \(520^2+65^2=270400+4225=274625\). &#10003;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 2 &mdash; 333 come somma di due quadrati</span>
+      \(333=3^2\cdot37\). Il primo \(3\equiv3\pmod4\) ha esponente 2 (pari). Il
+      primo \(37\equiv1\pmod4\). Quindi 333 &egrave; somma di due quadrati.<br>
+      \(37=6^2+1^2\). \(3^2=9=3^2+0^2\).<br>
+      \(333=9\cdot37=(3^2+0^2)(6^2+1^2)=(18+0)^2+(3-0)^2=18^2+3^2\).<br>
+      Verifica: \(324+9=333\). &#10003;
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 3 &mdash; Numeri complessi e Identit&agrave; (11-1-1)</span>
+      Se \(z=x+iy\), allora \(z\bar z=x^2+y^2=|z|^2\). (a) &#10003;<br>
+      (b) Se \(w=u+iv\): \(|w||z|=|wz|\) poich&eacute; il modulo &egrave; moltiplicativo.
+      Ma \(|wz|^2=|(xu-yv)+i(xv+yu)|^2=(xu-yv)^2+(xv+yu)^2\).
+      Quindi \((u^2+v^2)(x^2+y^2)=(xu-yv)^2+(xv+yu)^2\): questa &egrave;
+      l&rsquo;identit&agrave; (11-1-1) (con una diversa scelta di segni, equivalente
+      per simmetria). ∎<br>
+      <em>Interpretazione:</em> La moltiplicazione degli interi di Gauss
+      \(\mathbb{Z}[i]\) &egrave; la ragione profonda dell&rsquo;identit&agrave; (11-1-1).
+    </div>
+
+  </div>
+</div>
+
+<!-- §11-2 -->
+<div class="sb"><h3>&sect; 11-2 &middot; Somme di Quattro Quadrati (Teorema di Lagrange)</h3></div>
+
+<div>
+  <h4 class="sub">Il teorema di Lagrange</h4>
+  <p>Il Teorema 11-1 mostra che non tutti gli interi sono somma di
+  due quadrati: ad esempio 3, 6, 7 non lo sono. Quanti quadrati
+  bastano per rappresentare <em>ogni</em> intero positivo?</p>
+
+  <p>La risposta &egrave; quattro, e il teorema fu dimostrato da Lagrange
+  nel 1770. La prova si articola in tre parti:
+  (1) un&rsquo;identit&agrave; algebrica che riduce il problema ai primi,
+  (2) un lemma che garantisce \(A^2+B^2+C^2\equiv0\pmod p\) per ogni
+  primo \(p\) (Teorema 11-2),
+  (3) una discesa sul moltiplicatore che porta da \(kp=\sum 4\) quadrati
+  a \(p=\sum 4\) quadrati.</p>
+
+  <div class="id-box">
+    <span class="lbl">Identit&agrave; di Euler per le somme di quattro quadrati (1748)</span>
+    \begin{align}
+    (a^2+b^2+c^2+d^2)(e^2+f^2+g^2+h^2) &= (ae+bf+cg+dh)^2\\
+    &\quad+(af-be-ch+dg)^2\\
+    &\quad+(ag+bh-ce-df)^2\\
+    &\quad+(ah-bg+cf-de)^2.
+    \end{align}\tag{11-2-1}
+    <em>Se due interi sono ciascuno somma di quattro quadrati, lo &egrave;
+    anche il loro prodotto.</em>
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 11-2 &mdash; Lemma di solubilità mod p</span>
+    <div class="stmt">Per ogni primo \(p\) esistono interi \(A,B,C\),
+    non tutti zero, tali che \(A^2+B^2+C^2\equiv0\pmod p\).</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    <strong>Caso \(p=2\):</strong> \(A=B=C=1\): \(1+1+1=3\equiv1\pmod2\)... meglio:
+    \(A=1,B=1,C=0\): \(1+1=2\equiv0\). &#10003;<br>
+    <strong>Caso \(p\equiv1\pmod4\):</strong> Esiste \(A\) con \(A^2\equiv-1\pmod p\)
+    (Thm 9-5). Allora \(A^2+1^2+0^2\equiv0\pmod p\). &#10003;<br>
+    <strong>Caso \(p\equiv3\pmod4\):</strong> Sia \(d\) il pi&ugrave; piccolo intero
+    positivo NR mod \(p\). Allora \(\left(\frac{-d}{p}\right)=\left(\frac{-1}{p}\right)\left(\frac{d}{p}\right)=(-1)(-1)=1\),
+    quindi \(-d\) &egrave; QR: esiste \(B\) con \(B^2\equiv-d\pmod p\).
+    Esiste anche \(A\) con \(A^2\equiv d-1\pmod p\) (poich&eacute; \(d-1&lt;d\)
+    &egrave; il pi&ugrave; piccolo NR, quindi &egrave; QR). Allora:
+    \(A^2+B^2+C^2\equiv(d-1)+(-d)+1^2=0\pmod p\). &#10003; <span class="qed">&#9632;</span>
+  </div>
+</div>
+
+<div>
+  <div class="thm">
+    <span class="lbl">Teorema 11-3 &mdash; Teorema di Lagrange sui Quattro Quadrati (1770)</span>
+    <div class="stmt">Ogni intero positivo &egrave; somma di quattro quadrati
+    interi non negativi:
+    \[n = a^2+b^2+c^2+d^2.\]</div>
+  </div>
+
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione (Discesa infinita)</span>
+    Per l&rsquo;identit&agrave; (11-2-1) basta dimostrarlo per i primi.
+    \(1=1^2+0+0+0\) e \(2=1^2+1^2+0+0\). Per un primo dispari \(p\):<br><br>
+
+    <strong>Passo 1 &mdash; Trovare un multiplo \(kp\):</strong>
+    Per Thm 11-2, esistono \(A,B,C\) con \(A^2+B^2+C^2\equiv0\pmod p\).
+    Scegliendo \(D=0\) e \(A,B,C,D\in[0,p/2)\): allora
+    \(kp=A^2+B^2+C^2+D^2&lt;4(p/2)^2=p^2\), cio&egrave; \(k&lt;p\).
+    Sia \(k\) il pi&ugrave; piccolo intero positivo con \(kp\) somma di quattro
+    quadrati.<br><br>
+
+    <strong>Passo 2 &mdash; Mostrare \(k=1\):</strong>
+    Supponiamo \(k&gt;1\). Se \(k\) &egrave; dispari: scegli \(\bar a,\bar b,\bar c,\bar d\in(-k/2,k/2]\)
+    con \(a\equiv\bar a,\ldots\pmod k\). Allora \(\bar a^2+\bar b^2+\bar c^2+\bar d^2\equiv0\pmod k\),
+    diciamo \(=kl\) con \(0&lt;l&lt;k\). Per (11-2-1):
+    \((kp)(kl)=k^2lp=(\text{somma di 4 quadrati})\), tutti multipli di \(k^2\),
+    quindi \(lp=\sum4\) quadrati, con \(l&lt;k\): contraddizione.<br>
+    Se \(k\) &egrave; pari: si pu&ograve; riordinare \(a\equiv b\pmod2\), \(c\equiv d\pmod2\), e
+    \(\frac k2 p=\left(\frac{a-b}{2}\right)^2+\left(\frac{a+b}{2}\right)^2+\left(\frac{c-d}{2}\right)^2+\left(\frac{c+d}{2}\right)^2\):
+    ancora un multiplo di \(p\) minore di \(k\). Contraddizione.<br><br>
+
+    Quindi \(k=1\) e \(p=a^2+b^2+c^2+d^2\). <span class="qed">&#9632;</span>
+  </div>
+
+  <!-- Tabella: small integers as sums of 4 squares -->
+  <h4 class="sub">Esempi: rappresentazione come somma di quattro quadrati</h4>
+  <table>
+    <thead><tr><th>n</th><th>Rappresentazione(i)</th><th>n</th><th>Rappresentazione(i)</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="yes">1²+0+0+0</td><td>7</td><td class="yes">2²+1²+1²+1²</td></tr>
+      <tr><td>2</td><td class="yes">1²+1²+0+0</td><td>11</td><td class="yes">3²+1²+1²+0</td></tr>
+      <tr><td>3</td><td class="yes">1²+1²+1²+0</td><td>15</td><td class="yes">3²+2²+1²+1²</td></tr>
+      <tr><td>4</td><td class="yes">2²+0+0+0</td><td>19</td><td class="yes">4²+1²+1²+1²</td></tr>
+      <tr><td>5</td><td class="yes">2²+1²+0+0</td><td>21</td><td class="yes">4²+2²+1²+0</td></tr>
+      <tr><td>6</td><td class="yes">2²+1²+1²+0</td><td>30</td><td class="yes">5²+2²+1²+0</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:.78rem;color:#666;font-style:italic;">
+    Ogni intero positivo appare nella colonna sinistra &mdash; il Teorema di Lagrange garantisce
+    che la rappresentazione esiste sempre. I numeri 1,2,3 richiedono 1,2,3 quadrati;
+    7 &egrave; il primo che richiede 4 quadrati (non si esprime con meno di 4).
+  </p>
+</div>
+
+<!-- Problema di Waring e TUF -->
+<div class="full">
+  <h4 class="sub">Il Problema di Waring e oltre</h4>
+
+  <div class="waring">
+    <span class="lbl">Problema di Waring (1770) &mdash; aperto in parte</span>
+    Edward Waring afferm&ograve; nel 1770 che ogni intero positivo &egrave; somma di
+    al pi&ugrave; \(N_m\) potenze \(m\)-esime positive, per qualche \(N_m\) dipendente
+    solo da \(m\). La tabella dei valori noti:<br>
+    <div style="font-family:'Inconsolata',monospace;font-size:.85rem;margin-top:.5rem;">
+      N&#8322; = 4 (Lagrange 1770, Thm 11-3 ✓)<br>
+      N&#8323; = 9 (Dickson et al. 1939)<br>
+      N&#8324; = 19 (Balasubramanian-Dress-Deshouillers 1986)<br>
+      N&#8325; = 37, N&#8326; = 73, ...
+    </div>
+    Hilbert dimostr&ograve; l&rsquo;esistenza di \(N_m\) per ogni \(m\geq2\) nel 1909.
+  </div>
+
+  <div class="danger">
+    <strong>L&rsquo;Ultimo Teorema di Fermat (1637&ndash;1995):</strong>
+    La famosa nota a margine di Fermat: &ldquo;\(x^n+y^n=z^n\) non ha soluzioni
+    intere positive per \(n>2\); ho una dimostrazione meravigliosa che
+    questo margine &egrave; troppo piccolo per contenere.&rdquo; La dimostrazione di
+    Fermat non fu mai trovata. <strong>Andrew Wiles</strong> la dimostr&ograve; nel 1995
+    usando la corrispondenza modularit&agrave;-curve ellittiche &mdash; matematica del
+    XX secolo profondamente diversa dall&rsquo;approccio elementare di Andrews.
+  </div>
+
+  <!-- Esercizi §11-2 -->
+  <h4 class="sub">Esercizi &sect;11-2 &mdash; Soluzioni</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+
+    <div class="ex">
+      <span class="exl">Esercizio 1 &mdash; p&#8801;1(mod4): esiste mp=x&#178;+y&#178; senza Cor.10-1</span>
+      Per Thm 11-2, esistono \(A,B\) con \(A^2+B^2+C^2\equiv0\pmod p\) (con \(C=0\)):
+      poich&eacute; \(p\equiv1\pmod4\), esiste \(A\) con \(A^2\equiv-1\pmod p\),
+      quindi \(A^2+1^2\equiv0\pmod p\): \(mp=A^2+1=x^2+y^2\) con \(m&lt;p\).
+      Poich&eacute; \(p\nmid A\) e \(p\nmid1\), vale \(p\nmid x,\,p\nmid y\). ∎
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizi 2&ndash;7 &mdash; Discesa verso p=x&#178;+y&#178; (Prova alternativa di Cor.10-1)</span>
+      Sia \(m_0\) il pi&ugrave; piccolo \(m>0\) con \(mp=x_0^2+y_0^2\) (Es.1 garantisce l&rsquo;esistenza).
+      Se \(m_0=1\) il gioco &egrave; fatto. Altrimenti \(m_0>1\) non divide entrambi \(x_0,y_0\) (Es.2).
+      Scegliamo \(a,b\) con \(|x_0-am_0|\leq m_0/2\), \(|y_0-bm_0|\leq m_0/2\) (Es.3),
+      \(x_1=x_0-am_0\), \(y_1=y_0-bm_0\), \(x_1^2+y_1^2=m_1m_0\) con \(0&lt;m_1&lt;m_0\) (Es.4).
+      Per (11-1-1): \(m_0^2m_1p=(x_0^2+y_0^2)(x_1^2+y_1^2)=(x_0x_1+y_0y_1)^2+(x_0y_1-x_1y_0)^2\) (Es.5).
+      Poich&eacute; \(m_0\) divide entrambi i quadrati (Es.6): \(m_1p=x_2^2+y_2^2\) con \(m_1&lt;m_0\),
+      contraddizione. Quindi \(m_0=1\) e \(p=x_0^2+y_0^2\). ∎
+    </div>
+
+    <div class="ex">
+      <span class="exl">Esercizio 9 &mdash; Nessun 4&#7491;(8m+7) &egrave; somma di tre quadrati</span>
+      Basta mostrare che \(x^2+y^2+z^2\equiv7\pmod8\) &egrave; impossibile.
+      I quadrati mod 8 sono solo \(\{0,1,4\}\) (poich&eacute; \(0^2=0,1^2=1,2^2=4,3^2=1,\ldots\pmod8\)).
+      Tutte le somme di tre elementi di \(\{0,1,4\}\) mod 8:
+      \(0+0+0=0\), \(0+0+1=1\), \(0+0+4=4\), \(0+1+1=2\), \(0+1+4=5\),
+      \(0+4+4=8\equiv0\), \(1+1+1=3\), \(1+1+4=6\), \(1+4+4=9\equiv1\), \(4+4+4=12\equiv4\).
+      Il valore 7 non appare mai. Quindi \(n\equiv7\pmod8\) non &egrave; somma di tre quadrati.
+      Poich&eacute; \(4=2^2\) &egrave; un quadrato, \(4^a(8m+7)\equiv7\pmod8\) implica \(8m+7\equiv7\pmod8\),
+      quindi l&rsquo;argomento mod 8 si applica invariato e il risultato si estende a \(4^a(8m+7)\). ∎
+    </div>
+
+  </div>
+</div>
+
+<!-- Mappa concettuale -->
+<div class="full" style="margin-top:.5rem;">
+  <h4 class="sub">Mappa Concettuale &mdash; Struttura del Capitolo 11</h4>
+  <div class="vis">
+    <svg viewBox="0 0 720 195" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="a11" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#1e1208"/>
+        </marker>
+        <marker id="a11t" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#107060"/>
+        </marker>
+        <marker id="a11b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#1e3070"/>
+        </marker>
+      </defs>
+      <!-- §11-1 cluster -->
+      <rect x="5" y="30" width="130" height="44" rx="4" fill="#1e1208"/>
+      <text x="70" y="49" text-anchor="middle" fill="white" font-family="Oswald,sans-serif" font-size="11" letter-spacing=".03em">Cor 10-1</text>
+      <text x="70" y="65" text-anchor="middle" fill="#c0a880" font-family="Inconsolata,monospace" font-size="8">p&#8801;1(4) &#8658; p=x&#178;+y&#178;</text>
+
+      <rect x="5" y="120" width="130" height="44" rx="4" fill="#1e3070"/>
+      <text x="70" y="139" text-anchor="middle" fill="white" font-family="Oswald,sans-serif" font-size="11" letter-spacing=".03em">Id (11-1-1)</text>
+      <text x="70" y="155" text-anchor="middle" fill="#b0c0e8" font-family="Inconsolata,monospace" font-size="8">Brahmagupta-Fibonacci</text>
+
+      <rect x="155" y="75" width="150" height="44" rx="4" fill="#3a1808"/>
+      <text x="230" y="94" text-anchor="middle" fill="white" font-family="Oswald,sans-serif" font-size="12" letter-spacing=".03em">Thm 11-1</text>
+      <text x="230" y="110" text-anchor="middle" fill="#e8c080" font-family="Inconsolata,monospace" font-size="8">n=x&#178;+y&#178; iff &#947;&#7522; pari</text>
+
+      <!-- §11-2 cluster -->
+      <rect x="325" y="30" width="130" height="44" rx="4" fill="#1e3070"/>
+      <text x="390" y="49" text-anchor="middle" fill="white" font-family="Oswald,sans-serif" font-size="11" letter-spacing=".03em">Id (11-2-1)</text>
+      <text x="390" y="65" text-anchor="middle" fill="#b0c0e8" font-family="Inconsolata,monospace" font-size="8">Euler: 4+4=4</text>
+
+      <rect x="325" y="120" width="130" height="44" rx="4" fill="#3a1808" opacity=".85"/>
+      <text x="390" y="139" text-anchor="middle" fill="white" font-family="Oswald,sans-serif" font-size="11" letter-spacing=".03em">Thm 11-2</text>
+      <text x="390" y="155" text-anchor="middle" fill="#e8c080" font-family="Inconsolata,monospace" font-size="8">A&#178;+B&#178;+C&#178;&#8801;0(mod p)</text>
+
+      <rect x="475" y="65" width="145" height="64" rx="4" fill="#8a2800"/>
+      <text x="547" y="91" text-anchor="middle" fill="white" font-family="Oswald,sans-serif" font-size="14" letter-spacing=".03em">Thm 11-3</text>
+      <text x="547" y="107" text-anchor="middle" fill="#f8c090" font-family="Inconsolata,monospace" font-size="8">Lagrange (1770)</text>
+      <text x="547" y="120" text-anchor="middle" fill="#f8c090" font-family="Inconsolata,monospace" font-size="8">n = x&#178;+y&#178;+z&#178;+w&#178;</text>
+
+      <!-- Open problems -->
+      <rect x="630" y="30" width="85" height="44" rx="4" fill="#6a1840" opacity=".8"/>
+      <text x="672" y="49" text-anchor="middle" fill="white" font-family="Oswald,sans-serif" font-size="10" letter-spacing=".02em">Waring</text>
+      <text x="672" y="63" text-anchor="middle" fill="#f0b0d0" font-family="Inconsolata,monospace" font-size="7">N&#7522; = ?</text>
+
+      <rect x="630" y="120" width="85" height="44" rx="4" fill="#6a1840" opacity=".7"/>
+      <text x="672" y="139" text-anchor="middle" fill="white" font-family="Oswald,sans-serif" font-size="10" letter-spacing=".02em">Fermat</text>
+      <text x="672" y="153" text-anchor="middle" fill="#f0b0d0" font-family="Inconsolata,monospace" font-size="7">x&#8319;+y&#8319;=z&#8319;</text>
+
+      <!-- Arrows -->
+      <line x1="135" y1="52" x2="153" y2="88" stroke="#1e1208" stroke-width="1.5" marker-end="url(#a11)"/>
+      <line x1="135" y1="142" x2="153" y2="105" stroke="#1e3070" stroke-width="1.5" marker-end="url(#a11b)"/>
+      <line x1="305" y1="97" x2="323" y2="72" stroke="#1e3070" stroke-width="1.5" marker-end="url(#a11b)"/>
+      <line x1="305" y1="97" x2="323" y2="138" stroke="#3a1808" stroke-width="1.5" marker-end="url(#a11)"/>
+      <line x1="455" y1="72" x2="473" y2="88" stroke="#8a2800" stroke-width="1.5" marker-end="url(#a11)"/>
+      <line x1="455" y1="142" x2="473" y2="112" stroke="#8a2800" stroke-width="1.5" marker-end="url(#a11)"/>
+      <line x1="620" y1="97" x2="628" y2="60" stroke="#6a1840" stroke-width="1.5" marker-end="url(#a11)"/>
+      <line x1="620" y1="97" x2="628" y2="135" stroke="#6a1840" stroke-width="1.5" marker-end="url(#a11)"/>
+
+      <!-- Caption -->
+      <text x="360" y="184" text-anchor="middle" font-family="Cormorant Garamond,serif"
+        font-size="10" fill="#888" font-style="italic">
+        Dal Teorema di Fermat su due quadrati al Teorema di Lagrange su quattro
+      </text>
+    </svg>
+  </div>
+</div>
+
+<!-- BIBLIOGRAFIA -->
+<div class="sb"><h3>&sect; Riferimenti Bibliografici</h3></div>
+<div class="full">
+  <div class="bib"><div class="bib-k">[And71]</div>Andrews, G.E. (1971). <em>Number Theory</em>. W.B. Saunders. &mdash; <strong>Riferimento principale.</strong></div>
+  <div class="bib"><div class="bib-k">[Dioph]</div>Diofanto di Alessandria (III sec. d.C.). <em>Arithmetica</em>. &mdash; Prime osservazioni sulle somme di quadrati.</div>
+  <div class="bib"><div class="bib-k">[Bra628]</div>Brahmagupta (628 d.C.). <em>Brahmasphutasiddhanta</em>. &mdash; Prima formulazione dell&rsquo;identit&agrave; (11-1-1).</div>
+  <div class="bib"><div class="bib-k">[Fib25]</div>Fibonacci, L. (1225). <em>Liber Quadratorum</em>. &mdash; Identit&agrave; di Brahmagupta-Fibonacci, teoria delle somme di due quadrati.</div>
+  <div class="bib"><div class="bib-k">[Fer40]</div>Fermat, P. de (1640). Lettere a Mersenne e Frenicle. &mdash; Enunciazione del Teorema 11-1 e del Teorema sui quattro quadrati.</div>
+  <div class="bib"><div class="bib-k">[Lag70]</div>Lagrange, J.L. (1770). D&eacute;monstration d&rsquo;un th&eacute;or&egrave;me d&rsquo;arithm&eacute;tique. <em>Nouv. M&eacute;m. Acad. Berlin</em>. &mdash; Prima dimostrazione del Thm 11-3.</div>
+  <div class="bib"><div class="bib-k">[War70]</div>Waring, E. (1770). <em>Meditationes Algebraicae</em>. &mdash; Formulazione del Problema di Waring.</div>
+  <div class="bib"><div class="bib-k">[Hil09]</div>Hilbert, D. (1909). Beweis f&uuml;r die Darstellbarkeit der ganzen Zahlen durch eine feste Anzahl n-ter Potenzen. <em>Math. Ann.</em> 67. &mdash; Soluzione del Problema di Waring per potenze generali.</div>
+  <div class="bib"><div class="bib-k">[Wil95]</div>Wiles, A. (1995). Modular elliptic curves and Fermat&rsquo;s Last Theorem. <em>Ann. Math.</em> 141. &mdash; Dimostrazione dell&rsquo;Ultimo Teorema di Fermat.</div>
+  <div class="bib"><div class="bib-k">[HarWri08]</div>Hardy, G.H. &amp; Wright, E.M. (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford. &mdash; Capitoli 20&ndash;21: somme di quadrati e Waring.</div>
+  <div class="bib"><div class="bib-k">[Ros11]</div>Rosen, K.H. (2011). <em>Elementary Number Theory</em> (6th ed.). Pearson. &mdash; Capitoli 12&ndash;13: somme di quadrati.</div>
+</div>
+
+</div><!-- end two-col -->
+
+<footer>
+  Studio redatto da <strong>Alberto Oliva</strong> &mdash;
+  <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a> &middot;
+  Rif.: G.E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971) &mdash; Capitolo 11 &middot;
+  Aprile 2026
+</footer>
+</body>
+</html>

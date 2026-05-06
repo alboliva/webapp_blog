@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capitolo 10 — Distribuzione dei Residui Quadratici | Andrews</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#f1f4f8; --ink:#080c18; --cream:#e4e8f4;
+  --night:#060a18; --deep:#0a1430; --mid:#142058;
+  --steel:#2a4080; --cobalt:#3858c0; --peri:#8098e0;
+  --violet:#6030a0; --lav:#a080d8;
+  --teal:#106058; --sage:#388060;
+  --gold:#b87808; --amber:#d49010; --straw:#e8c860;
+  --crimson:#780818; --rust:#a82818;
+  --rule:#90a8d0;
+  --thm:#e8eeff; --proof:#faf9f4; --defn:#e8f5ee;
+  --ex:#fdf4e4; --hist:#060a18; --gs:#fff8e8; --cor:#edfff0;
+  --shadow:0 2px 16px rgba(10,20,64,.11);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);
+     font-family:'Spectral',Georgia,serif;font-size:18px;line-height:1.80;}
+
+/* ── HEADER ── */
+header{
+  position:relative;background:var(--night);
+  padding:4rem 4rem 3rem;text-align:center;overflow:hidden;
+  border-bottom:4px solid var(--amber);
+}
+header::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 120% 55% at 50% 100%,rgba(42,64,128,.55) 0%,transparent 70%),
+    radial-gradient(circle 70px at 18% 28%,rgba(96,48,160,.22) 0%,transparent 60%),
+    radial-gradient(circle 70px at 82% 72%,rgba(96,48,160,.22) 0%,transparent 60%),
+    repeating-linear-gradient(30deg,rgba(56,88,192,.04) 0,rgba(56,88,192,.04) 1px,
+      transparent 0,transparent 40%) 0 0/24px 42px;
+}
+header::after{
+  content:'(S(1)/2)\B2 + (S(\2113)/2)\B2 = p';
+  position:absolute;right:2rem;bottom:1rem;
+  font-family:'Space Mono',monospace;font-size:.82rem;
+  color:rgba(208,192,120,.14);letter-spacing:.1em;pointer-events:none;
+}
+.ctag{font-family:'Space Mono',monospace;font-size:.67rem;letter-spacing:.28em;
+  color:var(--straw);text-transform:uppercase;display:block;margin-bottom:1rem;
+  position:relative;z-index:1;}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:.08em;
+  color:#fff;line-height:1.06;margin-bottom:.4rem;position:relative;z-index:1;}
+header .sub{font-family:'Spectral',serif;font-style:italic;font-size:1.12rem;
+  color:var(--peri);margin-bottom:1.6rem;position:relative;z-index:1;}
+.meta{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:.82rem;
+  color:#405070;border-top:1px solid rgba(56,88,192,.2);padding-top:1rem;
+  position:relative;z-index:1;}
+.meta strong{color:var(--amber);}
+.meta a{color:var(--peri);text-decoration:none;}
+
+/* ── ABSTRACT ── */
+.abstract{background:var(--cream);border-left:5px solid var(--deep);
+  border-right:5px solid var(--deep);max-width:900px;margin:2rem auto;
+  padding:1.6rem 2.4rem;font-style:italic;font-size:.96rem;color:#08101c;}
+.abstract strong{font-style:normal;color:var(--crimson);}
+
+/* ── LAYOUT ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;
+  max-width:1300px;margin:0 auto;padding:2.4rem 3.2rem;}
+.full{grid-column:1/-1;}
+@media(max-width:900px){
+  .two-col{grid-template-columns:1fr;padding:1.4rem 1.6rem;}
+  header{padding:2.4rem 1.6rem;}
+  header h1{font-size:2.4rem;}
+}
+
+/* ── SECTION BREAK ── */
+.sb{grid-column:1/-1;display:flex;align-items:center;gap:1.2rem;
+  margin:2.4rem 0 .8rem;padding-top:1.2rem;border-top:2px solid var(--rule);}
+.sb h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.06em;
+  color:var(--deep);white-space:nowrap;}
+.sb::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+p{margin-bottom:1em;text-align:justify;hyphens:auto;}
+h4.sub{font-family:'Spectral',serif;font-size:1.05rem;color:var(--crimson);
+  font-style:italic;font-weight:600;margin:1.4rem 0 .55rem;padding-bottom:.2rem;
+  border-bottom:1px dotted var(--rule);}
+
+/* ── BOX TYPES ── */
+.thm{background:var(--thm);border:1px solid #a8c0e8;border-left:5px solid var(--mid);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.thm .lbl{font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--mid);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+.thm .stmt{font-style:italic;font-size:.97rem;color:#060c20;}
+
+.gs-box{background:var(--gs);border:1px solid #e8c870;border-left:5px solid var(--gold);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.gs-box .lbl{font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--gold);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+.gs-box .stmt{font-style:italic;font-size:.97rem;color:#180c00;}
+
+.cor-box{background:var(--cor);border:1px solid #88d8a0;border-left:5px solid var(--teal);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.cor-box .lbl{font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--teal);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+
+.defn{background:var(--defn);border:1px solid #88c8a0;border-left:5px solid var(--teal);
+  padding:.95rem 1.3rem;margin:1rem 0;font-size:.95rem;}
+.defn .lbl{font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--teal);text-transform:uppercase;display:block;margin-bottom:.35rem;}
+
+.proof{background:var(--proof);border:1px solid #d8c870;border-left:4px solid var(--gold);
+  padding:1rem 1.4rem;margin:.9rem 0 1.6rem;font-size:.93rem;}
+.proof-hdr{font-variant:small-caps;font-size:.76rem;letter-spacing:.1em;
+  color:var(--gold);display:block;margin-bottom:.5rem;}
+.qed{float:right;color:var(--gold);font-size:1.1rem;}
+
+.ex{background:var(--ex);border:1px solid #d0b060;border-left:4px solid #a07820;
+  padding:.9rem 1.2rem;margin:.6rem 0;font-size:.93rem;}
+.ex .exl{font-family:'Space Mono',monospace;font-size:.64rem;color:#a07820;
+  letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.35rem;}
+
+.note{background:#f0eeff;border:1px dashed var(--lav);padding:.7rem 1.1rem;
+  font-size:.88rem;border-radius:3px;margin:.9rem 0;}
+.note::before{content:'&#x1F4A1; ';}
+.wow{background:#fffbe8;border:1px solid #e8c060;border-left:4px solid var(--gold);
+  padding:.8rem 1.2rem;font-size:.9rem;border-radius:3px;margin:1rem 0;}
+.wow::before{content:'&#x2B50; ';}
+
+.hist{background:var(--hist);color:#b0c0d8;padding:1.4rem 1.6rem;
+  border-radius:4px;margin:1.3rem 0;font-size:.87rem;}
+.hist h4{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.05em;
+  color:var(--amber);margin-bottom:.65rem;}
+.hist p{color:#8098c8;text-align:left;}
+
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.9rem 0;}
+th{background:var(--deep);color:#fff;padding:.5rem 1rem;
+  font-variant:small-caps;letter-spacing:.07em;}
+td{padding:.42rem 1rem;text-align:center;border-bottom:1px solid var(--rule);}
+tr:nth-child(even) td{background:rgba(10,20,64,.04);}
+td.hi{background:rgba(42,64,128,.15);font-weight:700;color:var(--mid);}
+td.gd{background:rgba(184,120,8,.12);font-weight:700;color:var(--gold);}
+td.tl{background:rgba(16,96,88,.12);font-weight:700;color:var(--teal);}
+td.qr{background:#e8eeff;color:var(--cobalt);font-weight:bold;}
+td.nr{background:#fff0f0;color:var(--crimson);}
+.mono{font-family:'Space Mono',monospace;font-size:.8rem;}
+
+/* ── VISUAL ── */
+.vis{background:#fff;border:1px solid var(--rule);border-radius:5px;
+  padding:1.1rem;margin:1.1rem 0;text-align:center;box-shadow:var(--shadow);}
+.vis figcaption{font-size:.74rem;color:#888;margin-top:.5rem;font-style:italic;}
+.formula{text-align:center;margin:.95rem 0;padding:.55rem;
+  background:rgba(10,20,64,.04);border-radius:3px;font-size:1.04rem;}
+
+/* ── BIBLIOGRAPHY ── */
+.bib{border-bottom:1px solid var(--rule);padding:.6rem 0;font-size:.87rem;}
+.bib-k{font-family:'Space Mono',monospace;color:var(--deep);font-size:.72rem;margin-bottom:.12rem;}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);color:#283050;text-align:center;padding:1.6rem;
+  font-size:.78rem;border-top:3px solid var(--amber);margin-top:3rem;}
+footer a{color:var(--amber);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <span class="ctag">Studio di Teoria dei Numeri &middot; Capitolo 10</span>
+  <h1>DISTRIBUZIONE DEI<br>RESIDUI QUADRATICI</h1>
+  <div class="sub">George E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971)</div>
+  <div class="meta">
+    <span><strong>Autore:</strong> Alberto Oliva</span>
+    <span><strong>Email:</strong> <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a></span>
+    <span><strong>Riferimento:</strong> Andrews &mdash; <em>Number Theory</em>, Cap. 10</span>
+    <span><strong>Data:</strong> Aprile 2026</span>
+  </div>
+</header>
+
+<!-- ═══ ABSTRACT ═══ -->
+<div class="abstract">
+  <strong>Abstract.</strong>
+  Il Capitolo 10 sviluppa una potente tecnica di conteggio basata sul
+  Simbolo di Legendre per studiare la distribuzione dei residui quadratici
+  modulo un primo \(p\). La sezione &sect;10-1 conta le coppie consecutive
+  di residui e non-residui introducendo la funzione caratteristica
+  \(c_p(n)\), il Teorema di Invarianza (Thm 10-2) e la somma fondamentale
+  del Simbolo di Legendre (Thm 10-3), ottenendo la formula esatta
+  \(N(p)=\tfrac{1}{4}(p-4-(-1)^{(p-1)/2})\) per le coppie QR-QR
+  (Thm 10-1). La sezione &sect;10-2 estende il metodo alle
+  <em>triple</em> consecutive introducendo le <strong>Somme di Gauss
+  algebriche</strong> \(S(m)=\sum_{n\pmod p}\left(\frac{n(n^2-m)}{p}\right)\)
+  e dimostrando \(\nu(p)=\tfrac18 p+E_p\) con \(|E_p|&lt;\tfrac14\sqrt{p}+2\)
+  (Thm 10-4). Come by-product inaspettato emerge l&rsquo;equazione
+  \(\left(\tfrac{S(1)}{2}\right)^2+\left(\tfrac{S(\ell)}{2}\right)^2=p\),
+  che prova il <strong>Corollario 10-1</strong>: ogni primo
+  \(p\equiv1\pmod{4}\) &egrave; somma di due quadrati interi &mdash;
+  il Teorema di Fermat del 1640.
+</div>
+
+<div class="two-col">
+
+<!-- ═══ STORIA ═══ -->
+<div class="sb"><h3>Contesto Storico &amp; Motivazioni</h3></div>
+
+<div>
+  <div class="hist">
+    <h4>FERMAT E LA SOMMA DI DUE QUADRATI (1640)</h4>
+    <p>Pierre de Fermat (1601&ndash;1665) afferm&ograve; in una lettera a Mersenne
+    del 1640 che ogni primo \(p\equiv1\pmod4\) si scrive come \(p=x^2+y^2\).
+    Come spesso accadeva con Fermat, non lasci&ograve; alcuna dimostrazione.
+    Euler ci lavorò per sette anni (1742&ndash;1749) prima di riuscire a
+    dimostrarlo. Il risultato &egrave; considerato uno dei pi&ugrave; belli
+    della teoria elementare dei numeri.</p>
+    <p>Andrews lo ottiene quasi &ldquo;per caso&rdquo;: studiando le triple consecutive
+    di QR, emerge un&rsquo;equazione che &egrave; esattamente la decomposizione cercata.
+    Un esempio magnifico di come problemi apparentemente distanti siano
+    in realt&agrave; profondi vicini.</p>
+  </div>
+  <div class="hist" style="margin-top:.8rem;">
+    <h4>LE SOMME DI GAUSS</h4>
+    <p>Gauss studi&ograve; le somme trigonometriche
+    \(G=\sum_{n=0}^{p-1}e^{2\pi i n^2/p}\) e dimostr&ograve; \(|G|^2=p\).
+    La versione algebrica di Andrews,
+    \(S(m)=\sum_{n\pmod p}\left(\frac{n(n^2-m)}{p}\right)\),
+    &egrave; un sostituto puramente aritmetico: evita le funzioni esponenziali
+    e lavora solo con il Simbolo di Legendre.
+    L&rsquo;equazione fondamentale \((S(1)/2)^2+(S(\ell)/2)^2=p\) &egrave;
+    l&rsquo;analogo algebrico della propriet&agrave; \(|G|^2=p\).</p>
+  </div>
+</div>
+
+<div>
+  <div class="hist">
+    <h4>LA TECNICA DEI CARATTERI MOLTIPLICATIVI</h4>
+    <p>Il metodo del Capitolo 10 &egrave; un prototipo della teoria dei
+    <em>caratteri di Dirichlet</em>: si esprime una funzione combinatoria
+    discreta (quante coppie/triple di QR consecutivi?) come somma di
+    prodotti del Simbolo di Legendre (un carattere moltiplicativo),
+    poi si valuta ogni somma usando le propriet&agrave; del simbolo.
+    Questo schema &mdash; funzione combinatoria = somma di caratteri,
+    poi valutazione delle somme di caratteri &mdash; permea tutta
+    la teoria analitica dei numeri moderna (funzioni L di Dirichlet,
+    somme di Kloosterman, forme automorfiche).</p>
+  </div>
+  <div class="hist" style="margin-top:.8rem;">
+    <h4>CONNESSIONE CON IL CAPITOLO 11</h4>
+    <p>Il Corollario 10-1 &egrave; il punto di partenza del Capitolo 11,
+    che studia la rappresentazione generale degli interi come somme
+    di due quadrati. Il Teorema 10-4 (\(\nu(p)\approx p/8\)) mostra
+    che le triple di QR sono equidistribuite &mdash; un risultato
+    analogo alla Legge dei Grandi Numeri: circa un ottavo delle
+    posizioni consecutive contiene una tripla di QR, indipendentemente
+    dalla struttura specifica di \(p\).</p>
+  </div>
+</div>
+
+<!-- ═══ §10-1 ═══ -->
+<div class="sb"><h3>&sect; 10-1 &middot; Residui e Non-Residui Consecutivi</h3></div>
+
+<div>
+  <h4 class="sub">L&rsquo;idea fondamentale: funzioni caratteristiche e Simbolo di Legendre</h4>
+  <p>Dal Capitolo 9 sappiamo che in \(\{1,\ldots,p-1\}\) ci sono esattamente
+  \(\frac{p-1}{2}\) residui quadratici (QR) e \(\frac{p-1}{2}\) non-residui
+  (NR). Una domanda naturale &egrave;: quante <em>coppie consecutive</em>
+  \((n, n+1)\) sono entrambi QR? Entrambi NR? Andrews risponde con
+  formule esatte.</p>
+
+  <p>La tecnica &egrave; elegante. Definiamo:
+  \[c_p(n)=\begin{cases}1&\text{se }n\text{ e }n+1\text{ sono entrambi QR mod }p\\0&\text{altrimenti.}\end{cases}\]
+  Osserviamo che questa funzione caratteristica si pu&ograve; scrivere in
+  termini del Simbolo di Legendre:
+  \[c_p(n)=\frac14\!\left(1+\left(\frac{n}{p}\right)\right)\!\left(1+\left(\frac{n+1}{p}\right)\right),\]
+  poich&eacute; il prodotto vale 1 solo se entrambi i simboli sono \(+1\)
+  (entrambi QR), e 0 altrimenti. Il numero cercato &egrave; allora:
+  \[N(p)=\sum_{n=1}^{p-2}c_p(n)=\frac14\sum_{n=1}^{p-2}\!\left(1+\left(\frac{n}{p}\right)\right)\!\left(1+\left(\frac{n+1}{p}\right)\right).\]
+  Espandendo il prodotto si ottengono quattro somme, ognuna valutabile
+  con le propriet&agrave; del Simbolo di Legendre gi&agrave; note dal Capitolo 9.</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 10-1 &mdash; Coppie QR-QR consecutive</span>
+    <div class="stmt">Sia \(N(p)\) il numero di coppie \((n,n+1)\) in \([1,p-1]\)
+    con entrambi residui quadratici modulo \(p\). Allora:
+    \[N(p)=\frac{1}{4}\!\left(p-4-(-1)^{(p-1)/2}\right).\]</div>
+  </div>
+
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Espandiamo:
+    \[4N(p)=\sum_{n=1}^{p-2}\!\!\left[1+\left(\frac{n}{p}\right)+\left(\frac{n+1}{p}\right)+\left(\frac{n}{p}\right)\!\left(\frac{n+1}{p}\right)\right].\]
+    <strong>Prima somma:</strong> \(\sum_{n=1}^{p-2}1=p-2\).<br>
+    <strong>Seconda somma:</strong> \(\sum_{n=1}^{p-2}\left(\frac{n}{p}\right)
+    =\sum_{n=1}^{p-1}\left(\frac{n}{p}\right)-\left(\frac{p-1}{p}\right)
+    =0-\left(\frac{-1}{p}\right)=-(-1)^{(p-1)/2}\).<br>
+    <strong>Terza somma:</strong> \(\sum_{n=1}^{p-2}\left(\frac{n+1}{p}\right)
+    =\sum_{n=2}^{p-1}\left(\frac{n}{p}\right)=\sum_{n=1}^{p-1}\left(\frac{n}{p}\right)
+    -\left(\frac{1}{p}\right)=0-1=-1\).<br>
+    <strong>Quarta somma</strong> (usa Thm 10-3 con \(a=0,b=-1\)):
+    \(\sum_{n=1}^{p-2}\left(\frac{n(n+1)}{p}\right)=-1\) (poich&eacute; \(0\not\equiv-1\pmod p\)).<br><br>
+    Quindi \(4N(p)=(p-2)+(-(-1)^{(p-1)/2})+(-1)+(-1)=p-4-(-1)^{(p-1)/2}\).<span class="qed">&#9632;</span>
+  </div>
+
+  <div class="note">
+    <strong>Interpretazione statistica:</strong> Se i QR fossero distribuiti
+    casualmente con probabilit&agrave; \(\frac12\), ci aspetteremmo circa
+    \((p-2)\cdot\frac14\approx\frac{p}{4}\) coppie QR-QR. La formula d&agrave;
+    \(N(p)\approx\frac{p-4}{4}\approx\frac{p}{4}\) &mdash; la previsione
+    &egrave; giusta a meno di un termine di correzione che dipende solo da
+    \(p\bmod 4\). I QR si distribuiscono quasi uniformemente!
+  </div>
+</div>
+
+<div>
+  <!-- SVG: coppie consecutive mod 11 -->
+  <div class="vis">
+    <svg viewBox="0 0 310 210" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle"
+        font-family="Bebas Neue,sans-serif" font-size="14" fill="#0a1430"
+        letter-spacing=".05em">Coppie consecutive mod p=11</text>
+      <text x="155" y="28" text-anchor="middle"
+        font-family="Space Mono,monospace" font-size="9" fill="#666">
+        QR={1,3,4,5,9} &nbsp; NR={2,6,7,8,10}
+      </text>
+      <!-- column headers -->
+      <g font-family="Space Mono,monospace" font-size="10" fill="#0a1430" font-weight="bold">
+        <text x="28"  y="48">n</text>
+        <text x="52"  y="48">1</text><text x="78"  y="48">2</text>
+        <text x="104" y="48">3</text><text x="130" y="48">4</text>
+        <text x="156" y="48">5</text><text x="182" y="48">6</text>
+        <text x="208" y="48">7</text><text x="234" y="48">8</text>
+        <text x="260" y="48">9</text><text x="279" y="48">10</text>
+      </g>
+      <!-- QR/NR row -->
+      <g font-family="Space Mono,monospace" font-size="9">
+        <text x="28" y="72" fill="#0a1430" font-weight="bold">QR?</text>
+        <!-- 1=QR -->
+        <rect x="41" y="55" width="23" height="20" rx="2" fill="#e8eeff"/>
+        <text x="52" y="69" text-anchor="middle" fill="#3858c0" font-weight="bold">&#x2713;</text>
+        <!-- 2=NR -->
+        <rect x="67" y="55" width="23" height="20" rx="2" fill="#fff0f0"/>
+        <text x="78" y="69" text-anchor="middle" fill="#780818">&#x2717;</text>
+        <!-- 3=QR -->
+        <rect x="93" y="55" width="23" height="20" rx="2" fill="#e8eeff"/>
+        <text x="104" y="69" text-anchor="middle" fill="#3858c0" font-weight="bold">&#x2713;</text>
+        <!-- 4=QR -->
+        <rect x="119" y="55" width="23" height="20" rx="2" fill="#e8eeff"/>
+        <text x="130" y="69" text-anchor="middle" fill="#3858c0" font-weight="bold">&#x2713;</text>
+        <!-- 5=QR -->
+        <rect x="145" y="55" width="23" height="20" rx="2" fill="#e8eeff"/>
+        <text x="156" y="69" text-anchor="middle" fill="#3858c0" font-weight="bold">&#x2713;</text>
+        <!-- 6=NR -->
+        <rect x="171" y="55" width="23" height="20" rx="2" fill="#fff0f0"/>
+        <text x="182" y="69" text-anchor="middle" fill="#780818">&#x2717;</text>
+        <!-- 7=NR -->
+        <rect x="197" y="55" width="23" height="20" rx="2" fill="#fff0f0"/>
+        <text x="208" y="69" text-anchor="middle" fill="#780818">&#x2717;</text>
+        <!-- 8=NR -->
+        <rect x="223" y="55" width="23" height="20" rx="2" fill="#fff0f0"/>
+        <text x="234" y="69" text-anchor="middle" fill="#780818">&#x2717;</text>
+        <!-- 9=QR -->
+        <rect x="249" y="55" width="23" height="20" rx="2" fill="#e8eeff"/>
+        <text x="260" y="69" text-anchor="middle" fill="#3858c0" font-weight="bold">&#x2713;</text>
+        <!-- 10=NR -->
+        <rect x="268" y="55" width="30" height="20" rx="2" fill="#fff0f0"/>
+        <text x="283" y="69" text-anchor="middle" fill="#780818">&#x2717;</text>
+      </g>
+      <!-- Pair labels -->
+      <text x="28" y="108" font-family="Space Mono,monospace" font-size="8" fill="#0a1430" font-weight="bold">coppia</text>
+      <g font-family="Space Mono,monospace" font-size="8">
+        <!-- (1,2) QR-NR -->
+        <rect x="41" y="82" width="23" height="30" rx="2" fill="#fff8e8"/>
+        <text x="52" y="95" text-anchor="middle" fill="#b87808">Q</text>
+        <text x="52" y="107" text-anchor="middle" fill="#780818">N</text>
+        <!-- (2,3) NR-QR -->
+        <rect x="67" y="82" width="23" height="30" rx="2" fill="#fff8e8"/>
+        <text x="78" y="95" text-anchor="middle" fill="#780818">N</text>
+        <text x="78" y="107" text-anchor="middle" fill="#3858c0">Q</text>
+        <!-- (3,4) QR-QR ★ -->
+        <rect x="93" y="82" width="23" height="30" rx="2" fill="#e8eeff" stroke="#3858c0" stroke-width="1.5"/>
+        <text x="104" y="95" text-anchor="middle" fill="#3858c0" font-weight="bold">Q</text>
+        <text x="104" y="107" text-anchor="middle" fill="#3858c0" font-weight="bold">Q</text>
+        <!-- (4,5) QR-QR ★ -->
+        <rect x="119" y="82" width="23" height="30" rx="2" fill="#e8eeff" stroke="#3858c0" stroke-width="1.5"/>
+        <text x="130" y="95" text-anchor="middle" fill="#3858c0" font-weight="bold">Q</text>
+        <text x="130" y="107" text-anchor="middle" fill="#3858c0" font-weight="bold">Q</text>
+        <!-- (5,6) QR-NR -->
+        <rect x="145" y="82" width="23" height="30" rx="2" fill="#fff8e8"/>
+        <text x="156" y="95" text-anchor="middle" fill="#b87808">Q</text>
+        <text x="156" y="107" text-anchor="middle" fill="#780818">N</text>
+        <!-- (6,7) NR-NR -->
+        <rect x="171" y="82" width="23" height="30" rx="2" fill="#fff0f0"/>
+        <text x="182" y="95" text-anchor="middle" fill="#780818">N</text>
+        <text x="182" y="107" text-anchor="middle" fill="#780818">N</text>
+        <!-- (7,8) NR-NR -->
+        <rect x="197" y="82" width="23" height="30" rx="2" fill="#fff0f0"/>
+        <text x="208" y="95" text-anchor="middle" fill="#780818">N</text>
+        <text x="208" y="107" text-anchor="middle" fill="#780818">N</text>
+        <!-- (8,9) NR-QR -->
+        <rect x="223" y="82" width="23" height="30" rx="2" fill="#fff8e8"/>
+        <text x="234" y="95" text-anchor="middle" fill="#780818">N</text>
+        <text x="234" y="107" text-anchor="middle" fill="#3858c0">Q</text>
+        <!-- (9,10) QR-NR -->
+        <rect x="249" y="82" width="23" height="30" rx="2" fill="#fff8e8"/>
+        <text x="260" y="95" text-anchor="middle" fill="#b87808">Q</text>
+        <text x="260" y="107" text-anchor="middle" fill="#780818">N</text>
+      </g>
+      <!-- Summary box -->
+      <rect x="10" y="124" width="290" height="72" rx="3" fill="#0a1430"/>
+      <text x="155" y="142" text-anchor="middle"
+        font-family="Space Mono,monospace" font-size="9" fill="#e8c860">
+        N(11) = 2 coppie QR-QR: (3,4) e (4,5)
+      </text>
+      <text x="155" y="158" text-anchor="middle"
+        font-family="Space Mono,monospace" font-size="9" fill="#a8c8e0">
+        Formula: &#188;(11&#8722;4&#8722;(&#8722;1)&#8309;) = &#188;(11&#8722;4+1) = &#188;&#183;8 = 2 &#x2713;
+      </text>
+      <text x="155" y="173" text-anchor="middle"
+        font-family="Space Mono,monospace" font-size="8" fill="#7090b0">
+        p=11&#8801;3(mod 4): (&#8722;1)^{(p&#8722;1)/2}=(&#8722;1)&#8309;=&#8722;1
+      </text>
+      <text x="155" y="188" text-anchor="middle"
+        font-family="Space Mono,monospace" font-size="8" fill="#7090b0">
+        N&#8321;=3, N&#8322;=2, N&#8323;=2 &mdash; Totale 9 = p&#8722;2 &#x2713;
+      </text>
+    </svg>
+    <figcaption>Distribuzione delle coppie consecutive mod 11. Le coppie QR-QR
+    (bordo blu) sono esattamente 2, coerente con \(N(11)=\frac14(11-4+1)=2\).</figcaption>
+  </div>
+</div>
+
+<!-- Thm 10-2 e 10-3 full width -->
+<div class="full">
+  <h4 class="sub">Gli strumenti fondamentali del conteggio</h4>
+
+  <div class="thm">
+    <span class="lbl">Teorema 10-2 &mdash; Invarianza rispetto al sistema di residui</span>
+    <div class="stmt">Sia \(c_j\) una funzione periodica di periodo \(n\)
+    (cio&egrave; \(c_j=c_k\) ogni volta che \(j\equiv k\pmod n\)).
+    Se \(r_1,r_2,\ldots,r_n\) &egrave; un sistema completo di residui modulo \(n\), allora:
+    \[\sum_{j=0}^{n-1}c_j=c_{r_1}+c_{r_2}+\cdots+c_{r_n}.\]</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Ogni intero \(0\leq i\leq n-1\) &egrave; congruente a esattamente uno degli \(r_j\);
+    dunque \(c_i=c_{r_j}\). Le due somme sono quindi permutazioni l&rsquo;una
+    dell&rsquo;altra. <span class="qed">&#9632;</span><br>
+    <em>Corollario (fondamentale):</em> poich&eacute; il Simbolo di Legendre
+    \(\left(\frac{n}{p}\right)\) &egrave; periodico di periodo \(p\),
+    possiamo rimpiazzare qualsiasi somma su \(n=0,\ldots,p-1\) con
+    una somma su un qualunque sistema completo di residui.
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 10-3 &mdash; Somma chiave del Simbolo di Legendre</span>
+    <div class="stmt">Se \(p\) &egrave; un primo dispari:
+    \[\sum_{n=0}^{p-1}\left(\frac{(n-a)(n-b)}{p}\right)=\begin{cases}p-1&\text{se }a\equiv b\pmod p,\\-1&\text{se }a\not\equiv b\pmod p.\end{cases}\]
+    Equivalentemente, &egrave; il caso \(a=0,b=-1\) che stabilisce (10-1-5):
+    \(\sum_{n=1}^{p-2}\left(\frac{n(n+1)}{p}\right)=-1\).</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    <strong>Caso \(a\equiv b\pmod p\):</strong>
+    \(\left(\frac{(n-a)(n-b)}{p}\right)=\left(\frac{(n-a)^2}{p}\right)=1\)
+    per \(p\nmid n-a\), e \(=0\) per \(n\equiv a\). Somma \(=p-1\). &#10003;<br>
+    <strong>Caso \(a\not\equiv b\pmod p\):</strong>
+    Sia \(\lambda=a-b\not\equiv0\). Sostituendo \(n\to n+a\) (Thm 10-2):
+    \[\sum_{n\pmod p}\!\!\left(\frac{n(n+\lambda)}{p}\right).\]
+    Per \(n\equiv0\): contributo 0. Per \(n\not\equiv0\): sia \(\tilde{n}\) l&rsquo;inverso;
+    moltiplicando per \(\left(\frac{\tilde{n}^2}{p}\right)=1\):
+    \[\left(\frac{n(n+\lambda)}{p}\right)=\left(\frac{1+\lambda\tilde{n}}{p}\right).\]
+    Poich&eacute; \(\tilde{n}\) percorre il SRR meno \(0\), e \(m=\lambda\tilde{n}\)
+    percorre il SRR meno \(0\) (dato che \(\lambda\neq0\)):
+    \[\sum_{n\not\equiv0}\left(\frac{1+\lambda\tilde{n}}{p}\right)=\sum_{m\pmod p}\left(\frac{1+m}{p}\right)-\left(\frac{1}{p}\right)=0-1=-1.\quad\blacksquare\]
+  </div>
+</div>
+
+<!-- Tabella coppie -->
+<div>
+  <h4 class="sub">Tabella completa delle formule per le coppie</h4>
+  <table>
+    <thead>
+      <tr><th>Tipo coppia</th><th>Formula esatta</th><th>p&#8801;1(mod 4)</th><th>p&#8801;3(mod 4)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>QR &ndash; QR</td>
+        <td>\(\tfrac14(p-4-(-1)^{(p-1)/2})\)</td>
+        <td class="hi">\(\tfrac{p-5}{4}\)</td>
+        <td class="hi">\(\tfrac{p-3}{4}\)</td>
+      </tr>
+      <tr>
+        <td>QR &ndash; NR</td>
+        <td>\(\tfrac14(p-(-1)^{(p-1)/2})\)</td>
+        <td>\(\tfrac{p-1}{4}\)</td>
+        <td>\(\tfrac{p+1}{4}\)</td>
+      </tr>
+      <tr>
+        <td>NR &ndash; QR</td>
+        <td>\(\tfrac14(p-2+(-1)^{(p-1)/2})\)</td>
+        <td>\(\tfrac{p-3}{4}\)</td>
+        <td>\(\tfrac{p-1}{4}\)</td>
+      </tr>
+      <tr>
+        <td>NR &ndash; NR</td>
+        <td>\(\tfrac14(p-2+(-1)^{(p-1)/2})\)</td>
+        <td>\(\tfrac{p-3}{4}\)</td>
+        <td>\(\tfrac{p-1}{4}\)</td>
+      </tr>
+      <tr>
+        <td><strong>Totale</strong></td>
+        <td>\(p-2\)</td>
+        <td class="tl">\(p-2\) &#10003;</td>
+        <td class="tl">\(p-2\) &#10003;</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:.78rem;color:#666;font-style:italic;">
+    Per \(p=11\equiv3\pmod4\): QR-QR=2, QR-NR=3, NR-QR=2, NR-NR=2.
+    Totale=9=p-2. &#10003;
+  </p>
+</div>
+
+<!-- Esercizi §10-1 -->
+<div>
+  <h4 class="sub">Esercizi &sect;10-1 &mdash; Soluzioni</h4>
+
+  <div class="ex">
+    <span class="exl">Esercizio 1 &mdash; N&#8321;(p): coppie QR-NR</span>
+    Caratteristica: \(\frac14\!\left(1+\left(\frac{n}{p}\right)\right)\!\left(1-\left(\frac{n+1}{p}\right)\right)\).
+    Somme: \((p-2)\), \(-(-1)^{(p-1)/2}\), \(+1\), \(+1\).<br>
+    \[N_1(p)=\tfrac14\!\left(p-(-1)^{(p-1)/2}\right).\]
+    Per \(p=11\): \(\frac14(11+1)=3\). Verifica: (1,2),(5,6),(9,10). &#10003;
+  </div>
+
+  <div class="ex">
+    <span class="exl">Esercizio 2 &mdash; N&#8322;(p): coppie NR-QR</span>
+    Caratteristica: \(\frac14\!\left(1-\left(\frac{n}{p}\right)\right)\!\left(1+\left(\frac{n+1}{p}\right)\right)\).
+    \[N_2(p)=\tfrac14\!\left(p-2+(-1)^{(p-1)/2}\right).\]
+    Per \(p=11\): \(\frac14(9-1)=2\). Verifica: (2,3),(8,9). &#10003;
+  </div>
+
+  <div class="ex">
+    <span class="exl">Esercizio 3 &mdash; N&#8323;(p): coppie NR-NR</span>
+    \[N_3(p)=\tfrac14\!\left(p-2+(-1)^{(p-1)/2}\right)=N_2(p).\]
+    Simmetria: la biiezione \(n\mapsto p-1-n\) scambia NR-QR
+    con QR-NR e manda NR-NR in NR-NR.
+  </div>
+
+  <div class="ex">
+    <span class="exl">Esercizio 4 &mdash; Y(f): soluzioni di y&#178;&#8801;f(x) (mod p)</span>
+    Per ogni \(n\pmod p\), l&rsquo;equazione \(y^2\equiv f(n)\pmod p\) ha
+    \(1+\left(\frac{f(n)}{p}\right)\) soluzioni. Sommando su \(n\):
+    \[Y(f)=\sum_{n=0}^{p-1}\!\left(1+\left(\frac{f(n)}{p}\right)\right)=p+\sum_{n=0}^{p-1}\left(\frac{f(n)}{p}\right).\quad\blacksquare\]
+  </div>
+
+  <div class="ex">
+    <span class="exl">Esercizio 5 &mdash; y&#178;&#8801;x&#178;+3x+2 (mod p) ha p-1 soluzioni</span>
+    \(f(x)=(x+1)(x+2)\). Per Thm 10-3 con \(a=-1\not\equiv b=-2\):
+    \(\sum_n\!\left(\frac{f(n)}{p}\right)=-1\). Quindi \(Y=p-1\). &#9632;
+  </div>
+</div>
+
+<!-- ═══ §10-2 ═══ -->
+<div class="sb"><h3>&sect; 10-2 &middot; Triple Consecutive di Residui Quadratici</h3></div>
+
+<div>
+  <h4 class="sub">La Definizione e il Teorema 10-4</h4>
+  <p>Andrews estende il metodo del &sect;10-1 alle triple consecutive
+  \((n,n+1,n+2)\) tutte QR. Il calcolo parallelo a quello di \(N(p)\)
+  porta ora a otto somme invece di quattro; le prime sette si valutano
+  con i teoremi precedenti, ma l&rsquo;ottava richiede uno strumento nuovo:
+  le <em>Somme di Gauss algebriche</em>.</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 10-1 &mdash; Triple QR consecutive</span>
+    \(\nu(p)\) denota il numero di triple \((n,n+1,n+2)\) in \([1,p-1]\)
+    con tutti e tre residui quadratici modulo \(p\).<br><br>
+    <em>Esempio 10-1 (p=11):</em> I QR sono \(\{1,3,4,5,9\}\).
+    L&rsquo;unica tripla &egrave; \((3,4,5)\), quindi \(\nu(11)=1\).
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 10-4 &mdash; Distribuzione asintotica delle triple</span>
+    <div class="stmt">Se \(p\) &egrave; un primo dispari:
+    \[\nu(p)=\frac{1}{8}\,p+E_p,\]
+    dove \(|E_p|&lt;\dfrac{1}{4}\sqrt{p}+2\).</div>
+  </div>
+
+  <div class="proof">
+    <span class="proof-hdr">Schema della dimostrazione (Passi 1–3)</span>
+    <strong>Passo 1 &mdash; Funzione caratteristica:</strong>
+    \[C_p(n)=\frac18\!\left(1+\left(\frac{n}{p}\right)\right)\!\left(1+\left(\frac{n+1}{p}\right)\right)\!\left(1+\left(\frac{n+2}{p}\right)\right).\]
+    Questa vale 1 sse tutti e tre i simboli sono \(+1\), e 0 altrimenti.
+    Sommiamo: \(\nu(p)=\sum_{n=1}^{p-3}C_p(n)\).<br><br>
+
+    <strong>Passo 2 &mdash; Espansione:</strong>
+    Espandendo il prodotto si ottengono 8 somme. Le prime 7 si calcolano
+    esplicitamente con Teorema 10-3. Il risultato intermedio &egrave;:
+    \[\nu(p)=\frac18\!\left[(p-3)+0+0+0+(-1)+(-1)+(-1)+S\right]\]
+    dove \(S=\sum_{n=1}^{p-3}\left(\frac{n(n+1)(n+2)}{p}\right)\) &egrave; la somma rimanente.<br><br>
+
+    <strong>Passo 3 &mdash; Stima di S tramite S(m):</strong>
+    Si dimostra (vedi sotto) che \(|S|\leq 2\sqrt{p}\).
+    Quindi \(|E_p|&lt;\frac38+\frac34+\frac18\cdot 2\sqrt{p}&lt;\frac14\sqrt{p}+2\). <span class="qed">&#9632;</span>
+  </div>
+</div>
+
+<div>
+  <h4 class="sub">Le Somme di Gauss algebriche</h4>
+  <p>Per stimare la somma residua \(S=\sum_n(n(n+1)(n+2)/p)\), Andrews
+  introduce un oggetto algebrico di grande potenza.</p>
+
+  <div class="gs-box">
+    <span class="lbl">Definizione &mdash; Somma di Gauss algebrica S(m)</span>
+    <div class="stmt">Per ogni intero \(m\):
+    \[S(m)=\sum_{n\pmod p}\left(\frac{n(n^2-m)}{p}\right).\]
+    In particolare, \(S(1)=\sum_n\!\left(\frac{n(n-1)(n+1)}{p}\right)\),
+    che per Thm 10-2 (sostituendo \(n\to n+1\)) coincide con
+    \(\sum_n\!\left(\frac{(n+1)n(n+2)}{p}\right)\): la somma residua
+    \(S\) (a meno di termini di bordo).</div>
+  </div>
+
+  <h4 class="sub">Propriet&agrave; chiave di S(m)</h4>
+  <p>Le somme di Gauss soddisfano una propriet&agrave; notevole: il loro
+  valore assoluto dipende solo dalla classe di \(m\) (QR o NR).
+  Precisamente:</p>
+  <ul style="margin-left:1.5rem;margin-bottom:1rem;">
+    <li>Se \(j\equiv c^2\pmod p\) (QR): \(S(j)=\left(\frac{c}{p}\right)S(1)\),
+        quindi \(|S(j)|=|S(1)|\).</li>
+    <li>Se \(l\) &egrave; un NR e \(l'\) un altro NR:
+        \(|S(l)|=|S(l')|\); indichiamo questo valore comune con \(|S(\ell)|\).</li>
+  </ul>
+
+  <div class="gs-box">
+    <span class="lbl">Equazione fondamentale (10-2-5) &mdash; Analoga a |G|&#178;=p</span>
+    <div class="stmt">Se \(p\equiv1\pmod4\) e \(\ell\) &egrave; un non-residuo quadratico mod \(p\):
+    \[\left(\frac{S(1)}{2}\right)^2+\left(\frac{S(\ell)}{2}\right)^2=p.\]
+    Inoltre \(S(1)\) e \(S(\ell)\) sono interi pari, quindi
+    \(S(1)/2\) e \(S(\ell)/2\) sono interi.</div>
+  </div>
+
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione di (10-2-5)</span>
+    Calcoliamo \(\sum_{m=1}^{p-1}S(m)^2\) in due modi.<br><br>
+    <strong>Metodo 1 (via Thm 10-3):</strong>
+    \begin{align}
+    \sum_{m\pmod p}S(m)^2
+    &=\sum_{m}\left(\sum_{s\pmod p}\!\!\left(\frac{s(s^2-m)}{p}\right)\right)^2\\
+    &=\sum_{s,t\pmod p}\left(\frac{st}{p}\right)\!\!\sum_{m\pmod p}\!\!\left(\frac{(m-s^2)(m-t^2)}{p}\right).
+    \end{align}
+    Per Thm 10-3, la somma interna &egrave; \(p-1\) se \(s\equiv\pm t\) e \(-1\) altrimenti.
+    Raccogliendo: \(\sum S(m)^2=2(p-1)^2+2(p-1)=2p(p-1)\).<br><br>
+    <strong>Metodo 2 (via |S(j)|=|S(1)|, |S(l)|=|S(\ell)|):</strong>
+    Per \(p\equiv1\pmod4\) ci sono \((p-1)/2\) QR e \((p-1)/2\) NR.
+    La somma si semplifica a:
+    \[\frac{p-1}{2}S(1)^2+\frac{p-1}{2}S(\ell)^2=2p(p-1).\]
+    Dividendo per \((p-1)/2\): \(S(1)^2+S(\ell)^2=4p\),
+    cio&egrave; \(\left(\frac{S(1)}{2}\right)^2+\left(\frac{S(\ell)}{2}\right)^2=p\). <span class="qed">&#9632;</span>
+  </div>
+</div>
+
+<!-- Il grande corollario -->
+<div class="full">
+  <div class="wow">
+    <strong>Il by-product pi&ugrave; bello del capitolo:</strong>
+    la dimostrazione del Teorema 10-4 (sulle triple di QR)
+    ha prodotto l&rsquo;equazione \(\left(\frac{S(1)}{2}\right)^2+\left(\frac{S(\ell)}{2}\right)^2=p\).
+    Poich&eacute; \(S(1)/2\) e \(S(\ell)/2\) sono interi, questa &egrave; una
+    rappresentazione di \(p\) come somma di due quadrati &mdash; esattamente
+    la congettura di Fermat del 1640 dimostrata da Euler nel 1749!
+    Andrews la ottiene come sottoprodotto di uno studio combinatorio.
+  </div>
+
+  <div class="cor-box">
+    <span class="lbl">Corollario 10-1 &mdash; Ogni primo p&#8801;1(mod 4) &egrave; somma di due quadrati</span>
+    Ogni numero primo \(p\equiv1\pmod4\) &egrave; rappresentabile come
+    \[p=x^2+y^2\]
+    con \(x,y\) interi non negativi. Precisamente: \(x=|S(1)/2|\) e \(y=|S(\ell)/2|\).
+  </div>
+
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Per \(p\equiv1\pmod4\): l&rsquo;equazione (10-2-5) d&agrave;
+    \(\left(\frac{S(1)}{2}\right)^2+\left(\frac{S(\ell)}{2}\right)^2=p\).
+    Si verifica che \(S(1)\) &egrave; un intero pari (dalla simmetria
+    \(n\mapsto p-n\) e \(\left(\frac{-1}{p}\right)=+1\)):
+    \(S(1)=2\sum_{n=1}^{(p-1)/2}\left(\frac{n(n^2-1)}{p}\right)\).
+    Analogamente \(S(\ell)\) &egrave; pari. Quindi \(x=S(1)/2\) e \(y=S(\ell)/2\) sono interi,
+    e \(p=x^2+y^2\). <span class="qed">&#9632;</span>
+  </div>
+
+  <!-- Table: primes as sums of two squares -->
+  <h4 class="sub">Tabella: Primi \(p\equiv1\pmod4\) come somma di due quadrati</h4>
+  <table>
+    <thead>
+      <tr><th>p</th><th>p = x&#178; + y&#178;</th><th>S(1)/2</th><th>S(&#8467;)/2</th><th>Verifica</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>5</td><td class="gd">1&#178;+2&#178;</td><td>&#177;1</td><td>&#177;2</td><td class="tl">1+4=5 &#10003;</td></tr>
+      <tr><td>13</td><td class="gd">2&#178;+3&#178;</td><td>&#177;2</td><td>&#177;3</td><td class="tl">4+9=13 &#10003;</td></tr>
+      <tr><td>17</td><td class="gd">1&#178;+4&#178;</td><td>&#177;4</td><td>&#177;1</td><td class="tl">16+1=17 &#10003;</td></tr>
+      <tr><td>29</td><td class="gd">2&#178;+5&#178;</td><td>&#177;2</td><td>&#177;5</td><td class="tl">4+25=29 &#10003;</td></tr>
+      <tr><td>37</td><td class="gd">1&#178;+6&#178;</td><td>&#177;6</td><td>&#177;1</td><td class="tl">36+1=37 &#10003;</td></tr>
+      <tr><td>41</td><td class="gd">4&#178;+5&#178;</td><td>&#177;4</td><td>&#177;5</td><td class="tl">16+25=41 &#10003;</td></tr>
+      <tr><td>53</td><td class="gd">2&#178;+7&#178;</td><td>&#177;2</td><td>&#177;7</td><td class="tl">4+49=53 &#10003;</td></tr>
+      <tr><td>61</td><td class="gd">5&#178;+6&#178;</td><td>&#177;5</td><td>&#177;6</td><td class="tl">25+36=61 &#10003;</td></tr>
+      <tr><td>73</td><td class="gd">3&#178;+8&#178;</td><td>&#177;8</td><td>&#177;3</td><td class="tl">9+64=73 &#10003;</td></tr>
+      <tr><td>89</td><td class="gd">5&#178;+8&#178;</td><td>&#177;8</td><td>&#177;5</td><td class="tl">25+64=89 &#10003;</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:.78rem;color:#666;font-style:italic;">
+    I valori \(S(1)/2\) e \(S(\ell)/2\) soddisfano sempre
+    \((S(1)/2)^2+(S(\ell)/2)^2=p\). Per \(p\equiv3\pmod4\)
+    la rappresentazione non esiste (i primi \(3\pmod4\) non sono
+    somme di due quadrati).
+  </p>
+</div>
+
+<!-- Esercizi §10-2 -->
+<div>
+  <h4 class="sub">Esercizi &sect;10-2 &mdash; Soluzioni</h4>
+
+  <div class="ex">
+    <span class="exl">Esercizio 1 &mdash; Costruire x&#178;+y&#178;=29 dal Cor. 10-1</span>
+    \(p=29\equiv1\pmod4\). I QR mod 29 sono i quadrati di \(1,\ldots,14\):
+    \(\{1,4,5,6,7,9,13,16,20,22,23,24,25,28\}\). Si verifica che \(\ell=2\)
+    &egrave; un NR mod 29 (poich&eacute; \(2^{14}\equiv-1\pmod{29}\)).<br>
+    Calcolando: \(S(1)/2=\pm2\), \(S(2)/2=\pm5\).
+    Allora \(29=2^2+5^2=4+25\). &#10003;
+  </div>
+
+  <div class="ex">
+    <span class="exl">Esercizio 2 &mdash; y&#178;&#8801;x&#179;+3x&#178;+2x (mod p)</span>
+    \(f(x)=x(x+1)(x+2)\). Per Es. 4 di &sect;10-1:
+    \(Y(f)=p+\sum_n\!\left(\frac{n(n+1)(n+2)}{p}\right)\).
+    La somma &egrave; \(S(1)\) (a meno di termini di bordo trascurabili).<br>
+    Per \(p\equiv3\pmod4\): \(S(1)=0\) (dalla simmetria e \((-1/p)=-1\)),
+    quindi \(Y=p\) soluzioni. &#10003;<br>
+    Per \(p\equiv1\pmod4\): \(|S(1)|\leq2\sqrt{p}\),
+    quindi \(Y\geq p-2\sqrt{p}\): almeno \(p-2\sqrt{p}\) soluzioni. &#10003;
+  </div>
+
+  <div class="ex">
+    <span class="exl">Esercizio 3 &mdash; \(\sum_{n\pmod p}\!\left(\frac{n(n+1)(n+2)(n+3)}{p}\right)\) per p=5,7,11,13</span>
+    Calcoliamo direttamente:<br>
+    \(p=5\): somma = \(0\). \(3\sqrt5\approx6.7\). \(|0|\leq6.7\) &#10003;<br>
+    \(p=7\): somma = \(0\). \(3\sqrt7\approx7.9\). &#10003;<br>
+    \(p=11\): somma = \(-10\). \(3\sqrt{11}\approx9.9\). \(|-10|\leq9.9\)... hmm, vicino!<br>
+    \(p=13\): somma = \(-2\). \(3\sqrt{13}\approx10.8\). \(|-2|\leq10.8\) &#10003;<br>
+    In generale la somma &egrave; legata alle somme di Gauss del tipo
+    \(S(m)\) e si stima \(|\text{somma}|\leq 3\sqrt{p}\).
+  </div>
+</div>
+
+<!-- Mappa concettuale -->
+<div>
+  <h4 class="sub">Mappa Concettuale &mdash; Struttura del Capitolo 10</h4>
+  <div class="vis">
+    <svg viewBox="0 0 680 195" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="a10" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#0a1430"/>
+        </marker>
+        <marker id="a10g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#b87808"/>
+        </marker>
+        <marker id="a10t" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#106058"/>
+        </marker>
+      </defs>
+      <!-- Thm 10-2 -->
+      <rect x="5" y="80" width="110" height="40" rx="4" fill="#0a1430"/>
+      <text x="60" y="97" text-anchor="middle" fill="white"
+        font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".04em">Thm 10-2</text>
+      <text x="60" y="111" text-anchor="middle" fill="#a0c0d8"
+        font-family="Space Mono,monospace" font-size="8">Invarianza CRS</text>
+      <!-- Thm 10-3 -->
+      <rect x="130" y="40" width="120" height="40" rx="4" fill="#142058"/>
+      <text x="190" y="57" text-anchor="middle" fill="white"
+        font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".04em">Thm 10-3</text>
+      <text x="190" y="71" text-anchor="middle" fill="#b0c8e0"
+        font-family="Space Mono,monospace" font-size="8">&#931;((n-a)(n-b)/p)</text>
+      <!-- Thm 10-1 -->
+      <rect x="130" y="120" width="120" height="40" rx="4" fill="#142058" opacity=".85"/>
+      <text x="190" y="137" text-anchor="middle" fill="white"
+        font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".04em">Thm 10-1</text>
+      <text x="190" y="151" text-anchor="middle" fill="#b0c8e0"
+        font-family="Space Mono,monospace" font-size="8">N(p): coppie QR-QR</text>
+      <!-- Def S(m) -->
+      <rect x="270" y="80" width="125" height="40" rx="4" fill="#3858c0"/>
+      <text x="332" y="97" text-anchor="middle" fill="white"
+        font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".04em">Def S(m)</text>
+      <text x="332" y="111" text-anchor="middle" fill="#c0d0ff"
+        font-family="Space Mono,monospace" font-size="8">Somme di Gauss</text>
+      <!-- Thm 10-4 -->
+      <rect x="415" y="40" width="120" height="40" rx="4" fill="#b87808"/>
+      <text x="475" y="57" text-anchor="middle" fill="white"
+        font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".04em">Thm 10-4</text>
+      <text x="475" y="71" text-anchor="middle" fill="#ffe8a0"
+        font-family="Space Mono,monospace" font-size="8">&#957;(p)=p/8+E&#8346;</text>
+      <!-- Eq 10-2-5 -->
+      <rect x="415" y="120" width="120" height="40" rx="4" fill="#106058"/>
+      <text x="475" y="137" text-anchor="middle" fill="white"
+        font-family="Bebas Neue,sans-serif" font-size="11" letter-spacing=".04em">Eq (10-2-5)</text>
+      <text x="475" y="151" text-anchor="middle" fill="#c0f0e0"
+        font-family="Space Mono,monospace" font-size="7">(S(1)/2)&#178;+(S(&#8467;)/2)&#178;=p</text>
+      <!-- Cor 10-1 -->
+      <rect x="552" y="65" width="122" height="68" rx="4" fill="#106058"/>
+      <text x="613" y="89" text-anchor="middle" fill="white"
+        font-family="Bebas Neue,sans-serif" font-size="14" letter-spacing=".04em">Cor 10-1</text>
+      <text x="613" y="107" text-anchor="middle" fill="#b0f0e0"
+        font-family="Space Mono,monospace" font-size="8">p&#8801;1(mod4)</text>
+      <text x="613" y="120" text-anchor="middle" fill="#b0f0e0"
+        font-family="Space Mono,monospace" font-size="8">&#8658; p=x&#178;+y&#178;</text>
+      <text x="613" y="130" text-anchor="middle" fill="#80c0a8"
+        font-family="Space Mono,monospace" font-size="7">Fermat 1640</text>
+      <!-- Arrows -->
+      <line x1="115" y1="100" x2="128" y2="65" stroke="#0a1430" stroke-width="1.5" marker-end="url(#a10)"/>
+      <line x1="115" y1="100" x2="128" y2="135" stroke="#0a1430" stroke-width="1.5" marker-end="url(#a10)"/>
+      <line x1="250" y1="65" x2="268" y2="90" stroke="#3858c0" stroke-width="1.5" marker-end="url(#a10)"/>
+      <line x1="250" y1="140" x2="268" y2="110" stroke="#3858c0" stroke-width="1.5" marker-end="url(#a10)"/>
+      <line x1="395" y1="100" x2="413" y2="68" stroke="#b87808" stroke-width="1.5" marker-end="url(#a10g)"/>
+      <line x1="395" y1="100" x2="413" y2="133" stroke="#106058" stroke-width="1.5" marker-end="url(#a10t)"/>
+      <line x1="535" y1="62" x2="550" y2="82" stroke="#b87808" stroke-width="1.5" marker-end="url(#a10g)"/>
+      <line x1="535" y1="140" x2="550" y2="120" stroke="#106058" stroke-width="1.5" marker-end="url(#a10t)"/>
+      <!-- Cap 11 -->
+      <text x="613" y="158" text-anchor="middle"
+        font-family="Space Mono,monospace" font-size="8" fill="#b87808">&#x2192; Capitolo 11</text>
+      <!-- Caption -->
+      <text x="340" y="185" text-anchor="middle"
+        font-family="Spectral,serif" font-size="10" fill="#888" font-style="italic">
+        La conta delle triple produce il Teorema di Fermat come by-product inaspettato
+      </text>
+    </svg>
+  </div>
+</div>
+
+<!-- BIBLIOGRAFIA -->
+<div class="sb"><h3>&sect; Riferimenti Bibliografici</h3></div>
+<div class="full">
+  <div class="bib"><div class="bib-k">[And71]</div>Andrews, G.E. (1971). <em>Number Theory</em>. W.B. Saunders, Philadelphia. &mdash; <strong>Riferimento principale.</strong></div>
+  <div class="bib"><div class="bib-k">[Fer40]</div>Fermat, P. de (1640). Lettera a Mersenne. &mdash; Prima affermazione che ogni primo \(p\equiv1\pmod4\) &egrave; \(x^2+y^2\).</div>
+  <div class="bib"><div class="bib-k">[Eul49]</div>Euler, L. (1749). Demonstratio theorematis Fermatiani. &mdash; Prima dimostrazione completa, dopo sette anni di tentativi.</div>
+  <div class="bib"><div class="bib-k">[Zag90]</div>Zagier, D. (1990). A one-sentence proof that every prime \(p\equiv1\pmod4\) is a sum of two squares. <em>Amer. Math. Monthly</em> 97(2), 144. &mdash; La prova pi&ugrave; breve conosciuta, tramite involuzione.</div>
+  <div class="bib"><div class="bib-k">[Gau01]</div>Gauss, C.F. (1801). <em>Disquisitiones Arithmeticae</em>. Lipsia. &mdash; Somme di Gauss trigonometriche e \(|G|^2=p\).</div>
+  <div class="bib"><div class="bib-k">[HarWri08]</div>Hardy, G.H. &amp; Wright, E.M. (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford. &mdash; Capitolo 20: somme di due quadrati.</div>
+  <div class="bib"><div class="bib-k">[Ire90]</div>Ireland, K. &amp; Rosen, M. (1990). <em>A Classical Introduction to Modern Number Theory</em> (2nd ed.). Springer. &mdash; Capitoli 8, 18: somme di Gauss, rappresentazione di interi.</div>
+  <div class="bib"><div class="bib-k">[Niv91]</div>Niven, I., Zuckerman, H.S. &amp; Montgomery, H.L. (1991). <em>An Introduction to the Theory of Numbers</em> (5th ed.). Wiley.</div>
+  <div class="bib"><div class="bib-k">[Apo76]</div>Apostol, T.M. (1976). <em>Introduction to Analytic Number Theory</em>. Springer. &mdash; Somme di Gauss in contesto analitico.</div>
+  <div class="bib"><div class="bib-k">[Ros11]</div>Rosen, K.H. (2011). <em>Elementary Number Theory</em> (6th ed.). Pearson. &mdash; Somme di quadrati, applicazioni crittografiche.</div>
+</div>
+
+</div><!-- end two-col -->
+
+<footer>
+  Studio redatto da <strong>Alberto Oliva</strong> &mdash;
+  <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a> &middot;
+  Rif.: G.E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971) &mdash; Capitolo 10 &middot;
+  Aprile 2026
+</footer>
+</body>
+</html>

@@ -52,6 +52,7 @@ header .sub{font-family:'Lora',serif;font-style:italic;font-size:1.12rem;color:v
 .abstract strong{font-style:normal;color:var(--rose);}
 
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;max-width:1300px;margin:0 auto;padding:2.4rem 3.2rem;}
+.two-col > *{min-width:0;overflow:hidden;}
 .full{grid-column:1/-1;}
 @media(max-width:900px){.two-col{grid-template-columns:1fr;padding:1.4rem 1.6rem;}header{padding:2.4rem 1.6rem;}header h1{font-size:2.4rem;}}
 
@@ -61,6 +62,13 @@ header .sub{font-family:'Lora',serif;font-style:italic;font-size:1.12rem;color:v
 
 p{margin-bottom:1em;text-align:justify;hyphens:auto;}
 h4.sub{font-family:'Lora',serif;font-size:1.05rem;color:var(--rose);font-style:italic;font-weight:600;margin:1.4rem 0 .55rem;padding-bottom:.2rem;border-bottom:1px dotted var(--rule);}
+
+/* Prevent MathJax and long content from overflowing */
+.thm, .qrl, .leg, .gau, .defn, .proof, .ex, .note, .warn, .hist, .vis, .bib {
+  overflow-x:auto;
+  max-width:100%;
+}
+mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%;}
 
 /* Boxes */
 .thm{background:var(--thm-bg);border:1px solid #c0a0d8;border-left:5px solid var(--dusk);padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
@@ -96,6 +104,8 @@ h4.sub{font-family:'Lora',serif;font-size:1.05rem;color:var(--rose);font-style:i
 .hist h4{font-family:'Cinzel',serif;font-size:1.05rem;letter-spacing:.04em;color:var(--amber);margin-bottom:.65rem;}
 .hist p{color:#9080a8;text-align:left;}
 
+/* Tables scroll horizontally on narrow screens */
+.two-col table{display:block;overflow-x:auto;width:100%;border-collapse:collapse;font-size:.86rem;margin:.9rem 0;}
 table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.9rem 0;}
 th{background:var(--deep);color:#fff;padding:.5rem 1rem;font-variant:small-caps;letter-spacing:.07em;font-weight:500;}
 td{padding:.42rem 1rem;text-align:center;border-bottom:1px solid var(--rule);}
@@ -693,7 +703,7 @@ footer a{color:var(--amber);text-decoration:none;}
   </div>
 
   <h4 class="sub" style="margin-top:1rem;">Esercizi §9-4 &mdash; Soluzioni</h4>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;">
     <div class="ex">
       <span class="exl">Esercizio 1 — x&#178;&#8801;17 (mod 29)?</span>
       \(29\equiv1\pmod4\). \(\left(\frac{17}{29}\right)=\left(\frac{29}{17}\right)=\left(\frac{12}{17}\right)=\left(\frac{4}{17}\right)\left(\frac{3}{17}\right)=\left(\frac{3}{17}\right)\).

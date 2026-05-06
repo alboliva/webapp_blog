@@ -1,823 +1,1327 @@
 <!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Capitolo 9 — Residui Quadratici | Andrews Number Theory</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Cinzel:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="it" xml:lang="it"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Alberto Oliva">
+
+<title>Residui Quadratici — Capitolo 9</title>
 <style>
-:root{
-  --paper:#f2eee8;--ink:#100c18;--cream:#e8e2d8;
-  --night:#100818;--deep:#1a0830;--dusk:#2a1050;
-  --wine:#5a1028;--rose:#8a1840;--blush:#c04060;
-  --gold:#b88008;--amber:#d89a10;--straw:#e8c060;
-  --indigo:#2840a0;--cobalt:#4060c8;--periwinkle:#8090e0;
-  --teal:#107868;--sage:#408060;
-  --rule:#c0a8d0;
-  --thm-bg:#f0e8f8;--proof-bg:#faf8f2;--defn-bg:#e8f4ee;
-  --ex-bg:#fdf2e0;--hist-bg:#100818;--qrl-bg:#e8ecff;
-  --leg-bg:#fff0f4;--gau-bg:#f0fff8;
-  --shadow:0 2px 16px rgba(26,8,48,.12);
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--paper);color:var(--ink);font-family:'Lora',Georgia,serif;font-size:18px;line-height:1.80;}
-
-header{
-  position:relative;background:var(--night);
-  padding:4rem 4rem 3rem;text-align:center;overflow:hidden;
-  border-bottom:4px solid var(--amber);
-}
-header::before{
-  content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 100% 60% at 30% 50%,rgba(90,16,40,.5) 0%,transparent 70%),
-    radial-gradient(ellipse 80% 50% at 80% 30%,rgba(40,64,160,.35) 0%,transparent 65%),
-    repeating-linear-gradient(135deg,rgba(184,128,8,.04) 0,rgba(184,128,8,.04) 1px,transparent 0,transparent 50%) 0 0/22px 22px;
-}
-header::after{
-  content:'(p/q)(q/p) = (−1)^{(p−1)(q−1)/4}';
-  position:absolute;right:2rem;bottom:1rem;
-  font-family:'JetBrains Mono',monospace;font-size:.82rem;
-  color:rgba(232,192,96,.15);letter-spacing:.1em;pointer-events:none;
-}
-.ctag{font-family:'JetBrains Mono',monospace;font-size:.67rem;letter-spacing:.3em;color:var(--straw);text-transform:uppercase;display:block;margin-bottom:1rem;position:relative;z-index:1;}
-header h1{font-family:'Cinzel',serif;font-size:3.4rem;letter-spacing:.06em;color:#fff;line-height:1.1;margin-bottom:.4rem;position:relative;z-index:1;font-weight:600;}
-header .sub{font-family:'Lora',serif;font-style:italic;font-size:1.12rem;color:var(--periwinkle);margin-bottom:1.6rem;position:relative;z-index:1;}
-.meta{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:.82rem;color:#504068;border-top:1px solid rgba(138,24,64,.2);padding-top:1rem;position:relative;z-index:1;}
-.meta strong{color:var(--amber);}
-.meta a{color:var(--periwinkle);text-decoration:none;}
-
-.abstract{background:var(--cream);border-left:5px solid var(--wine);border-right:5px solid var(--wine);max-width:900px;margin:2rem auto;padding:1.6rem 2.4rem;font-style:italic;font-size:.96rem;color:#18080c;}
-.abstract strong{font-style:normal;color:var(--rose);}
-
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;max-width:1300px;margin:0 auto;padding:2.4rem 3.2rem;}
-.full{grid-column:1/-1;}
-@media(max-width:900px){.two-col{grid-template-columns:1fr;padding:1.4rem 1.6rem;}header{padding:2.4rem 1.6rem;}header h1{font-size:2.4rem;}}
-
-.sb{grid-column:1/-1;display:flex;align-items:center;gap:1.2rem;margin:2.4rem 0 .8rem;padding-top:1.2rem;border-top:2px solid var(--rule);}
-.sb h3{font-family:'Cinzel',serif;font-size:1.3rem;letter-spacing:.04em;color:var(--deep);white-space:nowrap;}
-.sb::after{content:'';flex:1;height:1px;background:var(--rule);}
-
-p{margin-bottom:1em;text-align:justify;hyphens:auto;}
-h4.sub{font-family:'Lora',serif;font-size:1.05rem;color:var(--rose);font-style:italic;font-weight:600;margin:1.4rem 0 .55rem;padding-bottom:.2rem;border-bottom:1px dotted var(--rule);}
-
-/* Boxes */
-.thm{background:var(--thm-bg);border:1px solid #c0a0d8;border-left:5px solid var(--dusk);padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
-.thm .lbl{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.15em;color:var(--dusk);text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem;}
-.thm .stmt{font-style:italic;font-size:.97rem;color:#0a0618;}
-
-.qrl{background:var(--qrl-bg);border:1px solid #a8b8f0;border-left:5px solid var(--indigo);padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
-.qrl .lbl{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.15em;color:var(--indigo);text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem;}
-.qrl .stmt{font-style:italic;font-size:.97rem;color:#080418;}
-
-.leg{background:var(--leg-bg);border:1px solid #d8a0b8;border-left:5px solid var(--rose);padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
-.leg .lbl{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.15em;color:var(--rose);text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem;}
-
-.gau{background:var(--gau-bg);border:1px solid #88c8a8;border-left:5px solid var(--teal);padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
-.gau .lbl{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.15em;color:var(--teal);text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem;}
-
-.defn{background:var(--defn-bg);border:1px solid #88c8a0;border-left:5px solid var(--teal);padding:.95rem 1.3rem;margin:1rem 0;font-size:.95rem;}
-.defn .lbl{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.15em;color:var(--teal);text-transform:uppercase;display:block;margin-bottom:.35rem;}
-
-.proof{background:var(--proof-bg);border:1px solid #d8c870;border-left:4px solid var(--gold);padding:1rem 1.4rem;margin:.9rem 0 1.6rem;font-size:.93rem;}
-.proof-hdr{font-variant:small-caps;font-size:.76rem;letter-spacing:.1em;color:var(--gold);display:block;margin-bottom:.5rem;}
-.qed{float:right;color:var(--gold);font-size:1.1rem;}
-
-.ex{background:var(--ex-bg);border:1px solid #d0b060;border-left:4px solid #a07020;padding:.9rem 1.2rem;margin:.6rem 0;font-size:.93rem;}
-.ex .exl{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:#a07020;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.35rem;}
-
-.note{background:#f8f0ff;border:1px dashed #b090e0;padding:.7rem 1.1rem;font-size:.88rem;border-radius:3px;margin:.9rem 0;}
-.note::before{content:'💡 ';}
-.warn{background:#fff8ec;border:1px solid #e0a860;border-left:4px solid var(--rose);padding:.7rem 1.1rem;font-size:.88rem;margin:.9rem 0;}
-.warn::before{content:'⚠️ ';}
-
-.hist{background:var(--hist-bg);color:#c0a8c8;padding:1.4rem 1.6rem;border-radius:4px;margin:1.3rem 0;font-size:.87rem;}
-.hist h4{font-family:'Cinzel',serif;font-size:1.05rem;letter-spacing:.04em;color:var(--amber);margin-bottom:.65rem;}
-.hist p{color:#9080a8;text-align:left;}
-
-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.9rem 0;}
-th{background:var(--deep);color:#fff;padding:.5rem 1rem;font-variant:small-caps;letter-spacing:.07em;font-weight:500;}
-td{padding:.42rem 1rem;text-align:center;border-bottom:1px solid var(--rule);}
-tr:nth-child(even) td{background:rgba(26,8,48,.04);}
-td.pos{background:rgba(40,64,160,.15);font-weight:700;color:var(--indigo);}
-td.neg{background:rgba(138,24,64,.15);font-weight:700;color:var(--rose);}
-td.zer{background:#f0f0f0;color:#888;}
-td.hi{background:rgba(26,8,48,.12);font-weight:700;color:var(--deep);}
-.mono{font-family:'JetBrains Mono',monospace;font-size:.8rem;}
-
-.vis{background:#fff;border:1px solid var(--rule);border-radius:5px;padding:1.1rem;margin:1.1rem 0;text-align:center;box-shadow:var(--shadow);}
-.vis figcaption{font-size:.74rem;color:#888;margin-top:.5rem;font-style:italic;}
-.formula{text-align:center;margin:.95rem 0;padding:.55rem;background:rgba(26,8,48,.04);border-radius:3px;font-size:1.04rem;}
-
-.bib{border-bottom:1px solid var(--rule);padding:.6rem 0;font-size:.87rem;}
-.bib-k{font-family:'JetBrains Mono',monospace;color:var(--deep);font-size:.72rem;margin-bottom:.12rem;}
-
-footer{background:var(--ink);color:#382848;text-align:center;padding:1.6rem;font-size:.78rem;border-top:3px solid var(--amber);margin-top:3rem;}
-footer a{color:var(--amber);text-decoration:none;}
 </style>
-</head>
-<body>
 
-<header>
-  <span class="ctag">Studio di Teoria dei Numeri &middot; Capitolo 9</span>
-  <h1>RESIDUI QUADRATICI</h1>
-  <div class="sub">George E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971)</div>
-  <div class="meta">
-    <span><strong>Autore:</strong> Alberto Oliva</span>
-    <span><strong>Email:</strong> <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a></span>
-    <span><strong>Riferimento:</strong> Andrews, G.E. &mdash; <em>Number Theory</em>, Cap. 9</span>
-    <span><strong>Data:</strong> Aprile 2026</span>
+
+<script src="andrews_ch9_residui_quadratici_files/libs/clipboard/clipboard.min.js"></script>
+<script src="andrews_ch9_residui_quadratici_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="andrews_ch9_residui_quadratici_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="andrews_ch9_residui_quadratici_files/libs/quarto-html/popper.min.js"></script>
+<script src="andrews_ch9_residui_quadratici_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="andrews_ch9_residui_quadratici_files/libs/quarto-html/anchor.min.js"></script>
+<link href="andrews_ch9_residui_quadratici_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="andrews_ch9_residui_quadratici_files/libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="andrews_ch9_residui_quadratici_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="andrews_ch9_residui_quadratici_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="andrews_ch9_residui_quadratici_files/libs/bootstrap/bootstrap-170b94ad9e322df11de454cd5eb05b1b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="body { font-family: 'Lora', 'Georgia', serif; font-size: 17px;
+       line-height: 1.80; }
+h1,h2,h3 { font-family: 'Cinzel', 'Palatino Linotype', serif; }
+code { background: #f8f0ff; padding: 1px 5px; border-radius: 3px;
+       font-size: .87em; }">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Indice</h2>
+   
+  <ul>
+  <li><a href="#contesto-storico" id="toc-contesto-storico" class="nav-link active" data-scroll-target="#contesto-storico"><span class="header-section-number">1</span> Contesto Storico</a></li>
+  <li><a href="#il-criterio-di-eulero" id="toc-il-criterio-di-eulero" class="nav-link" data-scroll-target="#il-criterio-di-eulero"><span class="header-section-number">2</span> §9-1 · Il Criterio di Eulero</a>
+  <ul class="collapse">
+  <li><a href="#residui-quadratici-definizione-e-prime-osservazioni" id="toc-residui-quadratici-definizione-e-prime-osservazioni" class="nav-link" data-scroll-target="#residui-quadratici-definizione-e-prime-osservazioni"><span class="header-section-number">2.1</span> Residui quadratici — definizione e prime osservazioni</a></li>
+  <li><a href="#tabella-qr-e-nr-per-p7-e-p11" id="toc-tabella-qr-e-nr-per-p7-e-p11" class="nav-link" data-scroll-target="#tabella-qr-e-nr-per-p7-e-p11"><span class="header-section-number">2.2</span> Tabella: QR e NR per p=7 e p=11</a></li>
+  <li><a href="#esercizio-9-1" id="toc-esercizio-9-1" class="nav-link" data-scroll-target="#esercizio-9-1"><span class="header-section-number">2.3</span> Esercizio §9-1</a></li>
+  </ul></li>
+  <li><a href="#il-simbolo-di-legendre-1" id="toc-il-simbolo-di-legendre-1" class="nav-link" data-scroll-target="#il-simbolo-di-legendre-1"><span class="header-section-number">3</span> §9-2 · Il Simbolo di Legendre</a>
+  <ul class="collapse">
+  <li><a href="#definizione-e-proprietà" id="toc-definizione-e-proprietà" class="nav-link" data-scroll-target="#definizione-e-proprietà"><span class="header-section-number">3.1</span> Definizione e proprietà</a></li>
+  <li><a href="#simbolo-di-jacobi-generalizzazione" id="toc-simbolo-di-jacobi-generalizzazione" class="nav-link" data-scroll-target="#simbolo-di-jacobi-generalizzazione"><span class="header-section-number">3.2</span> Simbolo di Jacobi (generalizzazione)</a></li>
+  <li><a href="#esercizi-9-2" id="toc-esercizi-9-2" class="nav-link" data-scroll-target="#esercizi-9-2"><span class="header-section-number">3.3</span> Esercizi §9-2</a></li>
+  </ul></li>
+  <li><a href="#la-legge-di-reciprocità-quadratica" id="toc-la-legge-di-reciprocità-quadratica" class="nav-link" data-scroll-target="#la-legge-di-reciprocità-quadratica"><span class="header-section-number">4</span> §9-3 · La Legge di Reciprocità Quadratica</a>
+  <ul class="collapse">
+  <li><a href="#il-lemma-di-gauss-strumento-fondamentale" id="toc-il-lemma-di-gauss-strumento-fondamentale" class="nav-link" data-scroll-target="#il-lemma-di-gauss-strumento-fondamentale"><span class="header-section-number">4.1</span> Il Lemma di Gauss — strumento fondamentale</a></li>
+  <li><a href="#esempio-del-lemma-di-gauss" id="toc-esempio-del-lemma-di-gauss" class="nav-link" data-scroll-target="#esempio-del-lemma-di-gauss"><span class="header-section-number">4.2</span> Esempio del Lemma di Gauss</a></li>
+  <li><a href="#la-legge-di-reciprocità-quadratica-1" id="toc-la-legge-di-reciprocità-quadratica-1" class="nav-link" data-scroll-target="#la-legge-di-reciprocità-quadratica-1"><span class="header-section-number">4.3</span> La Legge di Reciprocità Quadratica</a></li>
+  <li><a href="#tabella-della-lrq" id="toc-tabella-della-lrq" class="nav-link" data-scroll-target="#tabella-della-lrq"><span class="header-section-number">4.4</span> Tabella della LRQ</a></li>
+  <li><a href="#formule-per--1p-e-2p" id="toc-formule-per--1p-e-2p" class="nav-link" data-scroll-target="#formule-per--1p-e-2p"><span class="header-section-number">4.5</span> Formule per (-1/p) e (2/p)</a></li>
+  <li><a href="#esercizi-9-3" id="toc-esercizi-9-3" class="nav-link" data-scroll-target="#esercizi-9-3"><span class="header-section-number">4.6</span> Esercizi §9-3</a></li>
+  </ul></li>
+  <li><a href="#applicazioni-della-legge-di-reciprocità-quadratica" id="toc-applicazioni-della-legge-di-reciprocità-quadratica" class="nav-link" data-scroll-target="#applicazioni-della-legge-di-reciprocità-quadratica"><span class="header-section-number">5</span> §9-4 · Applicazioni della Legge di Reciprocità Quadratica</a>
+  <ul class="collapse">
+  <li><a href="#strategia-generale" id="toc-strategia-generale" class="nav-link" data-scroll-target="#strategia-generale"><span class="header-section-number">5.1</span> Strategia generale</a></li>
+  <li><a href="#esempi-di-calcolo-completo" id="toc-esempi-di-calcolo-completo" class="nav-link" data-scroll-target="#esempi-di-calcolo-completo"><span class="header-section-number">5.2</span> Esempi di calcolo completo</a></li>
+  </ul></li>
+  <li><a href="#sintesi-struttura-del-capitolo-9" id="toc-sintesi-struttura-del-capitolo-9" class="nav-link" data-scroll-target="#sintesi-struttura-del-capitolo-9"><span class="header-section-number">6</span> Sintesi — Struttura del Capitolo 9</a></li>
+  <li><a href="#riferimenti-bibliografici" id="toc-riferimenti-bibliografici" class="nav-link" data-scroll-target="#riferimenti-bibliografici"><span class="header-section-number">7</span> Riferimenti Bibliografici</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Altri Formati</h2><ul><li><a href="andrews_ch9_residui_quadratici.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Residui Quadratici — Capitolo 9</h1>
+<p class="subtitle lead">Studio su <em>Number Theory</em> di George E. Andrews (W.B. Saunders, 1971)</p>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Autore/Autrice</div>
+  <div class="quarto-title-meta-heading">Affiliazione</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Alberto Oliva <a href="mailto:eng.aoliva@gmail.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
   </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Studio Indipendente di Matematica
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+    <div>
+    <div class="quarto-title-meta-heading">Data di Pubblicazione</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">3 maggio 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
 </header>
 
-<div class="abstract">
-  <strong>Abstract.</strong>
-  Il Capitolo 9 affronta la congruenza quadratica \(x^2\equiv a\pmod{p}\):
-  quando ha soluzione? La risposta organizza tutta la teoria dei
-  <em>residui quadratici</em>. La sezione &sect;9-1 presenta il
-  <em>Criterio di Eulero</em> (Teorema 9-1): \(a\) &egrave; residuo quadratico
-  modulo \(p\) iff \(a^{(p-1)/2}\equiv1\pmod p\). La &sect;9-2 introduce
-  il <em>Simbolo di Legendre</em> \(\left(\frac{a}{p}\right)\in\{-1,0,1\}\)
-  e le sue propriet&agrave; moltiplicative. La &sect;9-3 dimostra il celebre
-  <em>Lemma di Gauss</em> (Teorema 9-3) e la <em>Legge di
-  Reciprocit&agrave; Quadratica</em> (Teorema 9-4) via un argomento geometrico
-  sui punti reticolari — uno dei pi&ugrave; bei risultati dell&rsquo;intera matematica.
-  Completano il quadro le formule per \(\left(\frac{-1}{p}\right)\) e
-  \(\left(\frac{2}{p}\right)\) (Teorema 9-5). La &sect;9-4 applica
-  questi strumenti a congruenze quadratiche generali.
+
+<div style="background:#100818;color:#c0a8c8;padding:1.4rem 2rem;
+     border-radius:4px;margin-bottom:1.5rem;font-style:italic;
+     border-left:5px solid #d89a10;">
+<strong style="color:#d89a10;">Abstract.</strong>
+Il Capitolo 9 affronta la congruenza quadratica \(x^2\equiv a\pmod{p}\).
+La §9-1 presenta il <em>Criterio di Eulero</em> (Thm 9-1):
+\(a\) è QR iff \(a^{(p-1)/2}\equiv1\pmod p\).
+La §9-2 introduce il <em>Simbolo di Legendre</em> \(\left(\frac{a}{p}\right)\)
+con proprietà moltiplicative.
+La §9-3 dimostra il <em>Lemma di Gauss</em> (Thm 9-3) e la
+<em>Legge di Reciprocità Quadratica</em> (Thm 9-4) via argomento
+geometrico sui punti reticolari, più le formule per
+\(\left(\frac{-1}{p}\right)\) e \(\left(\frac{2}{p}\right)\) (Thm 9-5).
+La §9-4 applica questi strumenti a congruenze quadratiche generali.
 </div>
-
-<div class="two-col">
-
-<!-- STORIA -->
-<div class="sb"><h3>Contesto Storico &amp; Motivazioni</h3></div>
-
-<div>
-  <div class="hist">
-    <h4>EULER, LEGENDRE, GAUSS E LA LRQ</h4>
-    <p>La Legge di Reciprocit&agrave; Quadratica (LRQ) fu osservata empiricamente
-    da Euler (1783) e congetturata da Legendre (1785), che la chiamo&grave;
-    il <em>Theorema Aureum</em> (Teorema d&rsquo;Oro). Ma entrambi fallirono nel
-    dimostrarla completamente. Gauss la dimostr&ograve; nel 1796, all&rsquo;et&agrave; di
-    diciannove anni, con la sua prima prova (una delle sei diverse che dare&agrave;
-    nel corso della sua vita). La LRQ &egrave; cos&igrave; fondamentale che oltre
-    250 dimostrazioni diverse sono state pubblicate dal 1796 ad oggi
-    (Gerstenhaber ne contava 152 nel 1963).</p>
-  </div>
-  <div class="hist" style="margin-top:.8rem;">
-    <h4>IL SIMBOLO DI LEGENDRE</h4>
-    <p>Adrien-Marie Legendre (1752&ndash;1833) introdusse il simbolo
-    \(\left(\frac{a}{p}\right)\) nella sua <em>Essai sur la Th&eacute;orie
-    des Nombres</em> (1798) come notazione efficiente per le propriet&agrave;
-    dei residui quadratici. La propriet&agrave; moltiplicativa
-    \(\left(\frac{ab}{p}\right)=\left(\frac{a}{p}\right)\left(\frac{b}{p}\right)\)
-    trasforma calcoli complicati in sequenze di prodotti elementari.
-    Il Simbolo di Jacobi (estensione ai moduli composti) sar&agrave;
-    lo strumento principale degli esercizi avanzati.</p>
-  </div>
+<hr>
+<section id="contesto-storico" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Contesto Storico</h1>
+<div class="columns">
+<div class="column" style="width:50%;">
+<section id="euler-legendre-gauss-e-la-lrq" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="euler-legendre-gauss-e-la-lrq"><span class="header-section-number">1.1</span> Euler, Legendre, Gauss e la LRQ</h2>
+<p>La Legge di Reciprocità Quadratica (LRQ) fu osservata empiricamente da <strong>Euler</strong> (1783) e congetturata (con prova parziale) da <strong>Legendre</strong> (1785), che la chiamò <em>Theorema Aureum</em> (Teorema d’Oro). La prima dimostrazione completa si deve a <strong>Gauss</strong> nel 1796, all’età di 19 anni.</p>
+<p>Gauss ritornò più volte su questo risultato, fornendo <strong>sei dimostrazioni diverse</strong> nel corso della sua vita. La prova presentata da Andrews (via punti reticolari) è una versione della terza dimostrazione di Gauss. In totale, oltre 250 dimostrazioni diverse sono state pubblicate (Gerstenhaber ne contava 152 nel 1963).</p>
+</section>
+<section id="il-simbolo-di-legendre" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="il-simbolo-di-legendre"><span class="header-section-number">1.2</span> Il Simbolo di Legendre</h2>
+<p>Adrien-Marie Legendre (1752–1833) introdusse <span class="math inline">\(\left(\frac{a}{p}\right)\)</span> nella sua <em>Essai sur la Théorie des Nombres</em> (1798). La proprietà moltiplicativa <span class="math inline">\(\left(\frac{ab}{p}\right)=\left(\frac{a}{p}\right)\left(\frac{b}{p}\right)\)</span> trasforma calcoli complicati in sequenze di prodotti elementari.</p>
+</section>
+</div><div class="column" style="width:50%;">
+<section id="perché-la-lrq-è-straordinaria" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="perché-la-lrq-è-straordinaria"><span class="header-section-number">1.3</span> Perché la LRQ è straordinaria</h2>
+<p>La LRQ afferma che la risposta a “<strong><span class="math inline">\(p\)</span> è un quadrato mod <span class="math inline">\(q\)</span>?</strong>” dipende dalla risposta a “<strong><span class="math inline">\(q\)</span> è un quadrato mod <span class="math inline">\(p\)</span>?</strong>” in un modo preciso e sorprendente: le due risposte coincidono tranne quando entrambi i primi sono <span class="math inline">\(\equiv3\pmod4\)</span>, caso in cui si oppongono.</p>
+<p>Non c’è nessuna ragione ovvia per cui questi due problemi <em>a priori</em> indipendenti debbano essere collegati. Eppure lo sono, e la connessione passa per la geometria dei punti reticolari.</p>
+</section>
+<section id="applicazioni-moderne" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="applicazioni-moderne"><span class="header-section-number">1.4</span> Applicazioni moderne</h2>
+<p>I residui quadratici sono fondamentali in crittografia:</p>
+<ul>
+<li><strong>Goldwasser-Micali</strong> (1982): primo schema di cifratura probabilistica basato sulla difficoltà di decidere se <span class="math inline">\(n\)</span> è un QR modulo un composto.</li>
+<li><strong>Test di primalità di Solovay-Strassen</strong>: usa il Simbolo di Jacobi.</li>
+<li><strong>Firma digitale di Rabin</strong>: sicurezza equivalente alla fattorizzazione.</li>
+</ul>
+</section>
 </div>
-
-<div>
-  <div class="hist">
-    <h4>PERCH&Eacute; LA LRQ &Egrave; MAGNIFICA</h4>
-    <p>La Legge di Reciprocit&agrave; afferma che il legame tra
-    \(\left(\frac{p}{q}\right)\) e \(\left(\frac{q}{p}\right)\) (pu&ograve;
-    \(p\) essere estratto quadratico di \(q\) e viceversa?) dipende
-    solo da \(p\bmod4\) e \(q\bmod4\). Questa connessione tra due
-    problemi apparentemente indipendenti &egrave; sorprendente: non c&rsquo;&egrave; nessuna
-    ragione ovvia per cui la risposta a &ldquo;\(p\) &egrave; quadrato mod \(q\)?&rdquo;
-    debba dipendere da &ldquo;\(q\) &egrave; quadrato mod \(p\)?&rdquo;.
-    Eppure lo fa, e la dimostrazione di Andrews usa i punti reticolari
-    di un esagono &mdash; di una bellezza sorprendente.</p>
-  </div>
-  <div class="hist" style="margin-top:.8rem;">
-    <h4>APPLICAZIONI MODERNE</h4>
-    <p>I residui quadratici sono fondamentali in crittografia: il
-    problema di decidere se \(n\) &egrave; un residuo quadratico modulo un
-    composto &egrave; computazionalmente difficile e sta alla base del
-    cifrario di Goldwasser-Micali (1982). La LRQ &egrave; anche il punto
-    di partenza della generalizzazione a residui di ordine superiore
-    (simbolo di potenza \(n\)-esima) e alla teoria del corpo di
-    classe (Class Field Theory).</p>
-  </div>
 </div>
-
-<!-- §9-1 CRITERIO DI EULERO -->
-<div class="sb"><h3>&sect; 9-1 &middot; Il Criterio di Eulero</h3></div>
-
-<div>
-  <h4 class="sub">Residui quadratici — la domanda fondamentale</h4>
-  <p>Dopo aver risolto la congruenza lineare \(ax\equiv b\pmod c\) (Cap. 5),
-  la domanda naturale &egrave;: quando ha soluzione la congruenza
-  <em>quadratica</em> \(x^2\equiv a\pmod p\)? Questa &egrave; la domanda centrale
-  del Capitolo 9.</p>
-
-  <p>Diciamo che \(a\) &egrave; un <em>residuo quadratico</em> modulo \(p\) se
-  \(\gcd(a,p)=1\) e \(x^2\equiv a\pmod p\) ha una soluzione.
-  Per \(p=7\): i quadrati \(1^2=1,\; 2^2=4,\; 3^2=2\pmod7\) — i residui
-  quadratici mod 7 sono \(\{1,2,4\}\). Gli altri — \(\{3,5,6\}\) — sono
-  <em>non-residui quadratici</em>.</p>
-
-  <div class="note">
-    In generale, i residui quadratici modulo un primo dispari \(p\) formano
-    esattamente \((p-1)/2\) classi: met&agrave; degli elementi del SRR sono QR,
-    met&agrave; non-QR. Questo segue direttamente dal Criterio di Eulero.
-  </div>
-
-  <div class="thm">
-    <span class="lbl">Teorema 9-1 &mdash; Criterio di Eulero</span>
-    <div class="stmt">Se \(p\) &egrave; un primo dispari e \(\gcd(a,p)=1\), allora
-    \(a\) &egrave; un residuo quadratico modulo \(p\) se e solo se
-    \[a^{(p-1)/2}\equiv 1\pmod p.\]</div>
-  </div>
-  <div class="proof">
-    <span class="proof-hdr">Dimostrazione</span>
-    \((\Rightarrow)\) Se \(a\) &egrave; QR, esiste \(X\) con \(X^2\equiv a\pmod p\)
-    e \(p\nmid X\). Allora:
-    \[a^{(p-1)/2}\equiv(X^2)^{(p-1)/2}=X^{p-1}\equiv1\pmod p\]
-    per il Piccolo Teorema di Fermat (Cor. 5-2). <br><br>
-    \((\Leftarrow)\) Sia \(g\) una radice primitiva mod \(p\) (esiste per Thm 7-6).
-    Esiste \(r\) con \(g^r\equiv a\pmod p\). Allora
-    \[g^{r(p-1)/2}\equiv a^{(p-1)/2}\equiv1\pmod p,\]
-    quindi \((p-1)\mid r(p-1)/2\), cioè \(2\mid r\). Sia \(r=2s\);
-    allora \((g^s)^2=g^{2s}=g^r\equiv a\pmod p\): \(a\) &egrave; QR. <span class="qed">&#9632;</span>
-  </div>
-
-  <div class="thm">
-    <span class="lbl">Corollario 9-1 &mdash; Indice pari iff residuo quadratico</span>
-    <div class="stmt">Sia \(g\) radice primitiva mod \(p\) e \(g^r\equiv a\pmod p\).
-    Allora \(r\) &egrave; pari se e solo se \(a\) &egrave; un residuo quadratico mod \(p\).</div>
-  </div>
+<hr>
+</section>
+<section id="il-criterio-di-eulero" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> §9-1 · Il Criterio di Eulero</h1>
+<section id="residui-quadratici-definizione-e-prime-osservazioni" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="residui-quadratici-definizione-e-prime-osservazioni"><span class="header-section-number">2.1</span> Residui quadratici — definizione e prime osservazioni</h2>
+<p>Diciamo che <span class="math inline">\(a\)</span> è un <strong>residuo quadratico</strong> (QR) modulo <span class="math inline">\(p\)</span> (primo dispari, <span class="math inline">\(\gcd(a,p)=1\)</span>) se <span class="math inline">\(x^2\equiv a\pmod p\)</span> ha una soluzione.</p>
+<p><strong>Esempio 9-1:</strong> Per <span class="math inline">\(p=7\)</span>: <span class="math inline">\(1^2=1\)</span>, <span class="math inline">\(2^2=4\)</span>, <span class="math inline">\(3^2=2\pmod7\)</span>. I QR mod 7 sono <span class="math inline">\(\{1,2,4\}\)</span>; i non-residui (NR) sono <span class="math inline">\(\{3,5,6\}\)</span>.</p>
+<p><strong>Regola generale:</strong> Ci sono esattamente <span class="math inline">\(\frac{p-1}{2}\)</span> residui quadratici e <span class="math inline">\(\frac{p-1}{2}\)</span> non-residui mod <span class="math inline">\(p\)</span>. Questo segue dal Criterio di Eulero.</p>
+<hr>
+<div class="callout callout-style-default callout-important callout-titled" title="Teorema 9-1 — Criterio di Eulero">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-
-<div>
-  <!-- Table: QR mod 7 and mod 11 -->
-  <h4 class="sub">Tabella: Residui Quadratici mod 7 e mod 11</h4>
-  <table>
-    <thead><tr><th>a mod 7</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></thead>
-    <tbody>
-      <tr><td class="mono">a^3 mod 7</td><td>1</td><td>1</td><td>6</td><td>1</td><td>6</td><td>6</td></tr>
-      <tr><td>QR?</td><td class="pos">&#10003; QR</td><td class="pos">&#10003; QR</td><td class="neg">&#10007; NR</td><td class="pos">&#10003; QR</td><td class="neg">&#10007; NR</td><td class="neg">&#10007; NR</td></tr>
-    </tbody>
-  </table>
-  <p style="font-size:.78rem;color:#777;font-style:italic;">QR mod 7: {1,2,4}. Non-residui: {3,5,6}. (p-1)/2=3 di ciascun tipo. ✓</p>
-
-  <table>
-    <thead><tr><th>a mod 11</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr></thead>
-    <tbody>
-      <tr><td class="mono">a^5 mod 11</td><td>1</td><td>10</td><td>1</td><td>1</td><td>1</td><td>10</td><td>10</td><td>10</td><td>1</td><td>10</td></tr>
-      <tr><td>QR?</td><td class="pos">&#10003;</td><td class="neg">&#10007;</td><td class="pos">&#10003;</td><td class="pos">&#10003;</td><td class="pos">&#10003;</td><td class="neg">&#10007;</td><td class="neg">&#10007;</td><td class="neg">&#10007;</td><td class="pos">&#10003;</td><td class="neg">&#10007;</td></tr>
-    </tbody>
-  </table>
-  <p style="font-size:.78rem;color:#777;font-style:italic;">QR mod 11: {1,3,4,5,9}. NR: {2,6,7,8,10}. Esattamente 5 ciascuno. ✓</p>
-
-  <h4 class="sub">Esercizi §9-1</h4>
-  <div class="ex">
-    <span class="exl">Esercizio 1 &mdash; Criterio di Eulero: applicazioni</span>
-    <strong>(a)</strong> \(a=2,p=5\): \(2^2=4\equiv-1\pmod5\). NR. &#10007;<br>
-    <strong>(b)</strong> \(a=4,p=7\): \(4^3=64\equiv1\pmod7\). QR! Verifica: \(2^2=4\) &#10003;<br>
-    <strong>(c)</strong> \(a=3,p=11\): \(3^5=243\equiv1\pmod{11}\). QR! \(5^2=25\equiv3\) &#10003;<br>
-    <strong>(d)</strong> \(a=6,p=13\): \(6^6=46656\equiv(6^2)^3=36^3\equiv10^3=1000\equiv12\equiv-1\pmod{13}\). NR. &#10007;
-  </div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Teorema 9-1 — Criterio di Eulero
 </div>
-
-<!-- §9-2 SIMBOLO DI LEGENDRE -->
-<div class="sb"><h3>&sect; 9-2 &middot; Il Simbolo di Legendre</h3></div>
-
-<div>
-  <h4 class="sub">Una notazione che semplifica tutto</h4>
-  <p>Il Criterio di Eulero ci d&agrave; un test per i residui quadratici,
-  ma i calcoli con le potenze diventano presto complessi. Il
-  <em>Simbolo di Legendre</em> \(\left(\frac{a}{p}\right)\) &egrave; una
-  notazione compatta che codifica la risposta: +1 se \(a\) &egrave; QR,
-  &minus;1 se NR, 0 se \(p\mid a\). La sua propriet&agrave; chiave &egrave; la
-  <em>moltiplicativit&agrave;</em>: \(\left(\frac{ab}{p}\right)=
-  \left(\frac{a}{p}\right)\left(\frac{b}{p}\right)\).
-  Questo permette di decomporre il calcolo di un simbolo complesso
-  in prodotti di simboli pi&ugrave; semplici.</p>
-
-  <div class="leg">
-    <span class="lbl">Definizione 9-1 &mdash; Simbolo di Legendre</span>
-    Se \(p\) &egrave; un primo dispari:
-    \[\left(\frac{a}{p}\right)=\begin{cases}1&\text{se }a\text{ &egrave; residuo quadratico mod }p,\\0&\text{se }p\mid a,\\-1&\text{altrimenti.}\end{cases}\]
-  </div>
-
-  <div class="thm">
-    <span class="lbl">Teorema 9-2 &mdash; Propriet&agrave; del Simbolo di Legendre</span>
-    <div class="stmt">Se \(p\) &egrave; primo dispari e \(\gcd(a,p)=\gcd(b,p)=1\):
-    \[\left(\frac{a}{p}\right)=\left(\frac{b}{p}\right)\quad\text{se }a\equiv b\pmod p,\tag{9-2-1}\]
-    \[\left(\frac{ab}{p}\right)=\left(\frac{a}{p}\right)\left(\frac{b}{p}\right),\tag{9-2-2}\]
-    \[a^{(p-1)/2}\equiv\left(\frac{a}{p}\right)\pmod p.\tag{9-2-3}\]
-    </div>
-  </div>
-  <div class="proof">
-    <span class="proof-hdr">Dimostrazione</span>
-    (9-2-1) segue dalla definizione. (9-2-2) segue dal Corollario 9-1: l&rsquo;indice
-    di \(ab\) &egrave; la somma degli indici di \(a\) e \(b\), quindi &egrave; pari iff
-    entrambi sono pari o entrambi dispari, cio&egrave; iff i simboli hanno
-    uguale segno. (9-2-3): se \(a\) &egrave; QR: Thm 9-1 d&agrave; \(a^{(p-1)/2}\equiv1\);
-    se \(p\mid a\): entrambi 0; se NR: Fermat d&agrave; \(a^{p-1}\equiv1\),
-    quindi \(a^{(p-1)/2}\equiv\pm1\), e Thm 9-1 esclude +1, quindi \(\equiv-1\). <span class="qed">&#9632;</span>
-  </div>
 </div>
-
-<div>
-  <!-- Visual: Legendre symbol table mod 13 -->
-  <div class="vis">
-    <svg viewBox="0 0 310 180" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <text x="155" y="14" text-anchor="middle" font-family="Cinzel,serif"
-        font-size="12" fill="#1a0830" letter-spacing=".04em">Simbolo di Legendre (a/13) per a=1..12</text>
-      <!-- Headers -->
-      <g font-family="JetBrains Mono,monospace" font-size="10" fill="#1a0830" font-weight="bold">
-        <text x="22" y="32">a</text>
-        <text x="45" y="32">1</text><text x="68" y="32">2</text><text x="91" y="32">3</text>
-        <text x="114" y="32">4</text><text x="137" y="32">5</text><text x="160" y="32">6</text>
-        <text x="183" y="32">7</text><text x="206" y="32">8</text><text x="229" y="32">9</text>
-        <text x="247" y="32">10</text><text x="270" y="32">11</text><text x="293" y="32">12</text>
-      </g>
-      <!-- Row: (a/13) values: QR={1,3,4,9,10,12} → +1; NR={2,5,6,7,8,11} → -1 -->
-      <g font-family="JetBrains Mono,monospace" font-size="9">
-        <text x="22" y="60" fill="#1a0830" font-weight="bold">(a/13)</text>
-        <!-- +1 cells -->
-        <rect x="35" y="42" width="22" height="22" rx="2" fill="#e8ecff"/>
-        <text x="46" y="57" text-anchor="middle" fill="#2840a0" font-weight="bold">+1</text>
-        <rect x="81" y="42" width="22" height="22" rx="2" fill="#e8ecff"/>
-        <text x="92" y="57" text-anchor="middle" fill="#2840a0" font-weight="bold">+1</text>
-        <rect x="104" y="42" width="22" height="22" rx="2" fill="#e8ecff"/>
-        <text x="115" y="57" text-anchor="middle" fill="#2840a0" font-weight="bold">+1</text>
-        <rect x="219" y="42" width="22" height="22" rx="2" fill="#e8ecff"/>
-        <text x="230" y="57" text-anchor="middle" fill="#2840a0" font-weight="bold">+1</text>
-        <rect x="238" y="42" width="26" height="22" rx="2" fill="#e8ecff"/>
-        <text x="251" y="57" text-anchor="middle" fill="#2840a0" font-weight="bold">+1</text>
-        <rect x="281" y="42" width="26" height="22" rx="2" fill="#e8ecff"/>
-        <text x="294" y="57" text-anchor="middle" fill="#2840a0" font-weight="bold">+1</text>
-        <!-- -1 cells -->
-        <rect x="58" y="42" width="22" height="22" rx="2" fill="#fff0f4"/>
-        <text x="69" y="57" text-anchor="middle" fill="#8a1840" font-weight="bold">-1</text>
-        <rect x="127" y="42" width="22" height="22" rx="2" fill="#fff0f4"/>
-        <text x="138" y="57" text-anchor="middle" fill="#8a1840" font-weight="bold">-1</text>
-        <rect x="150" y="42" width="22" height="22" rx="2" fill="#fff0f4"/>
-        <text x="161" y="57" text-anchor="middle" fill="#8a1840" font-weight="bold">-1</text>
-        <rect x="173" y="42" width="22" height="22" rx="2" fill="#fff0f4"/>
-        <text x="184" y="57" text-anchor="middle" fill="#8a1840" font-weight="bold">-1</text>
-        <rect x="196" y="42" width="22" height="22" rx="2" fill="#fff0f4"/>
-        <text x="207" y="57" text-anchor="middle" fill="#8a1840" font-weight="bold">-1</text>
-        <rect x="258" y="42" width="26" height="22" rx="2" fill="#fff0f4"/>
-        <text x="271" y="57" text-anchor="middle" fill="#8a1840" font-weight="bold">-1</text>
-      </g>
-      <!-- QR list -->
-      <text x="155" y="90" text-anchor="middle" font-family="JetBrains Mono,monospace"
-        font-size="10" fill="#2840a0">QR mod 13: {1, 3, 4, 9, 10, 12}</text>
-      <text x="155" y="110" text-anchor="middle" font-family="JetBrains Mono,monospace"
-        font-size="10" fill="#8a1840">NR mod 13: {2, 5, 6, 7, 8, 11}</text>
-      <!-- Jacobi symbol explanation -->
-      <rect x="10" y="125" width="290" height="42" rx="3" fill="#1a0830"/>
-      <text x="155" y="143" text-anchor="middle" font-family="JetBrains Mono,monospace"
-        font-size="9.5" fill="#e0c890">Simbolo di Jacobi: (n/m) = (n/p₁)(n/p₂)···(n/pᵣ)</text>
-      <text x="155" y="160" text-anchor="middle" font-family="JetBrains Mono,monospace"
-        font-size="9" fill="#a090c0">se m = p₁p₂···pᵣ (non necessariamente distinti)</text>
-    </svg>
-    <figcaption>Simbolo di Legendre \((a/13)\) per \(a=1,\ldots,12\). Il simbolo &egrave; +1 iff \(a\) &egrave; un quadrato mod 13 (QR). Esattamente 6 QR e 6 NR.</figcaption>
-  </div>
-
-  <div class="note">
-    <strong>Simbolo di Jacobi:</strong> L&rsquo;estensione del simbolo di Legendre a
-    moduli composti: se \(m=p_1p_2\cdots p_r\) (con i \(p_i\) non necessariamente
-    distinti), definiamo \(\left(\frac{n}{m}\right)=\left(\frac{n}{p_1}\right)
-    \left(\frac{n}{p_2}\right)\cdots\left(\frac{n}{p_r}\right)\).
-    Attenzione: \(\left(\frac{n}{m}\right)=1\) <strong>non</strong> implica che
-    \(n\) sia QR mod \(m\) (esercizio §9-3 n. 6)!
-  </div>
-
-  <h4 class="sub">Esercizi §9-2</h4>
-  <div class="ex">
-    <span class="exl">Esercizi §9-2 n. 1-3 — Propriet&agrave; del Simbolo di Jacobi</span>
-    <strong>Es. 1:</strong> \(\left(\frac{ab}{c}\right)=\left(\frac{a}{c}\right)\left(\frac{b}{c}\right)\)
-    per \(c\) dispari: dalla definizione come prodotto sui fattori primi. ∎<br>
-    <strong>Es. 2:</strong> \(\left(\frac{a}{bc}\right)=\left(\frac{a}{b}\right)\left(\frac{a}{c}\right)\)
-    per \(b,c\) dispari: dalla definizione (si separano i fattori). ∎<br>
-    <strong>Es. 3:</strong> \(a\equiv b\pmod c\Rightarrow\left(\frac{a}{c}\right)=\left(\frac{b}{c}\right)\)
-    per \(c\) dispari: ogni fattore primo \(p\) di \(c\) soddisfa
-    \(\left(\frac{a}{p}\right)=\left(\frac{b}{p}\right)\) per (9-2-1). ∎
-  </div>
+<div class="callout-body-container callout-body">
+<p>Se <span class="math inline">\(p\)</span> è un primo dispari e <span class="math inline">\(\gcd(a,p)=1\)</span>, allora <span class="math inline">\(a\)</span> è un residuo quadratico modulo <span class="math inline">\(p\)</span> se e solo se <span class="math display">\[a^{(p-1)/2} \equiv 1 \pmod p.\]</span></p>
 </div>
-
-<!-- §9-3 LRQ -->
-<div class="sb"><h3>&sect; 9-3 &middot; La Legge di Reciprocit&agrave; Quadratica</h3></div>
-
-<div>
-  <h4 class="sub">Il Lemma di Gauss — uno strumento geometrico</h4>
-  <p>Per dimostrare la Legge di Reciprocit&agrave;, Andrews percorre la
-  strada delle definizioni intermedie. Il <em>Residuo Minimo</em>
-  \(LR_m(n)\) di \(n\) modulo \(m\) &egrave; il rappresentante di \(n\) nell&rsquo;intervallo
-  \((-m/2, m/2]\). Il <em>Lemma di Gauss</em> afferma che
-  \(\left(\frac{m}{p}\right)=(-1)^\mu\), dove \(\mu\) &egrave; il numero di
-  residui minimi <em>negativi</em> tra \(m, 2m, \ldots, \frac{p-1}{2}m\).
-  Questo trasforma il calcolo del simbolo di Legendre in un puro
-  problema di conteggio.</p>
-
-  <div class="defn">
-    <span class="lbl">Definizione 9-2 &mdash; Residuo Minimo</span>
-    Il <strong>residuo minimo</strong> di \(n\) modulo \(m\) &egrave; il valore
-    \(x\in(-m/2,m/2]\) con \(n\equiv x\pmod m\), denotato \(LR_m(n)\).<br>
-    <em>Esempio:</em> \(LR_{11}(21)=-1\) (poich&eacute; \(21\equiv-1\pmod{11}\));
-    \(LR_{11}(99)=0\); \(LR_{11}(60)=5\).
-  </div>
-
-  <div class="defn">
-    <span class="lbl">Definizione 9-3 &mdash; Segno (Signum)</span>
-    \(\mathrm{sgn}(x)=\begin{cases}+1&x>0\\0&x=0\\-1&x&lt;0\end{cases}\), con
-    \(x=|x|\cdot\mathrm{sgn}(x)\).
-  </div>
-
-  <div class="gau">
-    <span class="lbl">Teorema 9-3 &mdash; Lemma di Gauss</span>
-    Siano \(\gcd(m,p)=1\) con \(p\) primo dispari, e \(\mu\) il numero di
-    interi in \(\{m,2m,\ldots,\frac{p-1}{2}m\}\) con residuo minimo mod \(p\)
-    negativo. Allora:
-    \[\left(\frac{m}{p}\right)=(-1)^\mu.\]
-  </div>
-  <div class="proof">
-    <span class="proof-hdr">Dimostrazione</span>
-    Per \(n=1,\ldots,\frac{p-1}{2}\):
-    \(nm\equiv LR_p(nm)\cdot|LR_p(nm)|^{-1}|LR_p(nm)|\equiv\mathrm{sgn}(LR_p(nm))\cdot|LR_p(nm)|\pmod p\).
-    Mentre \(n\) varia in \((0,p/2)\), anche \(|LR_p(nm)|\) percorre i valori
-    \(\{1,2,\ldots,(p-1)/2\}\) (tutti distinti). Moltiplicando:
-    \[m^{(p-1)/2}\cdot\left(\tfrac{p-1}{2}\right)!\equiv(-1)^\mu\cdot\left(\tfrac{p-1}{2}\right)!\pmod p.\]
-    Poich&eacute; \(((p-1)/2)!\) &egrave; coprimo con \(p\), cancelliamo e otteniamo
-    \(m^{(p-1)/2}\equiv(-1)^\mu\pmod p\). Combinando con (9-2-3):
-    \(\left(\frac{m}{p}\right)\equiv(-1)^\mu\pmod p\). Poich&eacute; entrambi i membri
-    sono \(\pm1\) e \(p>2\): uguaglianza. <span class="qed">&#9632;</span>
-  </div>
-
-  <h4 class="sub">Esempio del Lemma di Gauss</h4>
-  <p>Calcoliamo \(\left(\frac{5}{11}\right)\). Calcoliamo \(5n\bmod11\) (residui minimi)
-  per \(n=1,2,3,4,5\):</p>
-  <p>\(5\cdot1=5\), \(5\cdot2=10\equiv-1\), \(5\cdot3=15\equiv4\), \(5\cdot4=20\equiv-2\) (LR=-2), \(5\cdot5=25\equiv3\).</p>
-  <p>I residui minimi negativi sono: \(-1\) (per \(n=2\)) e \(-2\) (per \(n=4\)).
-  Quindi \(\mu=2\) e \(\left(\frac{5}{11}\right)=(-1)^2=1\).
-  Verifica: \(4^2=16\equiv5\pmod{11}\) &#10003;.</p>
 </div>
-
-<div>
-  <h4 class="sub">La Legge di Reciprocit&agrave; Quadratica — la "gemma" di Gauss</h4>
-  <p>Siamo ora al risultato pi&ugrave; profondo del capitolo — e uno dei pi&ugrave;
-  belli della matematica elementare. La Legge di Reciprocit&agrave; Quadratica
-  (LRQ) afferma che per due primi dispari distinti \(p\) e \(q\), il
-  simbolo \(\left(\frac{p}{q}\right)\) e il simbolo "invertito"
-  \(\left(\frac{q}{p}\right)\) sono quasi sempre uguali — tranne quando
-  entrambi i primi sono congruenti a 3 modulo 4, caso in cui si
-  oppongono in segno.</p>
-  <p>La dimostrazione usa un argomento geometrico straordinario: si contano
-  i punti reticolari all&rsquo;interno di un esagono nel primo quadrante, in due
-  modi diversi. La loro parit&agrave; determina la relazione tra i due simboli.</p>
-
-  <div class="qrl">
-    <span class="lbl">Teorema 9-4 &mdash; Legge di Reciprocit&agrave; Quadratica (Gauss, 1796)</span>
-    <div class="stmt">Se \(p\) e \(q\) sono primi dispari distinti, allora:
-    \[\left(\frac{p}{q}\right)=\left(\frac{q}{p}\right)\quad\text{a meno che }p\equiv q\equiv3\pmod4,\]
-    nel qual caso \(\left(\frac{p}{q}\right)=-\left(\frac{q}{p}\right)\).<br><br>
-    Equivalentemente:
-    \[\left(\frac{p}{q}\right)\!\left(\frac{q}{p}\right)=(-1)^{\frac{p-1}{2}\cdot\frac{q-1}{2}}.\]</div>
-  </div>
-
-  <div class="proof">
-    <span class="proof-hdr">Dimostrazione (via punti reticolari)</span>
-    Siano \(\mu_1\) il numero di interi in \(\{q,2q,\ldots,\frac{p-1}{2}q\}\)
-    con residuo minimo mod \(p\) negativo, e \(\mu_2\) il numero di interi in
-    \(\{p,2p,\ldots,\frac{q-1}{2}p\}\) con residuo minimo mod \(q\) negativo.
-    Il Lemma di Gauss d&agrave;:
-    \[\left(\frac{q}{p}\right)=(-1)^{\mu_1},\quad\left(\frac{p}{q}\right)=(-1)^{\mu_2}.\]
-    Dobbiamo mostrare che \(\mu_1+\mu_2\) &egrave; dispari iff \(p\equiv q\equiv3\pmod4\).<br><br>
-    <strong>Primo conteggio:</strong> Consideriamo l&rsquo;esagono \(H\) nel piano con
-    vertici su \(y=q/2\), \(x=p/2\), \(y=(q/p)x+1/2\), \(y=(q/p)x-q/(2p)\).
-    Ogni punto reticolare \((m,n)\) interno a \(H\) &egrave; accoppiato con
-    \(\left(\frac{p+1}{2}-m,\frac{q+1}{2}-n\right)\). L&rsquo;unico punto fisso
-    &egrave; \(\left(\frac{p+1}{4},\frac{q+1}{4}\right)\), che &egrave; reticolare iff
-    \(p\equiv q\equiv3\pmod4\). Quindi il numero di punti reticolari in \(H\)
-    &egrave; dispari iff \(p\equiv q\equiv3\pmod4\).<br><br>
-    <strong>Secondo conteggio:</strong> I punti reticolari in \(H\) sotto la
-    diagonale \(y=(q/p)x\) corrispondono esattamente ai valori di \(m\in\{1,\ldots,(q-1)/2\}\)
-    per cui \(mp\) ha residuo minimo negativo mod \(q\): ce ne sono \(\mu_2\).
-    Sopra la diagonale: \(\mu_1\) punti. Totale: \(\mu_1+\mu_2\).<br><br>
-    I due conteggi concordano: \(\mu_1+\mu_2\) &egrave; dispari iff
-    \(p\equiv q\equiv3\pmod4\), cio&egrave;
-    \(\left(\frac{p}{q}\right)\left(\frac{q}{p}\right)=(-1)^{\mu_1+\mu_2}=-1\)
-    iff \(p\equiv q\equiv3\pmod4\). <span class="qed">&#9632;</span>
-  </div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Dimostrazione">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-
-<!-- Formule per (-1/p) e (2/p) -->
-<div class="full">
-  <div class="thm">
-    <span class="lbl">Teorema 9-5 &mdash; Simboli fondamentali (-1/p) e (2/p)</span>
-    <div class="stmt">Se \(p\) &egrave; un primo dispari:
-    \[\left(\frac{-1}{p}\right)=(-1)^{(p-1)/2}=\begin{cases}+1&\text{se }p\equiv1\pmod4\\-1&\text{se }p\equiv3\pmod4\end{cases}\tag{9-3-4}\]
-    \[\left(\frac{2}{p}\right)=(-1)^{(p^2-1)/8}=\begin{cases}+1&\text{se }p\equiv\pm1\pmod8\\-1&\text{se }p\equiv\pm3\pmod8\end{cases}\tag{9-3-5}\]
-    </div>
-  </div>
-  <div class="proof">
-    <span class="proof-hdr">Dimostrazione</span>
-    <strong>Per \(\left(\frac{-1}{p}\right)\):</strong> Col Lemma di Gauss, \(m=-1\).
-    I multiples sono \(-1,-2,\ldots,-\frac{p-1}{2}\), i cui residui minimi mod \(p\)
-    sono tutti negativi. Quindi \(\mu=\frac{p-1}{2}\) e \(\left(\frac{-1}{p}\right)=(-1)^{(p-1)/2}\).<br>
-    \(p\equiv1\pmod4\Rightarrow(p-1)/2\) pari; \(p\equiv3\pmod4\Rightarrow\) dispari. &#10003;<br><br>
-    <strong>Per \(\left(\frac{2}{p}\right)\):</strong> Col Lemma di Gauss, \(m=2\).
-    I multiples sono \(2,4,\ldots,p-1\). I residui minimi negativi
-    sono le potenze pari nell&rsquo;intervallo \([(p+1)/2, p-1]\), cio&egrave;
-    gli interi pari tra \((p+1)/2\) e \(p-1\). Contando:
-    \(\mu = 2s\) se \(p=8s\pm1\), \(\mu=2s+1\) se \(p=8s\pm3\).
-    In ogni caso \(\left(\frac{2}{p}\right)=(-1)^{(p^2-1)/8}\). <span class="qed">&#9632;</span>
-  </div>
-
-  <!-- LRQ visualization -->
-  <div class="vis">
-    <svg viewBox="0 0 720 190" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <text x="360" y="16" text-anchor="middle" font-family="Cinzel,serif"
-        font-size="13" fill="#1a0830" letter-spacing=".04em">
-        Legge di Reciprocit&agrave; Quadratica — Tabella dei casi
-      </text>
-      <!-- Column headers -->
-      <text x="180" y="38" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#1a0830" font-weight="bold">p mod 4</text>
-      <text x="360" y="38" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#1a0830" font-weight="bold">q mod 4</text>
-      <text x="500" y="38" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#1a0830" font-weight="bold">(p-1)(q-1)/4</text>
-      <text x="640" y="38" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#1a0830" font-weight="bold">(p/q) = (q/p)?</text>
-      <!-- Row 1: p≡1, q≡1 -->
-      <rect x="10" y="48" width="700" height="30" rx="2" fill="#e8ecff"/>
-      <text x="180" y="68" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#2840a0">p ≡ 1 (mod 4)</text>
-      <text x="360" y="68" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#2840a0">q ≡ 1 (mod 4)</text>
-      <text x="500" y="68" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#2840a0">pari → (-1)⁰=1</text>
-      <text x="640" y="68" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#2840a0" font-weight="bold">(p/q) = (q/p) ✓</text>
-      <!-- Row 2: p≡1, q≡3 -->
-      <rect x="10" y="80" width="700" height="30" rx="2" fill="#f8f0ff"/>
-      <text x="180" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#2840a0">p ≡ 1 (mod 4)</text>
-      <text x="360" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#8a1840">q ≡ 3 (mod 4)</text>
-      <text x="500" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#555">pari → (-1)⁰=1</text>
-      <text x="640" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#2840a0" font-weight="bold">(p/q) = (q/p) ✓</text>
-      <!-- Row 3: p≡3, q≡1 -->
-      <rect x="10" y="112" width="700" height="30" rx="2" fill="#f8f0ff"/>
-      <text x="180" y="132" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#8a1840">p ≡ 3 (mod 4)</text>
-      <text x="360" y="132" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#2840a0">q ≡ 1 (mod 4)</text>
-      <text x="500" y="132" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#555">pari → (-1)⁰=1</text>
-      <text x="640" y="132" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#2840a0" font-weight="bold">(p/q) = (q/p) ✓</text>
-      <!-- Row 4: p≡3, q≡3 — special case -->
-      <rect x="10" y="144" width="700" height="32" rx="2" fill="#fff0f4"/>
-      <rect x="10" y="144" width="3" height="32" fill="#8a1840" rx="1"/>
-      <text x="180" y="165" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#8a1840" font-weight="bold">p ≡ 3 (mod 4)</text>
-      <text x="360" y="165" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#8a1840" font-weight="bold">q ≡ 3 (mod 4)</text>
-      <text x="500" y="165" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#8a1840">dispari → (-1)¹=-1</text>
-      <text x="640" y="165" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#8a1840" font-weight="bold">(p/q) = -(q/p) ✗</text>
-    </svg>
-    <figcaption>La LRQ in forma tabulare: solo quando \(p\equiv q\equiv3\pmod4\) i simboli si oppongono in segno. In tutti gli altri casi coincidono.</figcaption>
-  </div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Consiglio</span>Dimostrazione
 </div>
-
-<!-- Esercizi §9-3 -->
-<div class="full">
-  <h4 class="sub">Esercizi &sect;9-3 &mdash; Soluzioni</h4>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-
-    <div class="ex">
-      <span class="exl">Esercizio 1 — (-1/c) per c dispari (Simbolo di Jacobi)</span>
-      Scriviamo \(c=p_1\cdots p_r\). Allora:
-      \[\left(\frac{-1}{c}\right)=\prod_{i=1}^r(-1)^{(p_i-1)/2}=(-1)^{\sum(p_i-1)/2}=(-1)^{(c-1)/2}.\]
-      (L&rsquo;ultima uguaglianza segue dal fatto che \(\sum(p_i-1)/2\equiv(c-1)/2\pmod2\)
-      per prodotti di dispari.) ∎
-    </div>
-
-    <div class="ex">
-      <span class="exl">Esercizio 2 — (2/c) per c dispari (Simbolo di Jacobi)</span>
-      \(\left(\frac{2}{c}\right)=(-1)^{(c^2-1)/8}\). Si dimostra in modo analogo
-      a (9-3-5): scrivere \(c=p_1\cdots p_r\) e notare che
-      \(\sum(p_i^2-1)/8\equiv(c^2-1)/8\pmod2\) per prodotti di dispari. ∎
-    </div>
-
-    <div class="ex">
-      <span class="exl">Esercizio 3 — LRQ generalizzata al Simbolo di Jacobi</span>
-      Se \(a\) e \(c\) sono dispari positivi:
-      \[\left(\frac{a}{c}\right)\left(\frac{c}{a}\right)=(-1)^{\frac{a-1}{2}\cdot\frac{c-1}{2}}.\]
-      <em>Dim:</em> Usando la definizione di Jacobi e la LRQ per ogni coppia
-      di primi, il prodotto su tutte le coppie si semplifica a
-      \((-1)^{\sum\frac{p_i-1}{2}\sum\frac{q_j-1}{2}}\equiv(-1)^{\frac{a-1}{2}\cdot\frac{c-1}{2}}\pmod2\). ∎
-    </div>
-
-    <div class="ex">
-      <span class="exl">Esercizio 4 — 17 &egrave; QR mod 19?</span>
-      Col Lemma di Gauss, \(m=17,p=19\). Calcoliamo i residui minimi
-      di \(17n\pmod{19}\) per \(n=1,\ldots,9\):
-      \(17,-4,13,-8,9,-12,5,-16,1\). Residui negativi: \(-4,-8,-12,-16\).
-      Quindi \(\mu=4\) e \(\left(\frac{17}{19}\right)=(-1)^4=1\): QR! &#10003;<br>
-      Verifica tramite LRQ: \(\left(\frac{17}{19}\right)=\left(\frac{19}{17}\right)
-      \cdot(-1)^{\frac{16}{2}\cdot\frac{18}{2}\cdot\ldots}\). Poich&eacute; \(17\equiv1\pmod4\):
-      \(\left(\frac{17}{19}\right)=\left(\frac{19}{17}\right)=\left(\frac{2}{17}\right)\).
-      \(17\equiv1\pmod8\) quindi \(\left(\frac{2}{17}\right)=1\). &#10003;
-    </div>
-
-    <div class="ex">
-      <span class="exl">Esercizio 5 — (3/p) tramite LRQ</span>
-      \(\left(\frac{3}{p}\right)=\begin{cases}1&p\equiv\pm1\pmod{12}\\-1&p\equiv\pm5\pmod{12}\end{cases}\)<br>
-      <em>Dim:</em> Caso \(p\equiv1\pmod4\): \(\left(\frac{3}{p}\right)=\left(\frac{p}{3}\right)\).
-      Questo &egrave; +1 iff \(p\equiv1\pmod3\), cio&egrave; \(p\equiv1\pmod{12}\) (e -1 iff \(p\equiv7\pmod{12}\)).<br>
-      Caso \(p\equiv3\pmod4\): \(\left(\frac{3}{p}\right)=-\left(\frac{p}{3}\right)\).
-      \(p\equiv3\pmod4\) e \(p\equiv1\pmod3\Rightarrow p\equiv11\pmod{12}\): \(\left(\frac{3}{p}\right)=-(-1)^{...}=+1\).<br>
-      Combinando: \(\left(\frac{3}{p}\right)=1\) iff \(p\equiv\pm1\pmod{12}\). ∎
-    </div>
-
-    <div class="ex">
-      <span class="exl">Esercizio 6 — Jacobi=1 non implica QR</span>
-      Esempio: \(n=2,m=15=3\cdot5\).
-      \(\left(\frac{2}{15}\right)=\left(\frac{2}{3}\right)\left(\frac{2}{5}\right)=(-1)(1)=-1\).
-      Aspetta, proviamo \(n=2,m=9\):
-      \(\left(\frac{2}{9}\right)=\left(\frac{2}{3}\right)^2=(-1)^2=1\). Ma \(x^2\equiv2\pmod9\)
-      non ha soluzione (verificare: \(1,4,7,7,4,1,0,1,4\) i quadrati mod 9). Quindi
-      Jacobi=1 ma non QR. Questo mostra che il Simbolo di Jacobi non &egrave;
-      un test di QR per moduli composti!
-    </div>
-
-    <div class="ex">
-      <span class="exl">Esercizio 7 — x&#178;&#8801;631 (mod 1093)?</span>
-      \(1093\) &egrave; primo. \(\left(\frac{631}{1093}\right)=?\)
-      Fattorizziamo: \(631\) &egrave; primo. LRQ: \(631\equiv3\pmod4\) e \(1093\equiv1\pmod4\),
-      quindi \(\left(\frac{631}{1093}\right)=\left(\frac{1093}{631}\right)=\left(\frac{462}{631}\right)\).
-      \(462=2\cdot3\cdot7\cdot11\). Calcolando: si trova \(\left(\frac{631}{1093}\right)=-1\).
-      Quindi \(x^2\equiv631\pmod{1093}\) non ha soluzione. &#10007;
-    </div>
-
-  </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-
-<!-- §9-4 -->
-<div class="sb"><h3>&sect; 9-4 &middot; Applicazioni della LRQ</h3></div>
-
-<div>
-  <h4 class="sub">Risolvere congruenze quadratiche generali</h4>
-  <p>Armati del Simbolo di Legendre e della LRQ, possiamo ora affrontare
-  congruenze quadratiche generali \(ax^2+bx+c\equiv0\pmod d\). La strategia
-  standard &egrave;: completare il quadrato, ridursi alla forma \(y^2\equiv n\pmod{p^k}\),
-  poi usare il TCR se \(d\) &egrave; composto. Il Teorema 9-6 &egrave; il pezzo chiave
-  per i moduli a potenza di primo.</p>
-
-  <div class="thm">
-    <span class="lbl">Teorema 9-6 &mdash; Quadratica mod p<sup>n</sup></span>
-    <div class="stmt">Se \(p\) &egrave; un primo dispari e \(\gcd(a,p)=1\), allora
-    \(x^2\equiv a\pmod{p^n}\) ha soluzione se e solo se
-    \(\left(\frac{a}{p}\right)=1\).</div>
-  </div>
-  <div class="proof">
-    <span class="proof-hdr">Schema della dimostrazione</span>
-    Se \(\left(\frac{a}{p}\right)=-1\): le soluzioni di \(x^2\equiv a\pmod{p^n}\)
-    soddisferebbero \(x^2\equiv a\pmod p\), impossibile. Se \(\left(\frac{a}{p}\right)=1\):
-    si costruisce la soluzione per induzione su \(n\) (lifting di Hensel):
-    data una soluzione \(x_0\) mod \(p^k\), si trova una soluzione mod \(p^{k+1}\)
-    tramite \(x_1=x_0-m\tilde x_0\cdot\frac{p+1}{2}p^k\) dove \(\tilde x_0\)
-    &egrave; l&rsquo;inverso di \(x_0\) mod \(p\). <span class="qed">&#9632;</span>
-  </div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\((\Rightarrow)\)</span> Se <span class="math inline">\(a\)</span> è QR: esiste <span class="math inline">\(X\)</span> con <span class="math inline">\(X^2\equiv a\pmod p\)</span> e <span class="math inline">\(p\nmid X\)</span>. Allora <span class="math inline">\(a^{(p-1)/2}\equiv(X^2)^{(p-1)/2}=X^{p-1}\equiv1\pmod p\)</span> per il Piccolo Teorema di Fermat. ✓</p>
+<p><span class="math inline">\((\Leftarrow)\)</span> Sia <span class="math inline">\(g\)</span> radice primitiva mod <span class="math inline">\(p\)</span> (esiste per Thm 7-6). Esiste <span class="math inline">\(r\)</span> con <span class="math inline">\(g^r\equiv a\pmod p\)</span>. Allora <span class="math inline">\(g^{r(p-1)/2}\equiv a^{(p-1)/2}\equiv1\pmod p\)</span>, quindi <span class="math inline">\((p-1)\mid r(p-1)/2\)</span>, cioè <span class="math inline">\(2\mid r\)</span>. Se <span class="math inline">\(r=2s\)</span>: <span class="math inline">\((g^s)^2\equiv a\pmod p\)</span>, quindi <span class="math inline">\(a\)</span> è QR. <span class="math inline">\(\blacksquare\)</span></p>
 </div>
-
-<div>
-  <h4 class="sub">Esempi di applicazione completa</h4>
-  <div class="ex">
-    <span class="exl">Esempio &mdash; x&#178;&#8801;15 (mod 89)</span>
-    \(89\) &egrave; primo. \(15=3\cdot5\). \(\left(\frac{15}{89}\right)=\left(\frac{3}{89}\right)\left(\frac{5}{89}\right)\).<br>
-    \(\left(\frac{3}{89}\right)\): \(89\equiv1\pmod4\), quindi \(=\left(\frac{89}{3}\right)=\left(\frac{2}{3}\right)=-1\).<br>
-    \(\left(\frac{5}{89}\right)\): \(89\equiv1\pmod4\), quindi \(=\left(\frac{89}{5}\right)=\left(\frac{4}{5}\right)=1\).<br>
-    \(\left(\frac{15}{89}\right)=(-1)(1)=-1\): <strong>nessuna soluzione.</strong>
-  </div>
-  <div class="ex">
-    <span class="exl">Esempio &mdash; x&#178;&#8801;12 (mod 2989), 2989=7&#178;&middot;61</span>
-    Per TCR + Thm 9-6: riducere a \(x^2\equiv12\pmod7\) e \(x^2\equiv12\pmod{61}\).<br>
-    \(\left(\frac{12}{7}\right)=\left(\frac{4\cdot3}{7}\right)=\left(\frac{4}{7}\right)\left(\frac{3}{7}\right)=1\cdot\left(\frac{3}{7}\right)\).
-    \(7\equiv3\pmod4\), \(3\equiv3\pmod4\): \(\left(\frac{3}{7}\right)=-\left(\frac{7}{3}\right)=-\left(\frac{1}{3}\right)=-1\).
-    Quindi \(\left(\frac{12}{7}\right)=-1\): <strong>nessuna soluzione mod 7</strong>, quindi mod 2989. &#10007;
-  </div>
-
-  <h4 class="sub" style="margin-top:1rem;">Esercizi §9-4 &mdash; Soluzioni</h4>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-    <div class="ex">
-      <span class="exl">Esercizio 1 — x&#178;&#8801;17 (mod 29)?</span>
-      \(29\equiv1\pmod4\). \(\left(\frac{17}{29}\right)=\left(\frac{29}{17}\right)=\left(\frac{12}{17}\right)=\left(\frac{4}{17}\right)\left(\frac{3}{17}\right)=\left(\frac{3}{17}\right)\).
-      \(17\equiv1\pmod4\): \(\left(\frac{3}{17}\right)=\left(\frac{17}{3}\right)=\left(\frac{2}{3}\right)=-1\).
-      Quindi \(\left(\frac{17}{29}\right)=-1\): <strong>nessuna soluzione.</strong>
-    </div>
-    <div class="ex">
-      <span class="exl">Esercizio 2 — 3x&#178;&#8801;12 (mod 23)?</span>
-      Equivale a \(x^2\equiv4\pmod{23}\) (moltiplicando per \(\bar 3=8\) mod 23).
-      \(\left(\frac{4}{23}\right)=\left(\frac{2}{23}\right)^2=1\): <strong>ha soluzione!</strong>
-      \(x\equiv\pm2\pmod{23}\).
-    </div>
-    <div class="ex">
-      <span class="exl">Esercizio 3 — 2x&#178;&#8801;27 (mod 41)?</span>
-      \(\bar2\pmod{41}=21\) (poich&eacute; \(2\cdot21=42\equiv1\)). \(x^2\equiv27\cdot21=567\equiv567-13\cdot41=34\pmod{41}\).
-      \(\left(\frac{34}{41}\right)=\left(\frac{2}{41}\right)\left(\frac{17}{41}\right)\).
-      \(41\equiv1\pmod8\to\left(\frac{2}{41}\right)=1\). \(41\equiv1\pmod4\to\left(\frac{17}{41}\right)=\left(\frac{41}{17}\right)=\left(\frac{7}{17}\right)\).
-      \(17\equiv1\pmod4\to\left(\frac{7}{17}\right)=\left(\frac{17}{7}\right)=\left(\frac{3}{7}\right)=-\left(\frac{7}{3}\right)=-\left(\frac{1}{3}\right)=-1\).
-      Quindi \(\left(\frac{34}{41}\right)=-1\): <strong>nessuna soluzione.</strong>
-    </div>
-    <div class="ex">
-      <span class="exl">Esercizio 4 — x&#178;+5x&#8801;12 (mod 31)?</span>
-      Completiamo il quadrato: \((x+\bar2\cdot5)^2\equiv12+25\cdot\bar4\pmod{31}\).
-      \(\bar4\equiv8\pmod{31}\) (poich&eacute; \(4\cdot8=32\equiv1\)). \(25\cdot8=200\equiv200-6\cdot31=14\pmod{31}\).
-      \(y^2\equiv12+14=26\pmod{31}\). \(\left(\frac{26}{31}\right)=\left(\frac{2}{31}\right)\left(\frac{13}{31}\right)\).
-      \(31\equiv-1\pmod8\to\left(\frac{2}{31}\right)=-1\). Quindi \(\left(\frac{26}{31}\right)\) dipende da \(\left(\frac{13}{31}\right)\)...
-      Al netto dei calcoli: \(\left(\frac{26}{31}\right)=1\): <strong>ha soluzione!</strong>
-    </div>
-    <div class="ex">
-      <span class="exl">Esercizio 5 — x&#178;&#8801;19 (mod 30)?</span>
-      \(30=2\cdot3\cdot5\). Per TCR: \(x^2\equiv19\equiv1\pmod2\) (ovvio), \(x^2\equiv1\pmod3\), \(x^2\equiv4\pmod5\).<br>
-      Mod 3: \(19\equiv1\pmod3\), QR (\(1^2=1\)). Mod 5: \(19\equiv4\pmod5\), QR (\(2^2=4\)). Mod 2: sempre soluzione.<br>
-      <strong>Ha soluzioni!</strong> Per TCR, le soluzioni sono \(x\equiv\pm1\pmod3\) e \(x\equiv\pm2\pmod5\) combinati.
-    </div>
-  </div>
 </div>
-
-<!-- MAPPA CONCETTUALE -->
-<div class="full" style="margin-top:.8rem;">
-  <h4 class="sub">Mappa Concettuale &mdash; Struttura del Capitolo 9</h4>
-  <div class="vis">
-    <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" width="100%">
-      <defs>
-        <marker id="a9" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L8,3 z" fill="#1a0830"/>
-        </marker>
-        <marker id="a9q" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L8,3 z" fill="#2840a0"/>
-        </marker>
-        <marker id="a9r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L8,3 z" fill="#8a1840"/>
-        </marker>
-      </defs>
-      <!-- Nodes -->
-      <rect x="5" y="80" width="118" height="42" rx="4" fill="#1a0830"/>
-      <text x="64" y="97" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="10" letter-spacing=".03em">Thm 9-1</text>
-      <text x="64" y="112" text-anchor="middle" fill="#c0a8c8" font-family="JetBrains Mono,monospace" font-size="8">Criterio Eulero</text>
-
-      <rect x="143" y="40" width="120" height="42" rx="4" fill="#2a1050"/>
-      <text x="203" y="58" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="10" letter-spacing=".03em">Def 9-1 + Thm 9-2</text>
-      <text x="203" y="73" text-anchor="middle" fill="#b8a8d8" font-family="JetBrains Mono,monospace" font-size="8">Simbolo Legendre</text>
-
-      <rect x="143" y="120" width="120" height="42" rx="4" fill="#1a0830" opacity=".85"/>
-      <text x="203" y="138" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="10" letter-spacing=".03em">Cor 9-1</text>
-      <text x="203" y="153" text-anchor="middle" fill="#c0a8c8" font-family="JetBrains Mono,monospace" font-size="8">ind pari ↔ QR</text>
-
-      <rect x="283" y="80" width="130" height="42" rx="4" fill="#107868"/>
-      <text x="348" y="97" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="10" letter-spacing=".03em">Thm 9-3</text>
-      <text x="348" y="112" text-anchor="middle" fill="#a0e0c8" font-family="JetBrains Mono,monospace" font-size="8">Lemma di Gauss</text>
-
-      <rect x="433" y="40" width="130" height="42" rx="4" fill="#2840a0"/>
-      <text x="498" y="58" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="11" letter-spacing=".03em">Thm 9-4 (LRQ)</text>
-      <text x="498" y="73" text-anchor="middle" fill="#c0d0ff" font-family="JetBrains Mono,monospace" font-size="8">(p/q)(q/p)=(-1)^{...}</text>
-
-      <rect x="433" y="120" width="130" height="42" rx="4" fill="#5a1028"/>
-      <text x="498" y="138" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="10" letter-spacing=".03em">Thm 9-5</text>
-      <text x="498" y="153" text-anchor="middle" fill="#f0c0c8" font-family="JetBrains Mono,monospace" font-size="8">(-1/p), (2/p)</text>
-
-      <rect x="578" y="60" width="138" height="82" rx="4" fill="#2840a0"/>
-      <text x="647" y="90" text-anchor="middle" fill="white" font-family="Cinzel,serif" font-size="13" letter-spacing=".03em">Thm 9-6</text>
-      <text x="647" y="108" text-anchor="middle" fill="#d0e0ff" font-family="JetBrains Mono,monospace" font-size="8">x²≡a(mod pⁿ)</text>
-      <text x="647" y="122" text-anchor="middle" fill="#d0e0ff" font-family="JetBrains Mono,monospace" font-size="8">iff (a/p)=1</text>
-      <text x="647" y="136" text-anchor="middle" fill="#d0e0ff" font-family="JetBrains Mono,monospace" font-size="8">usa TCR+LRQ</text>
-
-      <!-- Arrows -->
-      <line x1="123" y1="101" x2="141" y2="66" stroke="#1a0830" stroke-width="1.5" marker-end="url(#a9)"/>
-      <line x1="123" y1="101" x2="141" y2="136" stroke="#1a0830" stroke-width="1.5" marker-end="url(#a9)"/>
-      <line x1="263" y1="68" x2="281" y2="90" stroke="#107868" stroke-width="1.5" marker-end="url(#a9)"/>
-      <line x1="263" y1="134" x2="281" y2="110" stroke="#107868" stroke-width="1.5" marker-end="url(#a9)"/>
-      <line x1="413" y1="101" x2="431" y2="68" stroke="#2840a0" stroke-width="1.5" marker-end="url(#a9q)"/>
-      <line x1="413" y1="101" x2="431" y2="136" stroke="#5a1028" stroke-width="1.5" marker-end="url(#a9r)"/>
-      <line x1="563" y1="68" x2="576" y2="84" stroke="#2840a0" stroke-width="1.5" marker-end="url(#a9q)"/>
-      <line x1="563" y1="140" x2="576" y2="118" stroke="#5a1028" stroke-width="1.5" marker-end="url(#a9r)"/>
-
-      <!-- Caption -->
-      <text x="360" y="186" text-anchor="middle" font-family="Lora,serif" font-size="10" fill="#888" font-style="italic">
-        La LRQ di Gauss (1796): una delle grandi gemme dell&rsquo;intera matematica
-      </text>
-    </svg>
-  </div>
 </div>
-
-<!-- BIBLIOGRAFIA -->
-<div class="sb"><h3>&sect; Riferimenti Bibliografici</h3></div>
-<div class="full">
-  <div class="bib"><div class="bib-k">[And71]</div>Andrews, G.E. (1971). <em>Number Theory</em>. W.B. Saunders, Philadelphia. &mdash; <strong>Riferimento principale.</strong></div>
-  <div class="bib"><div class="bib-k">[Gau96]</div>Gauss, C.F. (1796&ndash;1801). <em>Disquisitiones Arithmeticae</em>. Lipsia. &mdash; Prima dimostrazione della LRQ (Sezioni 131&ndash;144); seguiranno sei dimostrazioni distinte.</div>
-  <div class="bib"><div class="bib-k">[Leg98]</div>Legendre, A.M. (1798). <em>Essai sur la Th&eacute;orie des Nombres</em>. Paris. &mdash; Introduzione del simbolo \((a/p)\) e congettura della LRQ (con prova parziale).</div>
-  <div class="bib"><div class="bib-k">[HarWri08]</div>Hardy, G.H. &amp; Wright, E.M. (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford. &mdash; Capitoli 6&ndash;7: residui quadratici, LRQ, applicazioni.</div>
-  <div class="bib"><div class="bib-k">[Ire90]</div>Ireland, K. &amp; Rosen, M. (1990). <em>A Classical Introduction to Modern Number Theory</em> (2nd ed.). Springer. &mdash; Capitoli 5&ndash;9: LRQ, caratteri, somme di Gauss, Symbol di Jacobi.</div>
-  <div class="bib"><div class="bib-k">[Niv91]</div>Niven, I., Zuckerman, H.S. &amp; Montgomery, H.L. (1991). <em>An Introduction to the Theory of Numbers</em> (5th ed.). Wiley.</div>
-  <div class="bib"><div class="bib-k">[Ger63]</div>Gerstenhaber, M. (1963). The 152nd proof of the law of quadratic reciprocity. <em>Amer. Math. Monthly</em> 70, 397&ndash;398.</div>
-  <div class="bib"><div class="bib-k">[GolMic82]</div>Goldwasser, S. &amp; Micali, S. (1982). Probabilistic encryption. <em>J. Comput. System Sci.</em> 28, 270&ndash;299. &mdash; Cifrario basato sulla difficolt&agrave; del problema dei residui quadratici.</div>
-  <div class="bib"><div class="bib-k">[Apo76]</div>Apostol, T.M. (1976). <em>Introduction to Analytic Number Theory</em>. Springer. &mdash; Caratteri di Dirichlet e simbolo di Legendre in contesto analitico.</div>
-  <div class="bib"><div class="bib-k">[Ros11]</div>Rosen, K.H. (2011). <em>Elementary Number Theory</em> (6th ed.). Pearson. &mdash; Capitoli 9&ndash;10: algoritmo per il calcolo pratico dei simboli di Legendre/Jacobi.</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Corollario 9-1">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Corollario 9-1
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sia <span class="math inline">\(g\)</span> radice primitiva mod <span class="math inline">\(p\)</span> e <span class="math inline">\(g^r\equiv a\pmod p\)</span>. Allora <span class="math inline">\(r\)</span> è pari se e solo se <span class="math inline">\(a\)</span> è un residuo quadratico mod <span class="math inline">\(p\)</span>.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="tabella-qr-e-nr-per-p7-e-p11" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="tabella-qr-e-nr-per-p7-e-p11"><span class="header-section-number">2.2</span> Tabella: QR e NR per p=7 e p=11</h2>
+<table class="table-striped caption-top table">
+<caption>QR mod 7:</caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(a\)</span> mod 7</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">6</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(a^3\)</span> mod 7</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">QR?</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+</tr>
+</tbody>
+</table>
+<table class="table-striped caption-top table">
+<caption>QR mod 11:</caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(a\)</span> mod 11</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">7</th>
+<th style="text-align: center;">8</th>
+<th style="text-align: center;">9</th>
+<th style="text-align: center;">10</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(a^5\)</span> mod 11</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">QR?</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✗</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="esercizio-9-1" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="esercizio-9-1"><span class="header-section-number">2.3</span> Esercizio §9-1</h2>
+<div class="callout callout-style-default callout-caution callout-titled" title="Esercizio 1 — Criterio di Eulero: applicazioni">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Attenzione</span>Esercizio 1 — Criterio di Eulero: applicazioni
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>(a)</strong> <span class="math inline">\(a=2, p=5\)</span>: <span class="math inline">\(2^2=4\equiv-1\pmod5\)</span>. <strong>NR</strong>. ✗</p>
+<p><strong>(b)</strong> <span class="math inline">\(a=4, p=7\)</span>: <span class="math inline">\(4^3=64\equiv1\pmod7\)</span>. <strong>QR</strong>! Verifica: <span class="math inline">\(2^2=4\)</span>. ✓</p>
+<p><strong>(c)</strong> <span class="math inline">\(a=3, p=11\)</span>: <span class="math inline">\(3^5=243\equiv1\pmod{11}\)</span>. <strong>QR</strong>! Verifica: <span class="math inline">\(5^2=25\equiv3\)</span>. ✓</p>
+<p><strong>(d)</strong> <span class="math inline">\(a=6, p=13\)</span>: <span class="math inline">\(6^6=(6^2)^3=36^3\equiv10^3\equiv12\equiv-1\pmod{13}\)</span>. <strong>NR</strong>. ✗</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="il-simbolo-di-legendre-1" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> §9-2 · Il Simbolo di Legendre</h1>
+<section id="definizione-e-proprietà" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="definizione-e-proprietà"><span class="header-section-number">3.1</span> Definizione e proprietà</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Definizione 9-1 — Simbolo di Legendre">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Definizione 9-1 — Simbolo di Legendre
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se <span class="math inline">\(p\)</span> è un primo dispari, definiamo: <span class="math display">\[\left(\frac{a}{p}\right) = \begin{cases}
+1 &amp; \text{se } a \text{ è un residuo quadratico mod } p, \\
+0 &amp; \text{se } p\mid a, \\
+-1 &amp; \text{altrimenti.}
+\end{cases}\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Teorema 9-2 — Proprietà del Simbolo di Legendre">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Teorema 9-2 — Proprietà del Simbolo di Legendre
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se <span class="math inline">\(p\)</span> è primo dispari e <span class="math inline">\(\gcd(a,p)=\gcd(b,p)=1\)</span>:</p>
+<p><strong>(9-2-1)</strong> <span class="math inline">\(\left(\frac{a}{p}\right)=\left(\frac{b}{p}\right)\)</span> se <span class="math inline">\(a\equiv b\pmod p\)</span>.</p>
+<p><strong>(9-2-2)</strong> <span class="math inline">\(\left(\frac{ab}{p}\right)=\left(\frac{a}{p}\right)\left(\frac{b}{p}\right)\)</span> (<strong>moltiplicatività</strong>).</p>
+<p><strong>(9-2-3)</strong> <span class="math inline">\(a^{(p-1)/2}\equiv\left(\frac{a}{p}\right)\pmod p\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Dimostrazione">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Consiglio</span>Dimostrazione
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p><strong>(9-2-1):</strong> dalla definizione (i QR dipendono solo dalla classe di residuo).</p>
+<p><strong>(9-2-2):</strong> dal Corollario 9-1: ind<span class="math inline">\((ab)=\)</span>ind<span class="math inline">\((a)+\)</span>ind<span class="math inline">\((b)\)</span>; il prodotto è pari iff entrambi o nessuno degli indici è pari, cioè i simboli hanno lo stesso prodotto. ✓</p>
+<p><strong>(9-2-3):</strong> Se <span class="math inline">\(a\)</span> è QR: Thm 9-1 dà <span class="math inline">\(a^{(p-1)/2}\equiv1=\left(\frac{a}{p}\right)\pmod p\)</span>. Se <span class="math inline">\(p\mid a\)</span>: entrambi 0. Se NR: Fermat dà <span class="math inline">\(a^{p-1}\equiv1\)</span>, quindi <span class="math inline">\(a^{(p-1)/2}\equiv\pm1\)</span>; Thm 9-1 esclude +1, quindi <span class="math inline">\(\equiv-1=\left(\frac{a}{p}\right)\)</span>. <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="simbolo-di-jacobi-generalizzazione" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="simbolo-di-jacobi-generalizzazione"><span class="header-section-number">3.2</span> Simbolo di Jacobi (generalizzazione)</h2>
+<p>Se <span class="math inline">\(m=p_1p_2\cdots p_r\)</span> (con i <span class="math inline">\(p_i\)</span> non necessariamente distinti): <span class="math display">\[\left(\frac{n}{m}\right) = \left(\frac{n}{p_1}\right)\left(\frac{n}{p_2}\right)\cdots\left(\frac{n}{p_r}\right).\]</span></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Avviso
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Attenzione:</strong> <span class="math inline">\(\left(\frac{n}{m}\right)=1\)</span> <strong>non implica</strong> che <span class="math inline">\(n\)</span> sia QR mod <span class="math inline">\(m\)</span>! Il Simbolo di Jacobi può valere 1 anche se <span class="math inline">\(n\)</span> non è un quadrato. Esempio: <span class="math inline">\(\left(\frac{2}{9}\right)=\left(\frac{2}{3}\right)^2=(-1)^2=1\)</span>, ma <span class="math inline">\(x^2\equiv2\pmod9\)</span> non ha soluzione.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="esercizi-9-2" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="esercizi-9-2"><span class="header-section-number">3.3</span> Esercizi §9-2</h2>
+<div class="callout callout-style-default callout-caution callout-titled" title="Esercizi 1–3 — Proprietà del Simbolo di Jacobi">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Attenzione</span>Esercizi 1–3 — Proprietà del Simbolo di Jacobi
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Es. 1:</strong> <span class="math inline">\(\left(\frac{ab}{c}\right)=\left(\frac{a}{c}\right)\left(\frac{b}{c}\right)\)</span> per <span class="math inline">\(c\)</span> dispari: dalla definizione come prodotto sui fattori primi; la moltiplicatività si applica fattore per fattore. ∎</p>
+<p><strong>Es. 2:</strong> <span class="math inline">\(\left(\frac{a}{bc}\right)=\left(\frac{a}{b}\right)\left(\frac{a}{c}\right)\)</span> per <span class="math inline">\(b,c\)</span> dispari: dalla definizione; il prodotto sui fattori di <span class="math inline">\(bc\)</span> si separa in quelli di <span class="math inline">\(b\)</span> e quelli di <span class="math inline">\(c\)</span>. ∎</p>
+<p><strong>Es. 3:</strong> <span class="math inline">\(a\equiv b\pmod c\Rightarrow\left(\frac{a}{c}\right)=\left(\frac{b}{c}\right)\)</span>: per ogni fattore primo <span class="math inline">\(p\)</span> di <span class="math inline">\(c\)</span>: <span class="math inline">\(\left(\frac{a}{p}\right)=\left(\frac{b}{p}\right)\)</span> per (9-2-1). ∎</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="la-legge-di-reciprocità-quadratica" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> §9-3 · La Legge di Reciprocità Quadratica</h1>
+<section id="il-lemma-di-gauss-strumento-fondamentale" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="il-lemma-di-gauss-strumento-fondamentale"><span class="header-section-number">4.1</span> Il Lemma di Gauss — strumento fondamentale</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Definizione 9-2 — Residuo Minimo">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Definizione 9-2 — Residuo Minimo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Il <strong>residuo minimo</strong> di <span class="math inline">\(n\)</span> modulo <span class="math inline">\(m\)</span> è l’intero <span class="math inline">\(x\in(-m/2, m/2]\)</span> con <span class="math inline">\(n\equiv x\pmod m\)</span>, denotato <span class="math inline">\(LR_m(n)\)</span>.</p>
+<p><em>Esempio:</em> <span class="math inline">\(LR_{11}(21)=-1\)</span> (poiché <span class="math inline">\(21\equiv-1\pmod{11}\)</span>), <span class="math inline">\(LR_{11}(99)=0\)</span>, <span class="math inline">\(LR_{11}(60)=5\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Definizione 9-3 — Segno (Signum)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Definizione 9-3 — Segno (Signum)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\mathrm{sgn}(x)=+1\)</span> se <span class="math inline">\(x&gt;0\)</span>, <span class="math inline">\(0\)</span> se <span class="math inline">\(x=0\)</span>, <span class="math inline">\(-1\)</span> se <span class="math inline">\(x&lt;0\)</span>. Vale <span class="math inline">\(x=|x|\cdot\mathrm{sgn}(x)\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Teorema 9-3 — Lemma di Gauss">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Teorema 9-3 — Lemma di Gauss
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Siano <span class="math inline">\(\gcd(m,p)=1\)</span> con <span class="math inline">\(p\)</span> primo dispari. Sia <span class="math inline">\(\mu\)</span> il numero di interi in <span class="math inline">\(\{m, 2m, \ldots, \frac{p-1}{2}m\}\)</span> con residuo minimo mod <span class="math inline">\(p\)</span> negativo. Allora: <span class="math display">\[\left(\frac{m}{p}\right) = (-1)^\mu.\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Dimostrazione">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Consiglio</span>Dimostrazione
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Per <span class="math inline">\(n=1,\ldots,\frac{p-1}{2}\)</span>: <span class="math inline">\(nm\equiv\mathrm{sgn}(LR_p(nm))\cdot|LR_p(nm)|\pmod p\)</span>.</p>
+<p>Mentre <span class="math inline">\(n\)</span> varia in <span class="math inline">\((0,p/2)\)</span>, i valori <span class="math inline">\(|LR_p(nm)|\)</span> sono una permutazione di <span class="math inline">\(\{1,2,\ldots,(p-1)/2\}\)</span> (distinti poiché <span class="math inline">\(p\nmid m\)</span>). Moltiplicando: <span class="math display">\[m^{(p-1)/2}\cdot\left(\tfrac{p-1}{2}\right)! \equiv (-1)^\mu\cdot\left(\tfrac{p-1}{2}\right)!\pmod p.\]</span> Poiché <span class="math inline">\(((p-1)/2)!\)</span> è coprimo con <span class="math inline">\(p\)</span>, cancelliamo: <span class="math inline">\(m^{(p-1)/2}\equiv(-1)^\mu\pmod p\)</span>. Per (9-2-3): <span class="math inline">\(\left(\frac{m}{p}\right)\equiv(-1)^\mu\pmod p\)</span>. Poiché entrambi <span class="math inline">\(=\pm1\)</span> e <span class="math inline">\(p&gt;2\)</span>: uguaglianza. <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="esempio-del-lemma-di-gauss" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="esempio-del-lemma-di-gauss"><span class="header-section-number">4.2</span> Esempio del Lemma di Gauss</h2>
+<p>Calcolare <span class="math inline">\(\left(\frac{5}{11}\right)\)</span>.</p>
+<p>I multipli di 5 mod 11 in <span class="math inline">\(\{5,10,15,20,25\}\)</span> con i loro residui minimi:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(n\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(5n\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(5n\)</span> mod 11</th>
+<th style="text-align: center;"><span class="math inline">\(LR_{11}(5n)\)</span></th>
+<th style="text-align: center;">Negativo?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">No</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;"><strong>-1</strong></td>
+<td style="text-align: center;"><strong>Sì</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">No</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;"><strong>-2</strong></td>
+<td style="text-align: center;"><strong>Sì</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">No</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(\mu=2\)</span>, quindi <span class="math inline">\(\left(\frac{5}{11}\right)=(-1)^2=1\)</span>: QR!</p>
+<p><strong>Verifica:</strong> <span class="math inline">\(4^2=16\equiv5\pmod{11}\)</span>. ✓</p>
+<hr>
+</section>
+<section id="la-legge-di-reciprocità-quadratica-1" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="la-legge-di-reciprocità-quadratica-1"><span class="header-section-number">4.3</span> La Legge di Reciprocità Quadratica</h2>
+<div class="callout callout-style-default callout-important callout-titled" title="Teorema 9-4 — Legge di Reciprocità Quadratica (Gauss, 1796)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Teorema 9-4 — Legge di Reciprocità Quadratica (Gauss, 1796)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se <span class="math inline">\(p\)</span> e <span class="math inline">\(q\)</span> sono primi dispari distinti, allora: <span class="math display">\[\left(\frac{p}{q}\right) = \left(\frac{q}{p}\right)
+\quad\text{a meno che } p\equiv q\equiv3\pmod4,
+\text{ nel qual caso }\left(\frac{p}{q}\right)=-\left(\frac{q}{p}\right).\]</span></p>
+<p><strong>Forma compatta:</strong> <span class="math display">\[\left(\frac{p}{q}\right)\!\left(\frac{q}{p}\right) = (-1)^{\frac{p-1}{2}\cdot\frac{q-1}{2}}.\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Dimostrazione via punti reticolari">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Consiglio</span>Dimostrazione via punti reticolari
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Siano <span class="math inline">\(\mu_1\)</span> = numero di interi in <span class="math inline">\(\{q,2q,\ldots,\frac{p-1}{2}q\}\)</span> con LR mod <span class="math inline">\(p\)</span> negativo, e <span class="math inline">\(\mu_2\)</span> = numero di interi in <span class="math inline">\(\{p,2p,\ldots,\frac{q-1}{2}p\}\)</span> con LR mod <span class="math inline">\(q\)</span> negativo.</p>
+<p>Il Lemma di Gauss dà <span class="math inline">\(\left(\frac{q}{p}\right)=(-1)^{\mu_1}\)</span> e <span class="math inline">\(\left(\frac{p}{q}\right)=(-1)^{\mu_2}\)</span>. Dobbiamo mostrare <span class="math inline">\(\mu_1+\mu_2\equiv\frac{p-1}{2}\cdot\frac{q-1}{2}\pmod2\)</span>.</p>
+<p><strong>Argomento geometrico.</strong> Consideriamo l’esagono <span class="math inline">\(H\)</span> nel piano con vertici su <span class="math inline">\(x=p/2\)</span>, <span class="math inline">\(y=q/2\)</span>, e le rette <span class="math inline">\(y=\frac{q}{p}x\pm\frac{q}{2p}\)</span>. Ogni punto reticolare <span class="math inline">\((m,n)\)</span> interno a <span class="math inline">\(H\)</span> con <span class="math inline">\(n&lt;\frac{q}{p}m\)</span> (sotto la diagonale) corrisponde a un <span class="math inline">\(m\in\{1,\ldots,(q-1)/2\}\)</span> per cui <span class="math inline">\(mp\)</span> ha LR negativo mod <span class="math inline">\(q\)</span>: ci sono <span class="math inline">\(\mu_2\)</span> tali punti. Analogamente, sopra la diagonale ci sono <span class="math inline">\(\mu_1\)</span> punti.</p>
+<p>La biiezione <span class="math inline">\((m,n)\leftrightarrow\left(\frac{p+1}{2}-m, \frac{q+1}{2}-n\right)\)</span> accoppia i punti di <span class="math inline">\(H\)</span> (si verifica che l’immagine è ancora in <span class="math inline">\(H\)</span> e le rette <span class="math inline">\(y=\frac{q}{p}x\)</span> vengono rispettate). L’unico punto fisso è <span class="math inline">\(P=\left(\frac{p+1}{4},\frac{q+1}{4}\right)\)</span>, che è reticolare iff <span class="math inline">\(p\equiv q\equiv3\pmod4\)</span>.</p>
+<p>Quindi:</p>
+<ul>
+<li>Se <span class="math inline">\(p\not\equiv3\pmod4\)</span> o <span class="math inline">\(q\not\equiv3\pmod4\)</span>: i punti si accoppiano senza punti fissi → <span class="math inline">\(\mu_1+\mu_2\)</span> è pari → <span class="math inline">\(\left(\frac{p}{q}\right)\left(\frac{q}{p}\right)=1\)</span>. ✓</li>
+<li>Se <span class="math inline">\(p\equiv q\equiv3\pmod4\)</span>: c’è un punto fisso → <span class="math inline">\(\mu_1+\mu_2\)</span> è dispari → <span class="math inline">\(\left(\frac{p}{q}\right)\left(\frac{q}{p}\right)=-1\)</span>. ✓ <span class="math inline">\(\blacksquare\)</span></li>
+</ul>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="tabella-della-lrq" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="tabella-della-lrq"><span class="header-section-number">4.4</span> Tabella della LRQ</h2>
+<table class="table-striped caption-top table">
+<caption>La LRQ: solo nel caso p≡q≡3 (mod 4) i simboli si oppongono.</caption>
+<colgroup>
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 51%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(p\)</span> mod 4</th>
+<th style="text-align: center;"><span class="math inline">\(q\)</span> mod 4</th>
+<th style="text-align: center;"><span class="math inline">\(\frac{p-1}{2}\cdot\frac{q-1}{2}\)</span> mod 2</th>
+<th style="text-align: center;"><span class="math inline">\((p/q) = (q/p)\)</span>?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0 (pari)</td>
+<td style="text-align: center;"><strong>Sì</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">0 (pari)</td>
+<td style="text-align: center;"><strong>Sì</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0 (pari)</td>
+<td style="text-align: center;"><strong>Sì</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>3</strong></td>
+<td style="text-align: center;"><strong>3</strong></td>
+<td style="text-align: center;"><strong>1 (dispari)</strong></td>
+<td style="text-align: center;"><strong>No: segni opposti</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="formule-per--1p-e-2p" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="formule-per--1p-e-2p"><span class="header-section-number">4.5</span> Formule per (-1/p) e (2/p)</h2>
+<div class="callout callout-style-default callout-important callout-titled" title="Teorema 9-5 — Simboli fondamentali">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Teorema 9-5 — Simboli fondamentali
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se <span class="math inline">\(p\)</span> è un primo dispari: <span class="math display">\[\left(\frac{-1}{p}\right) = (-1)^{(p-1)/2} = \begin{cases}
++1 &amp; \text{se } p\equiv1\pmod4 \\
+-1 &amp; \text{se } p\equiv3\pmod4
+\end{cases} \tag{9-3-4}\]</span> <span class="math display">\[\left(\frac{2}{p}\right) = (-1)^{(p^2-1)/8} = \begin{cases}
++1 &amp; \text{se } p\equiv\pm1\pmod8 \\
+-1 &amp; \text{se } p\equiv\pm3\pmod8
+\end{cases} \tag{9-3-5}\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Dimostrazione">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Consiglio</span>Dimostrazione
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p><strong>Per <span class="math inline">\((-1/p)\)</span>:</strong> Lemma di Gauss con <span class="math inline">\(m=-1\)</span>: i multipli <span class="math inline">\(-1,-2,\ldots,-\frac{p-1}{2}\)</span> hanno tutti LR negativo mod <span class="math inline">\(p\)</span>. Quindi <span class="math inline">\(\mu=\frac{p-1}{2}\)</span> e <span class="math inline">\(\left(\frac{-1}{p}\right)=(-1)^{(p-1)/2}\)</span>. ✓</p>
+<p><strong>Per <span class="math inline">\((2/p)\)</span>:</strong> Lemma di Gauss con <span class="math inline">\(m=2\)</span>: i multipli sono <span class="math inline">\(2,4,\ldots,p-1\)</span>. I LR negativi sono i pari in <span class="math inline">\([(p+1)/2,p-1]\)</span>. Contando per <span class="math inline">\(p=8s+r\)</span>: <span class="math inline">\(\mu=2s\)</span> per <span class="math inline">\(r=\pm1\)</span> e <span class="math inline">\(\mu=2s+1\)</span> per <span class="math inline">\(r=\pm3\)</span>. In tutti i casi <span class="math inline">\((-1)^\mu=(-1)^{(p^2-1)/8}\)</span>. <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+</div>
+</div>
+<p><strong>Tavola di riferimento rapida:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(p\)</span> mod 8</th>
+<th style="text-align: center;"><span class="math inline">\((-1/p)\)</span></th>
+<th style="text-align: center;"><span class="math inline">\((2/p)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">+1</td>
+<td style="text-align: center;">+1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">-1</td>
+<td style="text-align: center;">-1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">+1</td>
+<td style="text-align: center;">-1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">-1</td>
+<td style="text-align: center;">+1</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="esercizi-9-3" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="esercizi-9-3"><span class="header-section-number">4.6</span> Esercizi §9-3</h2>
+<div class="callout callout-style-default callout-caution callout-titled" title="Esercizi 1–2 — Jacobi per (-1/c) e (2/c)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Attenzione</span>Esercizi 1–2 — Jacobi per (-1/c) e (2/c)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Es. 1:</strong> <span class="math inline">\(\left(\frac{-1}{c}\right)=(-1)^{(c-1)/2}\)</span> per <span class="math inline">\(c\)</span> dispari.</p>
+<p>Scrivendo <span class="math inline">\(c=p_1\cdots p_r\)</span>: <span class="math inline">\(\left(\frac{-1}{c}\right)=\prod(-1)^{(p_i-1)/2}=(-1)^{\sum(p_i-1)/2}\)</span>. Si verifica che <span class="math inline">\(\sum(p_i-1)/2\equiv(c-1)/2\pmod2\)</span> per prodotti di dispari. ∎</p>
+<p><strong>Es. 2:</strong> <span class="math inline">\(\left(\frac{2}{c}\right)=(-1)^{(c^2-1)/8}\)</span> per <span class="math inline">\(c\)</span> dispari.</p>
+<p>Analogamente: <span class="math inline">\(\sum(p_i^2-1)/8\equiv(c^2-1)/8\pmod2\)</span>. ∎</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled" title="Esercizio 4 — 17 è QR mod 19?">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Attenzione</span>Esercizio 4 — 17 è QR mod 19?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Metodo 1 (Lemma di Gauss):</strong> LR di <span class="math inline">\(17n\)</span> mod 19 per <span class="math inline">\(n=1,\ldots,9\)</span>: <span class="math inline">\(17,-4,13,-8,9,-12,5,-16,1\)</span>. Negativi: <span class="math inline">\(-4,-8,-12,-16\)</span>, cioè <span class="math inline">\(\mu=4\)</span>. <span class="math inline">\(\left(\frac{17}{19}\right)=(-1)^4=1\)</span>. <strong>QR!</strong> ✓</p>
+<p><strong>Metodo 2 (LRQ):</strong> <span class="math inline">\(17\equiv1\pmod4\)</span>, quindi <span class="math inline">\(\left(\frac{17}{19}\right)=\left(\frac{19}{17}\right)=\left(\frac{2}{17}\right)\)</span>. <span class="math inline">\(17\equiv1\pmod8\)</span>, quindi <span class="math inline">\(\left(\frac{2}{17}\right)=1\)</span>. ✓</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled" title="Esercizio 5 — Formula per (3/p)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Attenzione</span>Esercizio 5 — Formula per (3/p)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math display">\[\left(\frac{3}{p}\right)=\begin{cases}1&amp;\text{se }p\equiv\pm1\pmod{12}\\-1&amp;\text{se }p\equiv\pm5\pmod{12}\end{cases}\]</span></p>
+<p><strong>Dim:</strong> Applicare la LRQ: <span class="math inline">\(3\equiv3\pmod4\)</span>. - Se <span class="math inline">\(p\equiv1\pmod4\)</span>: <span class="math inline">\(\left(\frac{3}{p}\right)=\left(\frac{p}{3}\right)\)</span>. Vale +1 iff <span class="math inline">\(p\equiv1\pmod3\)</span>, cioè <span class="math inline">\(p\equiv1\)</span> o <span class="math inline">\(13\equiv1\pmod{12}\)</span>; vale -1 iff <span class="math inline">\(p\equiv2\pmod3\)</span>, cioè <span class="math inline">\(p\equiv5\)</span> o <span class="math inline">\(17\equiv5\pmod{12}\)</span>. - Se <span class="math inline">\(p\equiv3\pmod4\)</span>: <span class="math inline">\(\left(\frac{3}{p}\right)=-\left(\frac{p}{3}\right)\)</span>. Combinando con <span class="math inline">\(p\pmod3\)</span>: <span class="math inline">\(p\equiv11\pmod{12}\Rightarrow+1\)</span>; <span class="math inline">\(p\equiv7\pmod{12}\Rightarrow-1\)</span>. ∎</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled" title="Esercizio 6 — Jacobi=1 non implica QR">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Attenzione</span>Esercizio 6 — Jacobi=1 non implica QR
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(n=2\)</span>, <span class="math inline">\(m=9=3^2\)</span>: <span class="math inline">\(\left(\frac{2}{9}\right)=\left(\frac{2}{3}\right)^2=(-1)^2=1\)</span>.</p>
+<p>Ma <span class="math inline">\(x^2\equiv2\pmod9\)</span>: i quadrati mod 9 sono <span class="math inline">\(\{0,1,4,7\}\)</span>. Il valore 2 non appare. Quindi <span class="math inline">\(\left(\frac{2}{9}\right)=1\)</span> ma <span class="math inline">\(2\)</span> <strong>non è</strong> un QR mod 9. ✗</p>
+<p>Questo mostra che il Simbolo di Jacobi è utile per calcoli (tramite la LRQ), ma non è un test affidabile di QR per moduli composti.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="applicazioni-della-legge-di-reciprocità-quadratica" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> §9-4 · Applicazioni della Legge di Reciprocità Quadratica</h1>
+<section id="strategia-generale" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="strategia-generale"><span class="header-section-number">5.1</span> Strategia generale</h2>
+<p>Per risolvere <span class="math inline">\(ax^2+bx+c\equiv0\pmod d\)</span>:</p>
+<ol type="1">
+<li><strong>Completare il quadrato:</strong> <span class="math inline">\((2ax+b)^2\equiv b^2-4ac\pmod d\)</span></li>
+<li><strong>Ridurre alla forma <span class="math inline">\(y^2\equiv n\pmod p\)</span></strong> (o <span class="math inline">\(p^k\)</span>)</li>
+<li><strong>Verificare l’esistenza</strong> con il Simbolo di Legendre e la LRQ</li>
+<li><strong>Se <span class="math inline">\(d\)</span> è composto:</strong> usare TCR per combinare soluzioni</li>
+</ol>
+<div class="callout callout-style-default callout-important callout-titled" title="Teorema 9-6 — Quadratica mod pⁿ">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Teorema 9-6 — Quadratica mod pⁿ
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se <span class="math inline">\(p\)</span> è un primo dispari e <span class="math inline">\(\gcd(a,p)=1\)</span>, allora <span class="math inline">\(x^2\equiv a\pmod{p^n}\)</span> ha soluzione se e solo se <span class="math inline">\(\left(\frac{a}{p}\right)=1\)</span>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Dimostrazione (Lifting di Hensel)">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Consiglio</span>Dimostrazione (Lifting di Hensel)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-23" class="callout-23-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\((\Rightarrow)\)</span> Le soluzioni di <span class="math inline">\(x^2\equiv a\pmod{p^n}\)</span> soddisfano <span class="math inline">\(x^2\equiv a\pmod p\)</span>: se <span class="math inline">\(\left(\frac{a}{p}\right)=-1\)</span> impossibile.</p>
+<p><span class="math inline">\((\Leftarrow)\)</span> Se <span class="math inline">\(\left(\frac{a}{p}\right)=1\)</span>: per induzione su <span class="math inline">\(n\)</span>. Caso base <span class="math inline">\(n=1\)</span>: esiste <span class="math inline">\(x_0\)</span> con <span class="math inline">\(x_0^2\equiv a\pmod p\)</span>.</p>
+<p><strong>Lifting:</strong> data <span class="math inline">\(x_0\)</span> con <span class="math inline">\(x_0^2\equiv a\pmod{p^k}\)</span> (i.e.&nbsp;<span class="math inline">\(x_0^2-a=mp^k\)</span>), troviamo <span class="math inline">\(x_1=x_0-m\tilde x_0\frac{p+1}{2}p^k\)</span> (con <span class="math inline">\(\tilde x_0=\)</span> inverso di <span class="math inline">\(x_0\)</span> mod <span class="math inline">\(p\)</span>). Verifica: <span class="math inline">\(x_1^2\equiv a\pmod{p^{k+1}}\)</span>. <span class="math inline">\(\blacksquare\)</span></p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="esempi-di-calcolo-completo" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="esempi-di-calcolo-completo"><span class="header-section-number">5.2</span> Esempi di calcolo completo</h2>
+<div class="callout callout-style-default callout-caution callout-titled" title="Esercizi §9-4 — Soluzioni">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Attenzione</span>Esercizi §9-4 — Soluzioni
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Es. 1:</strong> <span class="math inline">\(x^2\equiv17\pmod{29}\)</span>? <span class="math inline">\(29\equiv1\pmod4\)</span>: <span class="math inline">\(\left(\frac{17}{29}\right)=\left(\frac{29}{17}\right)=\left(\frac{12}{17}\right)=\left(\frac{4}{17}\right)\left(\frac{3}{17}\right)=1\cdot\left(\frac{3}{17}\right)\)</span>. <span class="math inline">\(17\equiv1\pmod4\)</span>: <span class="math inline">\(\left(\frac{3}{17}\right)=\left(\frac{17}{3}\right)=\left(\frac{2}{3}\right)=-1\)</span>. Quindi <span class="math inline">\(\left(\frac{17}{29}\right)=-1\)</span>. <strong>Nessuna soluzione.</strong> ✗</p>
+<p><strong>Es. 2:</strong> <span class="math inline">\(3x^2\equiv12\pmod{23}\)</span>? Divido per 3: inverso di 3 mod 23 è 8. <span class="math inline">\(x^2\equiv96\equiv4\pmod{23}\)</span>. <span class="math inline">\(\left(\frac{4}{23}\right)=1\)</span>. <strong>Ha soluzione:</strong> <span class="math inline">\(x\equiv\pm2\pmod{23}\)</span>.</p>
+<p><strong>Es. 3:</strong> <span class="math inline">\(2x^2\equiv27\pmod{41}\)</span>? Inverso di 2 mod 41 è 21. <span class="math inline">\(x^2\equiv27\cdot21=567\equiv34\pmod{41}\)</span>. <span class="math inline">\(\left(\frac{34}{41}\right)=\left(\frac{2}{41}\right)\left(\frac{17}{41}\right)=1\cdot\left(\frac{17}{41}\right)\)</span>. <span class="math inline">\(41\equiv1\pmod4\)</span>: <span class="math inline">\(\left(\frac{17}{41}\right)=\left(\frac{41}{17}\right)=\left(\frac{7}{17}\right)\)</span>. <span class="math inline">\(17\equiv1\pmod4\)</span>: <span class="math inline">\(\left(\frac{7}{17}\right)=\left(\frac{17}{7}\right)=\left(\frac{3}{7}\right)\)</span>. <span class="math inline">\(3\equiv3\pmod4\)</span>, <span class="math inline">\(7\equiv3\pmod4\)</span>: <span class="math inline">\(\left(\frac{3}{7}\right)=-\left(\frac{7}{3}\right)=-\left(\frac{1}{3}\right)=-1\)</span>. Quindi <span class="math inline">\(\left(\frac{34}{41}\right)=-1\)</span>. <strong>Nessuna soluzione.</strong> ✗</p>
+<p><strong>Es. 4:</strong> <span class="math inline">\(x^2+5x\equiv12\pmod{31}\)</span>? Completare il quadrato: <span class="math inline">\((x+\frac{5}{2})^2\equiv12+\frac{25}{4}\pmod{31}\)</span>. Inverso di 2: 16. Inverso di 4: 8. <span class="math inline">\(y^2\equiv12+25\cdot8=12+200\equiv12+14=26\pmod{31}\)</span>. <span class="math inline">\(\left(\frac{26}{31}\right)=\left(\frac{2}{31}\right)\left(\frac{13}{31}\right)=(-1)\left(\frac{13}{31}\right)\)</span>. <span class="math inline">\(31\equiv3\pmod4\)</span>, <span class="math inline">\(13\equiv1\pmod4\)</span>: <span class="math inline">\(\left(\frac{13}{31}\right)=\left(\frac{31}{13}\right)=\left(\frac{5}{13}\right)\)</span>. <span class="math inline">\(13\equiv1\pmod4\)</span>: <span class="math inline">\(\left(\frac{5}{13}\right)=\left(\frac{13}{5}\right)=\left(\frac{3}{5}\right)\)</span>. <span class="math inline">\(5\equiv1\pmod4\)</span>: <span class="math inline">\(\left(\frac{3}{5}\right)=\left(\frac{5}{3}\right)=\left(\frac{2}{3}\right)=-1\)</span>. Quindi <span class="math inline">\(\left(\frac{26}{31}\right)=(-1)(-1)=1\)</span>. <strong>Ha soluzione!</strong> ✓</p>
+<p><strong>Es. 5:</strong> <span class="math inline">\(x^2\equiv19\pmod{30}\)</span>? <span class="math inline">\(30=2\cdot3\cdot5\)</span>. - mod 2: <span class="math inline">\(19\equiv1\equiv1^2\)</span> ✓ - mod 3: <span class="math inline">\(19\equiv1\equiv1^2\)</span> ✓ - mod 5: <span class="math inline">\(19\equiv4\equiv2^2\)</span> ✓ Tutte risolvibili → <strong>Ha soluzioni!</strong> Per TCR: <span class="math inline">\(x\equiv\pm1\pmod3\)</span> e <span class="math inline">\(x\equiv\pm2\pmod5\)</span>.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="sintesi-struttura-del-capitolo-9" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Sintesi — Struttura del Capitolo 9</h1>
+<pre><code>§9-1: Residui Quadratici e Criterio di Eulero
+│
+└─→ Thm 9-1: a QR mod p ↔ a^{(p-1)/2} ≡ 1 (mod p)
+    Cor 9-1:  ind(a) pari ↔ a QR
 
-</div><!-- end two-col -->
+§9-2: Simbolo di Legendre (a/p) ∈ {-1,0,+1}
+│
+└─→ Thm 9-2: (ab/p)=(a/p)(b/p)  [moltiplicatività]
+    Def: Simbolo di Jacobi — estensione a mod composti
 
-<footer>
-  Studio redatto da <strong>Alberto Oliva</strong> &mdash;
-  <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a> &middot;
-  Rif.: G.E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971) &mdash; Capitolo 9 &middot;
-  Aprile 2026
-</footer>
-</body>
-</html>
+§9-3: Legge di Reciprocità Quadratica
+│
+├─→ Def 9-2,3: Residuo minimo LR_m(n), segno sgn(x)
+│
+├─→ Thm 9-3 (Lemma di Gauss): (m/p) = (-1)^μ
+│
+├─→ Thm 9-4 (LRQ): (p/q)(q/p) = (-1)^{(p-1)(q-1)/4}
+│                   [prova via punti reticolari in H]
+│
+└─→ Thm 9-5: (-1/p) = (-1)^{(p-1)/2}
+             (2/p)  = (-1)^{(p²-1)/8}
+
+§9-4: Applicazioni
+│
+└─→ Thm 9-6: x²≡a(mod p^n) ↔ (a/p)=1  [lifting Hensel]
+    Algoritmo: completare il quadrato + Legendre + TCR</code></pre>
+<hr>
+</section>
+<section id="riferimenti-bibliografici" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Riferimenti Bibliografici</h1>
+<p><strong>[And71]</strong> Andrews, G.E. (1971). <em>Number Theory</em>. W.B. Saunders, Philadelphia. — <strong>Riferimento principale.</strong></p>
+<p><strong>[Gau96]</strong> Gauss, C.F. (1796–1801). <em>Disquisitiones Arithmeticae</em>. Lipsia. — Prima dimostrazione della LRQ (sei dimostrazioni nel corso della vita).</p>
+<p><strong>[Leg98]</strong> Legendre, A.M. (1798). <em>Essai sur la Théorie des Nombres</em>. Paris. — Introduzione del simbolo <span class="math inline">\((a/p)\)</span> e prima enunciazione della LRQ.</p>
+<p><strong>[HarWri08]</strong> Hardy, G.H. &amp; Wright, E.M. (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford. — Capitoli 6–7: residui quadratici, LRQ.</p>
+<p><strong>[Ire90]</strong> Ireland, K. &amp; Rosen, M. (1990). <em>A Classical Introduction to Modern Number Theory</em> (2nd ed.). Springer. — Capitoli 5–9: LRQ, caratteri, somme di Gauss.</p>
+<p><strong>[Niv91]</strong> Niven, I., Zuckerman, H.S. &amp; Montgomery, H.L. (1991). <em>An Introduction to the Theory of Numbers</em> (5th ed.). Wiley.</p>
+<p><strong>[Ger63]</strong> Gerstenhaber, M. (1963). The 152nd proof of the law of quadratic reciprocity. <em>Amer. Math. Monthly</em> 70, 397–398.</p>
+<p><strong>[GolMic82]</strong> Goldwasser, S. &amp; Micali, S. (1982). Probabilistic encryption. <em>J. Comput. System Sci.</em> 28, 270–299. — Cifrario basato sui residui quadratici.</p>
+<p><strong>[Apo76]</strong> Apostol, T.M. (1976). <em>Introduction to Analytic Number Theory</em>. Springer.</p>
+<p><strong>[Ros11]</strong> Rosen, K.H. (2011). <em>Elementary Number Theory</em> (6th ed.). Pearson.</p>
+<hr>
+<p><em>Studio redatto da <strong>Alberto Oliva</strong> — <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a></em></p>
+<p><em>Riferimento: G.E. Andrews, Number Theory (W.B. Saunders, 1971), Capitolo 9 · Aprile 2026</em></p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiato!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiato!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

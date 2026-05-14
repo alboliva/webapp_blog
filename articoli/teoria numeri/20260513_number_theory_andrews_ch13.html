@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capitolo 13 — Funzioni Generatrici per le Partizioni | Andrews</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#f4f0ec; --ink:#0c0808; --cream:#e8e0d4;
+  --night:#080604; --dark:#180c04; --mid:#2c1808;
+  --mahog:#4a1800; --rust:#8a3008; --ember:#c05010;
+  --teal:#085858; --pine:#106060; --sea:#207878;
+  --aqua:#30a0a0; --mint:#60c8c8;
+  --gold:#a87008; --amber:#d09008; --straw:#e8c040;
+  --violet:#380868; --plum:#6010a0; --lav:#9840e0;
+  --rule:#b89870;
+  --thm:#fff4e8; --proof:#faf8f4; --defn:#e8f4f0;
+  --gen:#f0f8ff; --id:#f8f0ff; --euler:#e8fff4;
+  --jacobi:#fff8e8; --ex:#fdf4e4;
+  --shadow:0 2px 16px rgba(72,24,0,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);
+  font-family:'EB Garamond',Georgia,serif;font-size:19px;line-height:1.80;}
+
+header{
+  position:relative;background:var(--night);
+  padding:4rem 4rem 3rem;text-align:center;overflow:hidden;
+  border-bottom:4px solid var(--amber);
+}
+header::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 60%,rgba(74,24,0,.5) 0%,transparent 70%),
+    radial-gradient(ellipse 70% 50% at 75% 35%,rgba(8,88,88,.4) 0%,transparent 65%),
+    repeating-linear-gradient(15deg,rgba(168,112,8,.04) 0,rgba(168,112,8,.04) 1px,
+      transparent 0,transparent 44px);
+}
+header::after{
+  content:'\220F(1-q\207F)\207B\00B9 = \2211 p(n)q\207F';
+  position:absolute;right:2rem;bottom:1rem;
+  font-family:'Fira Code',monospace;font-size:.85rem;
+  color:rgba(232,192,64,.14);letter-spacing:.1em;pointer-events:none;
+}
+.ctag{font-family:'Fira Code',monospace;font-size:.65rem;letter-spacing:.28em;
+  color:var(--straw);text-transform:uppercase;display:block;margin-bottom:1rem;
+  position:relative;z-index:1;}
+header h1{font-family:'Rajdhani',sans-serif;font-size:3.4rem;font-weight:700;
+  letter-spacing:.05em;color:#fff;line-height:1.08;margin-bottom:.4rem;
+  position:relative;z-index:1;}
+header .sub{font-family:'EB Garamond',serif;font-style:italic;
+  font-size:1.12rem;color:var(--mint);margin-bottom:1.6rem;
+  position:relative;z-index:1;}
+.meta{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;
+  font-size:.82rem;color:#504030;border-top:1px solid rgba(74,24,0,.2);
+  padding-top:1rem;position:relative;z-index:1;}
+.meta strong{color:var(--amber);}
+.meta a{color:var(--mint);text-decoration:none;}
+
+.abstract{background:var(--cream);border-left:5px solid var(--mid);
+  border-right:5px solid var(--mid);max-width:900px;margin:2rem auto;
+  padding:1.6rem 2.4rem;font-style:italic;font-size:.96rem;color:#140c04;}
+.abstract strong{font-style:normal;color:var(--rust);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;
+  max-width:1300px;margin:0 auto;padding:2.4rem 3.2rem;}
+.full{grid-column:1/-1;}
+@media(max-width:900px){
+  .two-col{grid-template-columns:1fr;padding:1.4rem 1.6rem;}
+  header{padding:2.4rem 1.6rem;}
+  header h1{font-size:2.4rem;}
+}
+
+.sb{grid-column:1/-1;display:flex;align-items:center;gap:1.2rem;
+  margin:2.4rem 0 .8rem;padding-top:1.2rem;border-top:2px solid var(--rule);}
+.sb h3{font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:700;
+  letter-spacing:.04em;color:var(--dark);white-space:nowrap;}
+.sb::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+p{margin-bottom:1em;text-align:justify;hyphens:auto;}
+h4.sub{font-family:'EB Garamond',serif;font-size:1.06rem;color:var(--rust);
+  font-style:italic;font-weight:600;margin:1.4rem 0 .55rem;
+  padding-bottom:.2rem;border-bottom:1px dotted var(--rule);}
+
+/* boxes */
+.thm{background:var(--thm);border:1px solid #d8b890;border-left:5px solid var(--mid);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.thm .lbl{font-family:'Fira Code',monospace;font-size:.62rem;letter-spacing:.14em;
+  color:var(--mid);text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem;}
+.thm .stmt{font-style:italic;font-size:.97rem;color:#140804;}
+
+.gen-thm{background:var(--gen);border:1px solid #a0c8e8;border-left:5px solid var(--teal);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.gen-thm .lbl{font-family:'Fira Code',monospace;font-size:.62rem;letter-spacing:.14em;
+  color:var(--teal);text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem;}
+.gen-thm .stmt{font-style:italic;font-size:.97rem;color:#040c14;}
+
+.id-box{background:var(--id);border:1px solid #c0a0e0;border-left:5px solid var(--plum);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.id-box .lbl{font-family:'Fira Code',monospace;font-size:.62rem;letter-spacing:.14em;
+  color:var(--plum);text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem;}
+.id-box .stmt{font-style:italic;font-size:.97rem;color:#10040c;}
+
+.jacobi{background:var(--jacobi);border:1px solid #e8d070;border-left:6px solid var(--gold);
+  padding:1.2rem 1.5rem;margin:1.4rem 0;border-radius:4px;box-shadow:var(--shadow);}
+.jacobi .lbl{font-family:'Fira Code',monospace;font-size:.65rem;letter-spacing:.15em;
+  color:var(--gold);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.5rem;}
+.jacobi .stmt{font-style:italic;font-size:.97rem;color:#180800;}
+
+.euler-box{background:var(--euler);border:1px solid #70d0a0;border-left:5px solid var(--pine);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.euler-box .lbl{font-family:'Fira Code',monospace;font-size:.62rem;letter-spacing:.14em;
+  color:var(--pine);text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem;}
+
+.defn{background:var(--defn);border:1px solid #80c0b0;border-left:5px solid var(--sea);
+  padding:.95rem 1.3rem;margin:1rem 0;font-size:.95rem;}
+.defn .lbl{font-family:'Fira Code',monospace;font-size:.62rem;letter-spacing:.14em;
+  color:var(--sea);text-transform:uppercase;display:block;margin-bottom:.35rem;}
+
+.proof{background:var(--proof);border:1px solid #d8c070;border-left:4px solid var(--gold);
+  padding:1rem 1.4rem;margin:.9rem 0 1.6rem;font-size:.93rem;}
+.proof-hdr{font-variant:small-caps;font-size:.76rem;letter-spacing:.1em;
+  color:var(--gold);display:block;margin-bottom:.5rem;}
+.qed{float:right;color:var(--gold);font-size:1.1rem;}
+
+.ex{background:var(--ex);border:1px solid #d0b060;border-left:4px solid var(--amber);
+  padding:.9rem 1.2rem;margin:.6rem 0;font-size:.93rem;}
+.ex .exl{font-family:'Fira Code',monospace;font-size:.62rem;color:var(--amber);
+  letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.35rem;}
+
+.note{background:#f8fff8;border:1px dashed var(--aqua);padding:.7rem 1.1rem;
+  font-size:.88rem;border-radius:3px;margin:.9rem 0;}
+.note::before{content:'💡 ';}
+.key{background:#fffcf0;border:1px solid #e8c860;border-left:4px solid var(--amber);
+  padding:.8rem 1.2rem;font-size:.9rem;border-radius:3px;margin:1rem 0;}
+.key::before{content:'🔑 ';}
+
+.hist{background:var(--night);color:#c0a888;padding:1.4rem 1.6rem;
+  border-radius:4px;margin:1.3rem 0;font-size:.87rem;}
+.hist h4{font-family:'Rajdhani',sans-serif;font-size:1.15rem;font-weight:700;
+  letter-spacing:.04em;color:var(--straw);margin-bottom:.65rem;}
+.hist p{color:#908070;text-align:left;}
+
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.9rem 0;}
+th{background:var(--dark);color:#fff;padding:.5rem 1rem;
+  font-variant:small-caps;letter-spacing:.07em;}
+td{padding:.42rem 1rem;text-align:center;border-bottom:1px solid var(--rule);}
+tr:nth-child(even) td{background:rgba(72,24,0,.04);}
+td.hi{background:rgba(44,24,8,.14);font-weight:700;color:var(--mahog);}
+td.tl{background:rgba(8,88,88,.10);font-weight:700;color:var(--teal);}
+td.pl{background:rgba(96,16,160,.10);font-weight:700;color:var(--plum);}
+.mono{font-family:'Fira Code',monospace;font-size:.8rem;}
+
+.vis{background:#fff;border:1px solid var(--rule);border-radius:5px;
+  padding:1.1rem;margin:1.1rem 0;text-align:center;box-shadow:var(--shadow);}
+.vis figcaption{font-size:.74rem;color:#888;margin-top:.5rem;font-style:italic;}
+.formula{text-align:center;margin:.95rem 0;padding:.6rem;
+  background:rgba(72,24,0,.04);border-radius:3px;font-size:1.05rem;}
+
+.bib{border-bottom:1px solid var(--rule);padding:.6rem 0;font-size:.87rem;}
+.bib-k{font-family:'Fira Code',monospace;color:var(--mid);font-size:.72rem;margin-bottom:.12rem;}
+
+footer{background:var(--ink);color:#403020;text-align:center;padding:1.6rem;
+  font-size:.78rem;border-top:3px solid var(--amber);margin-top:3rem;}
+footer a{color:var(--amber);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="ctag">Studio di Teoria dei Numeri &middot; Capitolo 13</span>
+  <h1>FUNZIONI GENERATRICI<br>PER LE PARTIZIONI</h1>
+  <div class="sub">George E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971)</div>
+  <div class="meta">
+    <span><strong>Autore:</strong> Alberto Oliva</span>
+    <span><strong>Email:</strong> <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a></span>
+    <span><strong>Riferimento:</strong> Andrews &mdash; <em>Number Theory</em>, Cap. 13</span>
+    <span><strong>Data:</strong> Aprile 2026</span>
+  </div>
+</header>
+
+<div class="abstract">
+  <strong>Abstract.</strong>
+  Il Capitolo 13 introduce le <em>funzioni generatrici</em> come strumento
+  principale per la teoria delle partizioni. La sezione &sect;13-1 sviluppa
+  le funzioni generatrici per \(\pi_m(n)\) (Teorema 13-1:
+  \(\sum\pi_m(n)q^n=\prod_{j=1}^m\frac{1}{1-q^j}\)),
+  per \(p(n)\) (Teorema 13-3: \(\sum p(n)q^n=\prod_{j=1}^\infty\frac{1}{1-q^j}\)),
+  per \(p(S_d,n)\) tramite i prodotti di Rogers-Ramanujan,
+  per \(d_m(n)\) (Teorema 13-4: prodotto finito con \((1+q^j)\))
+  e per \(D_1(n)\) (Teorema 13-5: prodotto infinito \(\prod(1+q^j)\)).
+  Crucialmente, la manipolazione algebrica dei prodotti infiniti fornisce
+  una nuova dimostrazione del Teorema di Eulero e del Teorema di Schur.
+  La sezione &sect;13-2 dimostra due identit&agrave; profonde tra serie infinite
+  e prodotti infiniti (Teorema 13-7) e il celebre
+  <strong>Prodotto Triplo di Jacobi</strong> (Teorema 13-8):
+  \(\prod_{n=0}^\infty(1-q^{2n+2})(1+zq^{2n+1})(1+z^{-1}q^{2n+1})
+  =\sum_{n=-\infty}^\infty q^{n^2}z^n\).
+</div>
+
+<div class="two-col">
+
+<!-- STORIA -->
+<div class="sb"><h3>Contesto Storico &amp; Motivazioni</h3></div>
+
+<div>
+  <div class="hist">
+    <h4>EULER E LE FUNZIONI GENERATRICI (1748)</h4>
+    <p>Euler invent&ograve; le funzioni generatrici per le partizioni nel suo
+    <em>Introductio in Analysin Infinitorum</em> (1748). L&rsquo;idea fondamentale:
+    codificare una sequenza \(a(n)\) nella serie formale \(\sum a(n)q^n\),
+    che spesso si fattorizza come prodotto infinito. Questo trasforma
+    domande combinatoriali (quante sono le partizioni con certe propriet&agrave;?)
+    in identit&agrave; algebriche tra serie e prodotti.</p>
+  </div>
+  <div class="hist" style="margin-top:.8rem;">
+    <h4>JACOBI E IL PRODOTTO TRIPLO (1829)</h4>
+    <p>Carl Gustav Jacob Jacobi (1804&ndash;1851) dimostr&ograve; nel 1829 il
+    <em>Prodotto Triplo</em> (Jacobi Triple Product, JTP):
+    \[\prod_{n=0}^\infty(1-q^{2n+2})(1+zq^{2n+1})(1+z^{-1}q^{2n+1})
+    =\sum_{n=-\infty}^\infty q^{n^2}z^n.\]
+    Questa identit&agrave; &egrave; straordinariamente generale: specializzandola
+    si ricavano la Formula del Pentagono di Euler, le funzioni teta di
+    Jacobi, e le identit&agrave; di Rogers-Ramanujan. &Egrave; una delle identit&agrave;
+    pi&ugrave; potenti della matematica combinatoria.</p>
+  </div>
+</div>
+
+<div>
+  <div class="hist">
+    <h4>ROGERS, RAMANUJAN E SCHUR (1894&ndash;1917)</h4>
+    <p>Le identit&agrave; di Rogers-Ramanujan (provate in Cap. 14) hanno le
+    funzioni generatrici:
+    \[\sum_{n=0}^\infty\frac{q^{n^2}}{(1-q)\cdots(1-q^n)}
+    =\prod_{j=1}^\infty\frac{1}{(1-q^{5j-4})(1-q^{5j-1})}\]
+    (prima identit&agrave;). Il Cap. 13 fornisce gli strumenti analitici
+    (Thm 13-7) necessari per dimostrarlo in Cap. 14. I risultati del
+    &sect;13-2 mostrano come l&rsquo;equazione funzionale \(f(z)=(1+z)f(zq)\)
+    determini univocamente il prodotto infinito &mdash; un uso fondamentale
+    dell&rsquo;unicita&grave; dell&rsquo;espansione di MacLaurin.</p>
+  </div>
+  <div class="hist" style="margin-top:.8rem;">
+    <h4>PERCH&Eacute; LE FUNZIONI GENERATRICI SONO POTENTI</h4>
+    <p>Il Capitolo 13 mostra che la manipolazione algebrica dei prodotti
+    infiniti permette di: (1) trovare relazioni di ricorrenza
+    (\(\pi_m(n)=\pi_m(n-m)+\pi_{m-1}(n)\)); (2) dimostrare identit&agrave;
+    di partizioni algebricamente invece che combinatoriamente
+    (nuova prova del Teorema di Eulero via \(\prod(1+q^j)=\prod\frac{1}{1-q^{2j-1}}\));
+    (3) scoprire identit&agrave; nuove tramite specializzazione di identit&agrave;
+    generali come il JTP. Questi metodi dominano la teoria delle
+    partizioni moderna.</p>
+  </div>
+</div>
+
+<!-- §13-1 -->
+<div class="sb"><h3>&sect; 13-1 &middot; Prodotti Infiniti come Funzioni Generatrici</h3></div>
+
+<div>
+  <h4 class="sub">Definizione e convergenza dei prodotti infiniti</h4>
+  <p>Prima di tutto, Andrews definisce il concetto di <em>prodotto infinito</em>,
+  analogo alle serie infinite: il prodotto infinito di \(a_j\) &egrave; il
+  limite (se esiste e non &egrave; zero) dei prodotti parziali
+  \(\prod_{j=0}^n a_j\).</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 13-1 &mdash; Prodotto Infinito</span>
+    L&rsquo;\(n\)-esimo prodotto parziale della sequenza \((a_j)\) &egrave;
+    \(\prod_{j=0}^n a_j=a_0a_1\cdots a_n\). Il <strong>prodotto infinito</strong>
+    &egrave; \(\prod_{j=0}^\infty a_j=\lim_{n\to\infty}\prod_{j=0}^n a_j\),
+    se il limite esiste e &egrave; diverso da zero.
+  </div>
+
+  <div class="key">
+    La chiave per collegare prodotti infiniti e partizioni: la serie
+    geometrica \(\frac{1}{1-x}=1+x+x^2+x^3+\cdots\) per \(|x|<1\).
+    Sostituendo \(x=q^j\), ogni fattore \(\frac{1}{1-q^j}\) genera
+    tutti i multipli di \(j\) come esponenti. Il prodotto
+    \(\prod_j\frac{1}{1-q^j}\) raccoglie tutti i modi di scegliere
+    quante copie di ogni intero usare &mdash; esattamente le partizioni!
+  </div>
+
+  <div class="gen-thm">
+    <span class="lbl">Teorema 13-1 &mdash; Funzione generatrice per &pi;<sub>m</sub>(n)</span>
+    <div class="stmt">Per \(|q|&lt;1\):
+    \[\sum_{n=0}^\infty\pi_m(n)\,q^n=\prod_{j=1}^m\frac{1}{1-q^j},\]
+    dove \(\pi_m(n)\) &egrave; il numero di partizioni di \(n\) in cui nessuna
+    parte supera \(m\).</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Espandiamo il prodotto:
+    \[\prod_{j=1}^m\frac{1}{1-q^j}=\prod_{j=1}^m(1+q^j+q^{2j}+q^{3j}+\cdots).\]
+    Moltiplicando queste \(m\) serie (convergenti assolutamente per \(|q|&lt;1\)),
+    ogni termine del prodotto si scrive come \(q^{f_1\cdot1+f_2\cdot2+\cdots+f_m\cdot m}\)
+    con \(f_j\geq0\). Questo esponente &egrave; esattamente una partizione di \(n\)
+    in cui \(j\) appare \(f_j\) volte, con ogni parte \(\leq m\). Il coefficiente
+    di \(q^n\) &egrave; quindi il numero di tali partizioni: \(\pi_m(n)\). <span class="qed">&#9632;</span>
+  </div>
+
+  <div class="note">
+    <strong>Verifica per \(m=3\), \(n=4\):</strong>
+    \(\pi_3(4)=4\) (partizioni \(4=4\)... aspetta, ma \(4>m=3\)!
+    Le partizioni di 4 con parti \(\leq3\) sono: \(3+1\), \(2+2\), \(2+1+1\),
+    \(1+1+1+1\) &mdash; 4 partizioni). Coefficiente di \(q^4\) in
+    \(\frac{1}{(1-q)(1-q^2)(1-q^3)}\):
+    la serie inizia \(1+q+(q^{2\cdot1}+q^2)+(q^{3\cdot1}+q^{2+1}+q^3)
+    +(q^{4\cdot1}+q^{2+2\cdot1}+q^{2\cdot2}+q^{3+1})+\cdots\)
+    — il coefficiente di \(q^4\) &egrave; 4. &#10003;
+  </div>
+</div>
+
+<div>
+  <!-- SVG: generating function visualization -->
+  <div class="vis">
+    <svg viewBox="0 0 310 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle"
+        font-family="Rajdhani,sans-serif" font-size="13" fill="#180c04"
+        font-weight="700" letter-spacing=".04em">
+        Funzione Generatrice per p(n) — Coefficienti
+      </text>
+      <!-- Product formula display -->
+      <rect x="8" y="22" width="294" height="28" rx="3" fill="#180c04"/>
+      <text x="155" y="40" text-anchor="middle"
+        font-family="Fira Code,monospace" font-size="10.5" fill="#e8c040">
+        &#8719;&#8321;&#8734; 1/(1-q&#8239;&#8319;) = 1 + q + 2q&#178; + 3q&#179; + 5q&#8308; + 7q&#8309; + 11q&#8310; + ...
+      </text>
+
+      <!-- Bar chart: p(n) for n=0..10 -->
+      <!-- Scale: p: 0..42 → 180..60 px (120/42); x: 0..10 → 10..300 (27px each) -->
+      <line x1="8" y1="180" x2="302" y2="180" stroke="#b89870" stroke-width="1"/>
+      <line x1="8" y1="180" x2="8" y2="60" stroke="#b89870" stroke-width="1"/>
+      <!-- x-axis labels -->
+      <g font-family="Fira Code,monospace" font-size="8.5" fill="#8a6040" text-anchor="middle">
+        <text x="22"  y="193">0</text><text x="49"  y="193">1</text>
+        <text x="76"  y="193">2</text><text x="103" y="193">3</text>
+        <text x="130" y="193">4</text><text x="157" y="193">5</text>
+        <text x="184" y="193">6</text><text x="211" y="193">7</text>
+        <text x="238" y="193">8</text><text x="265" y="193">9</text>
+        <text x="292" y="193">10</text>
+      </g>
+      <!-- p(n) values: 1,1,2,3,5,7,11,15,22,30,42 -->
+      <g>
+        <!-- p(0)=1 -->
+        <rect x="13" y="177" width="18" height="3" fill="#4a1800" rx="1"/>
+        <text x="22" y="173" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#c05010">1</text>
+        <!-- p(1)=1 -->
+        <rect x="40" y="177" width="18" height="3" fill="#4a1800" rx="1"/>
+        <text x="49" y="173" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#c05010">1</text>
+        <!-- p(2)=2 -->
+        <rect x="67" y="174" width="18" height="6" fill="#6a2800" rx="1"/>
+        <text x="76" y="170" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#c05010">2</text>
+        <!-- p(3)=3 -->
+        <rect x="94" y="171" width="18" height="9" fill="#8a3008" rx="1"/>
+        <text x="103" y="167" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#c05010">3</text>
+        <!-- p(4)=5 -->
+        <rect x="121" y="165" width="18" height="15" fill="#a04010" rx="1"/>
+        <text x="130" y="161" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#c05010">5</text>
+        <!-- p(5)=7 -->
+        <rect x="148" y="159" width="18" height="21" fill="#c05010" rx="1"/>
+        <text x="157" y="155" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#c05010">7</text>
+        <!-- p(6)=11 -->
+        <rect x="175" y="149" width="18" height="31" fill="#085858" rx="1"/>
+        <text x="184" y="145" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#085858">11</text>
+        <!-- p(7)=15 -->
+        <rect x="202" y="137" width="18" height="43" fill="#106060" rx="1"/>
+        <text x="211" y="133" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#085858">15</text>
+        <!-- p(8)=22 -->
+        <rect x="229" y="117" width="18" height="63" fill="#207878" rx="1"/>
+        <text x="238" y="113" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#207878">22</text>
+        <!-- p(9)=30 -->
+        <rect x="256" y="94" width="18" height="86" fill="#208080" rx="1"/>
+        <text x="265" y="90" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#207878">30</text>
+        <!-- p(10)=42 -->
+        <rect x="283" y="60" width="18" height="120" fill="#30a0a0" rx="1"/>
+        <text x="292" y="56" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#207878">42</text>
+      </g>
+      <text x="155" y="205" text-anchor="middle" font-family="EB Garamond,serif" font-size="8.5" fill="#888" font-style="italic">n</text>
+    </svg>
+    <figcaption>La funzione generatrice \(\prod_{j=1}^\infty\frac{1}{1-q^j}\) ha come coefficienti esattamente i valori \(p(n)\). La crescita rapida riflette la formula di Hardy-Ramanujan.</figcaption>
+  </div>
+
+  <h4 class="sub">La funzione generatrice per p(n) e per p(S,n)</h4>
+
+  <div class="thm">
+    <span class="lbl">Teorema 13-2 &mdash; \(\lim_{n\to\infty}p(n)^{1/n}=1\)</span>
+    <div class="stmt">La serie \(\sum_{n=0}^\infty p(n)q^n\) converge per \(|q|&lt;1\).</div>
+  </div>
+
+  <div class="gen-thm">
+    <span class="lbl">Teorema 13-3 &mdash; Funzione generatrice per p(n)</span>
+    <div class="stmt">Per \(|q|&lt;1\):
+    \[\sum_{n=0}^\infty p(n)\,q^n=\prod_{j=1}^\infty\frac{1}{1-q^j}.\]</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Per \(m\geq n\): \(\pi_m(n)=p(n)\) (nessuna parte pu&ograve; eccedere \(n\)).
+    Il resto della serie \(|\sum p(n)q^n - \prod_{j=1}^m\frac{1}{1-q^j}|\)
+    &egrave; dominato da \(\sum_{n=m+1}^\infty p(n)|q|^n\to0\) per \(m\to\infty\),
+    poich&eacute; la serie converge per \(|q|&lt;1\). <span class="qed">&#9632;</span>
+  </div>
+
+  <p>Analogamente si stabiliscono le funzioni generatrici per \(p(S_d,n)\)
+  (\(S_d=\) interi \(\equiv1\) o \(d+2\pmod{d+3}\)):
+  \[\sum_{n=0}^\infty p(S_1,n)\,q^n=\prod_{j=1}^\infty\frac{1}{1-q^{2j-1}},\tag{13-1-1}\]
+  \[\sum_{n=0}^\infty p(S_2,n)\,q^n=\prod_{j=1}^\infty\frac{1}{(1-q^{5j-4})(1-q^{5j-1})},\tag{13-1-2}\]
+  \[\sum_{n=0}^\infty p(S_3,n)\,q^n=\prod_{j=1}^\infty\frac{1}{(1-q^{6j-5})(1-q^{6j-1})}.\tag{13-1-3}\]</p>
+</div>
+
+<!-- Parti distinte e Eulero via prodotti -->
+<div class="full">
+  <h4 class="sub">Funzioni generatrici per parti distinte</h4>
+
+  <div class="thm">
+    <span class="lbl">Teorema 13-4 &mdash; Funzione generatrice per d<sub>m</sub>(n)</span>
+    <div class="stmt">Se \(d_m(n)\) &egrave; il numero di partizioni di \(n\) in parti
+    distinte, nessuna maggiore di \(m\), allora:
+    \[\sum_{n=0}^\infty d_m(n)\,q^n=\prod_{j=1}^m(1+q^j).\]</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    \(\prod_{j=1}^m(1+q^j)=(1+q)(1+q^2)\cdots(1+q^m)\). Ogni fattore
+    \((1+q^j)\) contribuisce \(q^j\) (la parte \(j\) &egrave; presente) o 1 (\(j\)
+    assente). Il termine generale &egrave; \(q^{j_1+j_2+\cdots+j_k}\) con
+    \(j_1&lt;j_2&lt;\cdots&lt;j_k\leq m\): una partizione in parti distinte \(\leq m\). <span class="qed">&#9632;</span>
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 13-5 &mdash; Funzione generatrice per D<sub>1</sub>(n)</span>
+    <div class="stmt">Per \(|q|&lt;1\):
+    \[\sum_{n=0}^\infty D_1(n)\,q^n=\prod_{j=1}^\infty(1+q^j).\]</div>
+  </div>
+
+  <h4 class="sub">Nuova dimostrazione del Teorema di Eulero via prodotti infiniti</h4>
+
+  <div class="euler-box">
+    <span class="lbl">Prova alternativa del Teorema 12-3 (Eulero) — via prodotti</span>
+    \begin{align}
+    \sum_{n=0}^\infty D_1(n)\,q^n &= \prod_{j=1}^\infty(1+q^j)\\
+    &=\prod_{j=1}^\infty\frac{(1+q^j)(1-q^j)}{1-q^j}
+    =\prod_{j=1}^\infty\frac{1-q^{2j}}{1-q^j}\\
+    &=\prod_{j=1}^\infty(1-q^{2j})\cdot\prod_{j=1}^\infty\frac{1}{1-q^j}\\
+    &=\prod_{j=1}^\infty\frac{1}{1-q^{2j-1}}
+    =\sum_{n=0}^\infty p(S_1,n)\,q^n.
+    \end{align}
+    Poich&eacute; la serie di MacLaurin &egrave; unica (teorema di unicità): \(D_1(n)=p(S_1,n)\).
+    Questo &egrave; esattamente il Teorema di Eulero (parti distinte = parti dispari)!
+    La prova algebrica &egrave; pi&ugrave; rapida della biiezione del Cap. 12.
+  </div>
+
+  <h4 class="sub">Teorema di Schur via prodotti — Teorema 13-6</h4>
+
+  <div class="thm">
+    <span class="lbl">Teorema 13-6 &mdash; Schur via prodotti infiniti</span>
+    <div class="stmt">Se \(Q_3(n)\) &egrave; il numero di partizioni di \(n\) in parti
+    distinte, nessuna multiplo di 3, allora \(Q_3(n)=p(S_3,n)\) per ogni \(n\).</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    \(\sum Q_3(n)q^n=\prod_{j:3\nmid j}(1+q^j)=\prod_{j=1}^\infty(1+q^{3j-2})(1+q^{3j-1})\).
+    Applicando \((1+q^{3j-2})(1-q^{3j-2})=1-q^{6j-4}\) e
+    \((1+q^{3j-1})(1-q^{3j-1})=1-q^{6j-2}\):
+    \begin{align}
+    &=\prod_{j=1}^\infty\frac{(1-q^{6j-4})(1-q^{6j-2})}{(1-q^{3j-2})(1-q^{3j-1})}\\
+    &=\prod_{j=1}^\infty\frac{1}{(1-q^{6j-5})(1-q^{6j-1})}
+    =\sum p(S_3,n)q^n.\quad\blacksquare
+    \end{align}
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizi §13-1 n.1–3 — Ricorrenza per &pi;<sub>m</sub>(n)</span>
+      <strong>Es.1:</strong> \(\pi_m(n)=\pi_m(n-m)+\pi_{m-1}(n)\).<br>
+      <em>Dim diretta:</em> Le partizioni di \(n\) con parti \(\leq m\) si
+      dividono in due tipi: quelle che contengono la parte \(m\) (togliendo
+      un'occorrenza di \(m\) si ottiene una partizione di \(n-m\) con parti
+      \(\leq m\): ci sono \(\pi_m(n-m)\) di queste) e quelle senza la parte
+      \(m\) (partizioni di \(n\) con parti \(\leq m-1\): ci sono \(\pi_{m-1}(n)\)). ∎<br>
+      <strong>Es.2:</strong> Se \(F_m(q)=\sum\pi_m(n)q^n\):
+      \(F_m(q)=q^mF_m(q)+F_{m-1}(q)\), da cui \(F_m(q)=F_{m-1}(q)/(1-q^m)\),
+      che per induzione d&agrave; \(F_m(q)=\prod_{j=1}^m\frac{1}{1-q^j}\). ∎
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizi §13-1 n.4–6 — Ricorrenza per d<sub>m</sub>(n)</span>
+      <strong>Es.4:</strong> \(d_m(n)=d_{m-1}(n)+d_{m-1}(n-m)\).<br>
+      <em>Dim:</em> Partizioni di \(n\) in parti distinte \(\leq m\): senza
+      la parte \(m\) (\(d_{m-1}(n)\)) o con la parte \(m\) (\(d_{m-1}(n-m)\)). ∎<br>
+      <strong>Es.5:</strong> \(L_m(q)=L_{m-1}(q)+q^mL_{m-1}(q)=(1+q^m)L_{m-1}(q)\),
+      da cui per induzione \(L_m(q)=\prod_{j=1}^m(1+q^j)\). ∎
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio §13-1 n.7 — Identit&agrave; di partizioni mod 7 e mod 14</span>
+      Le partizioni di \(n\) in parti distinte congruenti a 1, 2 o 4 (mod 7)
+      hanno funzione generatrice \(\prod_{j=1}^\infty(1+q^{7j-6})(1+q^{7j-5})(1+q^{7j-3})\).
+      Manipolando con le cancelazioni algebriche (come per Eulero e Schur),
+      si dimostra che questo equals il prodotto per le partizioni in parti
+      congruenti a 1, 9 o 11 (mod 14). Un risultato analogo al Thm di Schur. ✓
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizi §13-1 n.10–11 — Partizioni in potenze di 2</span>
+      \(b(n)\)=partizioni di \(n\) in potenze di 2 (incluso \(2^0=1\)). Ha funzione
+      generatrice \(\prod_{n=0}^\infty\frac{1}{1-q^{2^n}}\).<br>
+      Da questa: \(b(2n+1)=b(2n)\) (ogni partizione di \(2n+1\) in potenze di 2 contiene un 1;
+      toglierlo d&agrave; una partizione di \(2n\)); \(b(2n)=b(2n-1)+b(n)\)
+      (partizioni di \(2n\) senza 1 corrispondono a partizioni di \(n\) in
+      potenze di 2, dividendo per 2); e \(b(n)\equiv0\pmod2\) per \(n>1\).
+    </div>
+  </div>
+</div>
+
+<!-- §13-2 -->
+<div class="sb"><h3>&sect; 13-2 &middot; Identit&agrave; tra Serie Infinite e Prodotti Infiniti</h3></div>
+
+<div>
+  <h4 class="sub">L&rsquo;equazione funzionale e l&rsquo;unicità MacLaurin</h4>
+  <p>Il metodo chiave del &sect;13-2 &egrave; di trovare un&rsquo;equazione funzionale
+  che il prodotto infinito soddisfa, poi usare l&rsquo;unicità della serie di
+  MacLaurin per determinare i coefficienti. Questo &egrave; un principio
+  generale potentissimo: basta trovare la ricorrenza \(A_N = \frac{q^{N-1}}{1-q^N}A_{N-1}\)
+  per determinare completamente tutti i \(A_N\).</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 13-7 &mdash; Due identit&agrave; serie-prodotto fondamentali</span>
+    <div class="stmt">Per \(|q|&lt;1\):
+    \[1+\sum_{n=1}^\infty\frac{q^{n(n-1)/2}\,z^n}{(1-q)(1-q^2)\cdots(1-q^n)}
+    =\prod_{n=0}^\infty(1+zq^n),\tag{13-2-1}\]
+    \[1+\sum_{n=1}^\infty\frac{z^n}{(1-q)(1-q^2)\cdots(1-q^n)}
+    =\prod_{n=0}^\infty\frac{1}{1-zq^n}\quad(|z|&lt;1).\tag{13-2-2}\]</div>
+  </div>
+
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione di (13-2-1)</span>
+    Sia \(f(z)=\prod_{n=0}^\infty(1+zq^n)\) e sia \(f(z)=\sum A_nz^n\)
+    la sua serie di MacLaurin (in \(z\)).<br><br>
+    <strong>Equazione funzionale:</strong>
+    \[f(z)=(1+z)\prod_{n=1}^\infty(1+zq^n)=(1+z)f(zq).\]
+    Sostituendo \(f(z)=\sum A_nz^n\) e \(f(zq)=\sum A_n(zq)^n=\sum A_nq^nz^n\):
+    \[\sum A_nz^n=(1+z)\sum A_nq^nz^n=\sum A_nq^nz^n+\sum A_nq^nz^{n+1}.\]
+    Confrontando i coefficienti di \(z^N\) (\(N>0\)):
+    \[A_N=A_Nq^N+A_{N-1}q^{N-1}\implies(1-q^N)A_N=q^{N-1}A_{N-1}\implies A_N=\frac{q^{N-1}}{1-q^N}A_{N-1}.\]
+    Con \(A_0=f(0)=1\), per ricorsione:
+    \[A_N=\frac{q^{N-1}}{1-q^N}\cdot\frac{q^{N-2}}{1-q^{N-1}}\cdots\frac{q^0}{1-q}\cdot1
+    =\frac{q^{(N^2-N)/2}}{(1-q)(1-q^2)\cdots(1-q^N)}.\quad\blacksquare\]
+    La prova di (13-2-2) &egrave; analoga, con \(g(z)=\prod(1-zq^n)^{-1}\) e
+    l&rsquo;equazione funzionale \((1-z)g(z)=g(zq)\).
+  </div>
+</div>
+
+<div>
+  <h4 class="sub">Il Prodotto Triplo di Jacobi — il risultato pi&ugrave; potente del capitolo</h4>
+
+  <div class="jacobi">
+    <span class="lbl">Teorema 13-8 &mdash; Prodotto Triplo di Jacobi (1829)</span>
+    <div class="stmt">Per \(z\neq0\) e \(|q|&lt;1\):
+    \[\prod_{n=0}^\infty(1-q^{2n+2})(1+zq^{2n+1})(1+z^{-1}q^{2n+1})
+    =\sum_{n=-\infty}^\infty q^{n^2}z^n.\tag{13-2-12}\]</div>
+  </div>
+
+  <div class="proof">
+    <span class="proof-hdr">Schema della dimostrazione (via Teorema 13-7)</span>
+    <strong>Passo 1.</strong> In (13-2-1) si sostituisce \(q\to q^2\),
+    \(z\to zq\), ottenendo (per \(|z|>|q|\)):
+    \[\prod_{n=0}^\infty(1+zq^{2n+1})=1+\sum_{n=1}^\infty
+    \frac{q^{n^2}z^n}{(1-q^2)(1-q^4)\cdots(1-q^{2n})}.\tag{13-2-13}\]
+    <strong>Passo 2.</strong> Esprimendo \(\frac{1}{(1-q^2)(1-q^4)\cdots(1-q^{2n})}\)
+    tramite prodotti infiniti e sostituendo (13-2-16) nella (13-2-15), si ottiene:
+    \[\prod_{n=0}^\infty(1+zq^{2n+1})=\prod_{m=0}^\infty\frac{1}{1-q^{2m+2}}
+    \sum_{n=-\infty}^\infty q^{n^2}z^n\cdot\prod_{m=0}^\infty(1-q^{2m+2n+2}).\]
+    <strong>Passo 3.</strong> Per \(n\) negativo, il prodotto \(\prod(1-q^{2m+2n+2})\)
+    &egrave; zero (il fattore con \(m=-n-1\) d&agrave; \(1-q^0=0\)): i termini negativi scompaiono.
+    Il passaggio da \(|z|>|q|\) a \(|z^{-1}|>|q|\) (sostituendo \(z^{-1}\) per \(z\))
+    e poi combinando d&agrave; il risultato per \(z\neq0\), \(|q|&lt;1\). <span class="qed">&#9632;</span>
+  </div>
+
+  <div class="note">
+    <strong>Specializzazioni notevoli del Prodotto Triplo di Jacobi:</strong><br>
+    Ponendo \(z=-1\): \(\sum_{n=-\infty}^\infty(-1)^nq^{n^2}=\prod_{n=0}^\infty(1-q^{2n+2})(1-q^{2n+1})^2=\prod_{n=1}^\infty(1-q^n)\). Questa &egrave; la <em>formula del Pentagono di Euler</em>!<br>
+    Ponendo \(z=1\): \(\sum q^{n^2}=\prod(1-q^{2n+2})(1+q^{2n+1})^2\): funzione theta di Jacobi \(\vartheta_3\).
+  </div>
+</div>
+
+<!-- Tabella riassuntiva -->
+<div class="full">
+  <h4 class="sub">Tabella Riepilogativa: Funzioni Generatrici del Capitolo 13</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Funzione</th>
+        <th>Significato</th>
+        <th>Funzione generatrice</th>
+        <th>Teorema</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono">\(\pi_m(n)\)</td>
+        <td>Partizioni di \(n\), parti \(\leq m\)</td>
+        <td>\(\displaystyle\prod_{j=1}^m\frac{1}{1-q^j}\)</td>
+        <td class="hi">13-1</td>
+      </tr>
+      <tr>
+        <td class="mono">\(p(n)\)</td>
+        <td>Tutte le partizioni di \(n\)</td>
+        <td>\(\displaystyle\prod_{j=1}^\infty\frac{1}{1-q^j}\)</td>
+        <td class="hi">13-3</td>
+      </tr>
+      <tr>
+        <td class="mono">\(p(S_1,n)\)</td>
+        <td>Parti dispari</td>
+        <td>\(\displaystyle\prod_{j=1}^\infty\frac{1}{1-q^{2j-1}}\)</td>
+        <td>(13-1-1)</td>
+      </tr>
+      <tr>
+        <td class="mono">\(p(S_2,n)\)</td>
+        <td>Parti \(\equiv\pm1\pmod5\)</td>
+        <td>\(\displaystyle\prod_{j=1}^\infty\frac{1}{(1-q^{5j-4})(1-q^{5j-1})}\)</td>
+        <td>(13-1-2)</td>
+      </tr>
+      <tr>
+        <td class="mono">\(d_m(n)\)</td>
+        <td>Parti distinte, \(\leq m\)</td>
+        <td>\(\displaystyle\prod_{j=1}^m(1+q^j)\)</td>
+        <td class="tl">13-4</td>
+      </tr>
+      <tr>
+        <td class="mono">\(D_1(n)\)</td>
+        <td>Tutte le parti distinte</td>
+        <td>\(\displaystyle\prod_{j=1}^\infty(1+q^j)\)</td>
+        <td class="tl">13-5</td>
+      </tr>
+      <tr>
+        <td class="mono">\(Q_3(n)\)</td>
+        <td>Parti distinte, no multipli di 3</td>
+        <td>\(\displaystyle\prod_{j:3\nmid j}(1+q^j)\)</td>
+        <td class="tl">13-6</td>
+      </tr>
+      <tr>
+        <td class="mono">\(A_N\) (coeff.)</td>
+        <td>Coeff. in \(\prod(1+zq^n)\)</td>
+        <td>\(\dfrac{q^{N(N-1)/2}}{(1-q)\cdots(1-q^N)}\)</td>
+        <td class="pl">13-7</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Mappa concettuale -->
+  <h4 class="sub" style="margin-top:1.5rem;">Mappa Concettuale &mdash; Struttura del Capitolo 13</h4>
+  <div class="vis">
+    <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="a13" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#180c04"/>
+        </marker>
+        <marker id="a13t" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#085858"/>
+        </marker>
+        <marker id="a13p" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6010a0"/>
+        </marker>
+        <marker id="a13g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#a87008"/>
+        </marker>
+      </defs>
+
+      <!-- Series geo / def -->
+      <rect x="5" y="80" width="110" height="42" rx="4" fill="#180c04"/>
+      <text x="60" y="98" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="11" font-weight="700">Def 13-1</text>
+      <text x="60" y="113" text-anchor="middle" fill="#c0a888" font-family="Fira Code,monospace" font-size="8">Prodotti infiniti</text>
+
+      <!-- Thm 13-1,3 -->
+      <rect x="130" y="38" width="130" height="42" rx="4" fill="#2c1808"/>
+      <text x="195" y="56" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="11" font-weight="700">Thm 13-1, 13-3</text>
+      <text x="195" y="71" text-anchor="middle" fill="#d0b080" font-family="Fira Code,monospace" font-size="8">&#960;_m(n), p(n)</text>
+
+      <!-- Thm 13-4,5 -->
+      <rect x="130" y="122" width="130" height="42" rx="4" fill="#085858"/>
+      <text x="195" y="140" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="11" font-weight="700">Thm 13-4, 13-5</text>
+      <text x="195" y="155" text-anchor="middle" fill="#80d0d0" font-family="Fira Code,monospace" font-size="8">d_m(n), D&#8321;(n)</text>
+
+      <!-- Euler via products -->
+      <rect x="278" y="38" width="138" height="42" rx="4" fill="#085858"/>
+      <text x="347" y="56" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="11" font-weight="700">Euler via prodotti</text>
+      <text x="347" y="71" text-anchor="middle" fill="#80d0d0" font-family="Fira Code,monospace" font-size="8">&#8719;(1+q&#8239;&#8321;)=&#8719;(1-q&#695;&#8319;)&#207;&#185;</text>
+
+      <!-- Thm 13-6 Schur -->
+      <rect x="278" y="122" width="138" height="42" rx="4" fill="#085858" opacity=".85"/>
+      <text x="347" y="140" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="11" font-weight="700">Thm 13-6 (Schur)</text>
+      <text x="347" y="155" text-anchor="middle" fill="#80d0d0" font-family="Fira Code,monospace" font-size="8">Q&#8323;(n)=p(S&#8323;,n)</text>
+
+      <!-- Thm 13-7 -->
+      <rect x="432" y="80" width="130" height="42" rx="4" fill="#380868"/>
+      <text x="497" y="98" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="11" font-weight="700">Thm 13-7</text>
+      <text x="497" y="113" text-anchor="middle" fill="#c0a0ff" font-family="Fira Code,monospace" font-size="8">&#8721;z&#8319;q&#8319;&#178;/(1-q)&#8311; = &#8719;(1+zq&#8319;)</text>
+
+      <!-- Jacobi Triple Product -->
+      <rect x="578" y="60" width="138" height="82" rx="4" fill="#a87008"/>
+      <text x="647" y="89" text-anchor="middle" fill="white" font-family="Rajdhani,sans-serif" font-size="13" font-weight="700">Thm 13-8</text>
+      <text x="647" y="107" text-anchor="middle" fill="#fff0a0" font-family="Fira Code,monospace" font-size="8">Jacobi Triple Product</text>
+      <text x="647" y="121" text-anchor="middle" fill="#fff0a0" font-family="Fira Code,monospace" font-size="7">&#8721;q&#8319;&#178;z&#8319;=&#8719;(1-q&#178;&#8319;&#8314;&#178;)&#183;</text>
+      <text x="647" y="133" text-anchor="middle" fill="#fff0a0" font-family="Fira Code,monospace" font-size="7">&#183;(1+zq&#178;&#8319;&#8314;&#185;)(1+z&#207;&#185;q&#178;&#8319;&#8314;&#185;)</text>
+
+      <!-- Arrows -->
+      <line x1="115" y1="101" x2="128" y2="64" stroke="#180c04" stroke-width="1.5" marker-end="url(#a13)"/>
+      <line x1="115" y1="101" x2="128" y2="138" stroke="#085858" stroke-width="1.5" marker-end="url(#a13t)"/>
+      <line x1="260" y1="64" x2="276" y2="68" stroke="#085858" stroke-width="1.5" marker-end="url(#a13t)"/>
+      <line x1="260" y1="143" x2="276" y2="143" stroke="#085858" stroke-width="1.5" marker-end="url(#a13t)"/>
+      <line x1="416" y1="68" x2="430" y2="90" stroke="#380868" stroke-width="1.5" marker-end="url(#a13p)"/>
+      <line x1="416" y1="143" x2="430" y2="112" stroke="#380868" stroke-width="1.5" marker-end="url(#a13p)"/>
+      <line x1="562" y1="101" x2="576" y2="101" stroke="#a87008" stroke-width="1.5" marker-end="url(#a13g)"/>
+
+      <!-- Cap 14 pointer -->
+      <text x="647" y="165" text-anchor="middle" font-family="Fira Code,monospace" font-size="8" fill="#a87008">&#8594; Rogers-Ramanujan (Cap.14)</text>
+
+      <text x="360" y="188" text-anchor="middle" font-family="EB Garamond,serif" font-size="10" fill="#888" font-style="italic">
+        Il JTP &egrave; la chiave per le identit&#224; di Cap.14: ogni specializzazione d&#224; un teorema
+      </text>
+    </svg>
+  </div>
+</div>
+
+<!-- ESERCIZI §13-2 -->
+<div class="full">
+  <h4 class="sub">Esercizi &sect;13-2 &mdash; Soluzioni guidate</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizi 1–2 &mdash; Equazione funzionale per H(z)</span>
+      <strong>Es.1:</strong> \(H(z)=\prod_{n=0}^\infty\frac{1+azq^n}{1-zq^n}\).
+      Allora \((1-z)H(z)=(1+az)H(zq)\):<br>
+      \((1-z)\prod\frac{1+azq^n}{1-zq^n}
+      =(1-z)\frac{1+az}{1-z}\prod_{n=1}^\infty\frac{1+azq^n}{1-zq^n}
+      =(1+az)\prod_{n=0}^\infty\frac{1+azq^{n+1}}{1-zq^{n+1}}=(1+az)H(zq)\). ∎<br>
+      <strong>Es.2:</strong> Dalla ricorrenza si trova
+      \(R_0=1\) e \((1-q^n)R_n=(1+aq^{n-1})R_{n-1}\). ∎
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizi 3–5 &mdash; Identificazione e specializzazioni</span>
+      <strong>Es.3:</strong> Da Es.2: \(R_n=\frac{(1+a)(1+aq)\cdots(1+aq^{n-1})}{(1-q)(1-q^2)\cdots(1-q^n)}\). ∎<br>
+      <strong>Es.4:</strong> Sostituendo \(z\to bz\) in Es.3:
+      \(\sum\frac{(b+a)(b+aq)\cdots(b+aq^{n-1})z^n}{(1-q)\cdots(1-q^n)}=\prod\frac{1+azq^n}{1-bzq^n}\). ∎<br>
+      <strong>Es.5:</strong> Per ricavare Thm 13-7 dall&rsquo;Es.4: porre \(a=0\),
+      \(b=-1\) nella formula dell&rsquo;Es.4 d&agrave; (13-2-1). ∎
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizi 6–9 &mdash; Identit&agrave; del tipo Rogers-Ramanujan</span>
+      Questi esercizi costruiscono iterativamente le identit&agrave; Rogers-Ramanujan
+      tramite la somma
+      \(\sum_n\frac{q^{n(n+1)/2}(1-a)(1-aq)\cdots(1-aq^{n-1})}{(1-q)\cdots(1-q^n)}=\prod_m(1-aq^m)\),
+      usando le formule dimostrate nei passi precedenti. Il risultato finale
+      (Es.9) &egrave;:
+      \[\sum_n\frac{q^{n(n+1)/2}(1-a)(1-aq)\cdots(1-aq^{n-1})}{(1-q)\cdots(1-q^n)}=\prod_{m=0}^\infty(1-aq^{2m+1})(1+q^{m+1}).\]
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizi 10–11 &mdash; Partizioni in potenze di 2</span>
+      <strong>Es.10:</strong> \(b(n)\) = partizioni di \(n\) in potenze di 2 (compreso 1).
+      \(\sum b(n)q^n=\prod_{n=0}^\infty(1-q^{2^n})^{-1}\)
+      [ogni potenza \(2^n\) pu&ograve; apparire qualsiasi numero di volte]. ∎<br>
+      <strong>Es.11:</strong> Dalle identit&agrave; sul prodotto generatore:
+      \(b(2n+1)=b(2n)\): ogni partizione di \(2n+1\) contiene 1 (il resto
+      &egrave; una partizione di \(2n\) in potenze di 2); \(b(2n)=b(2n-1)+b(n)\):
+      le partizioni di \(2n\) senza 1 corrispondono a quelle di \(n\) (dividendo
+      per 2); \(b(n)\equiv0\pmod2\) per \(n>1\). ✓
+    </div>
+  </div>
+</div>
+
+<!-- BIBLIOGRAFIA -->
+<div class="sb"><h3>&sect; Riferimenti Bibliografici</h3></div>
+<div class="full">
+  <div class="bib"><div class="bib-k">[And71]</div>Andrews, G.E. (1971). <em>Number Theory</em>. W.B. Saunders. &mdash; <strong>Riferimento principale.</strong></div>
+  <div class="bib"><div class="bib-k">[Eul48]</div>Euler, L. (1748). <em>Introductio in Analysin Infinitorum</em>. Lausanne. &mdash; Funzioni generatrici per le partizioni, formula del Pentagono.</div>
+  <div class="bib"><div class="bib-k">[Jac29]</div>Jacobi, C.G.J. (1829). <em>Fundamenta Nova Theoriae Functionum Ellipticarum</em>. K&ouml;nigsberg. &mdash; Prodotto Triplo di Jacobi (Thm 13-8).</div>
+  <div class="bib"><div class="bib-k">[Rog94]</div>Rogers, L.J. (1894). Second memoir on the expansion of certain infinite products. <em>Proc. London Math. Soc.</em> 25. &mdash; Prima dimostrazione delle identit&agrave; Rogers-Ramanujan via prodotti.</div>
+  <div class="bib"><div class="bib-k">[Sch17]</div>Schur, I.J. (1917). Zur additiven Zahlentheorie. <em>Sitzungsber. Preuss. Akad. Wiss.</em> &mdash; Thm 13-6 dimostrato in questo capitolo.</div>
+  <div class="bib"><div class="bib-k">[And76]</div>Andrews, G.E. (1976). <em>The Theory of Partitions</em>. Addison-Wesley. &mdash; Trattazione sistematica e avanzata delle funzioni generatrici.</div>
+  <div class="bib"><div class="bib-k">[HarWri08]</div>Hardy, G.H. &amp; Wright, E.M. (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford. &mdash; Capitoli 19&ndash;20: prodotti infiniti e partizioni.</div>
+  <div class="bib"><div class="bib-k">[Apo76]</div>Apostol, T.M. (1976). <em>Introduction to Analytic Number Theory</em>. Springer. &mdash; Funzioni modulari, funzioni teta, prodotti infiniti.</div>
+  <div class="bib"><div class="bib-k">[Sta99]</div>Stanley, R.P. (1999). <em>Enumerative Combinatorics</em>, Vol. 1. Cambridge. &mdash; Funzioni generatrici in combinatoria.</div>
+  <div class="bib"><div class="bib-k">[Bern06]</div>Berndt, B.C. (2006). <em>Number Theory in the Spirit of Ramanujan</em>. AMS. &mdash; Funzioni teta, JTP e identit&agrave; di Ramanujan in contesto moderno.</div>
+</div>
+
+</div><!-- end two-col -->
+
+<footer>
+  Studio redatto da <strong>Alberto Oliva</strong> &mdash;
+  <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a> &middot;
+  Rif.: G.E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971) &mdash; Capitolo 13 &middot;
+  Aprile 2026
+</footer>
+</body>
+</html>

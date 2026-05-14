@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capitolo 12 — Teoria Elementare delle Partizioni | Andrews</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Exo+2:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#f6f8f2; --ink:#080e04; --cream:#e8ede0;
+  --night:#060c02; --forest:#0e2008; --hunter:#1a3010;
+  --fern:#2a5018; --moss:#406030; --sage:#608048;
+  --mint:#80b060; --lime:#b8d880;
+  --gold:#987808; --amber:#c09810; --straw:#e0c040;
+  --plum:#4a1058; --violet:#7030a0; --lav:#c080e0;
+  --rust:#882010; --flame:#c04020;
+  --rule:#a0b880;
+  --thm:#eef4e8; --proof:#faf8f4; --defn:#f4f0e8;
+  --ex:#f8f4e4; --hist:#060c02; --euler:#e8f8e0;
+  --rr:#f8e8f8; --disc:#fff8e0;
+  --shadow:0 2px 14px rgba(14,32,8,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);
+  font-family:'Libre Baskerville',Georgia,serif;font-size:18px;line-height:1.82;}
+
+header{
+  position:relative;background:var(--night);
+  padding:4rem 4rem 3rem;text-align:center;overflow:hidden;
+  border-bottom:4px solid var(--amber);
+}
+header::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 100% 55% at 50% 100%,rgba(42,80,24,.5) 0%,transparent 70%),
+    radial-gradient(circle 50px at 15% 40%,rgba(74,16,88,.25) 0%,transparent 55%),
+    radial-gradient(circle 50px at 85% 60%,rgba(74,16,88,.25) 0%,transparent 55%),
+    repeating-linear-gradient(45deg,rgba(64,96,48,.04) 0,rgba(64,96,48,.04) 1px,
+      transparent 0,transparent 36px);
+}
+header::after{
+  content:'p(n) ≈ \00BC√2 · e^{π√(2n/3)} / n';
+  position:absolute;right:2rem;bottom:1rem;
+  font-family:'Roboto Mono',monospace;font-size:.82rem;
+  color:rgba(200,220,80,.14);letter-spacing:.1em;pointer-events:none;
+}
+.ctag{font-family:'Roboto Mono',monospace;font-size:.67rem;letter-spacing:.3em;
+  color:var(--straw);text-transform:uppercase;display:block;margin-bottom:1rem;
+  position:relative;z-index:1;}
+header h1{font-family:'Exo 2',sans-serif;font-size:3.4rem;font-weight:800;
+  letter-spacing:.04em;color:#fff;line-height:1.08;margin-bottom:.4rem;
+  position:relative;z-index:1;}
+header .sub{font-family:'Libre Baskerville',serif;font-style:italic;
+  font-size:1.1rem;color:var(--mint);margin-bottom:1.6rem;
+  position:relative;z-index:1;}
+.meta{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;
+  font-size:.82rem;color:#405830;border-top:1px solid rgba(42,80,24,.2);
+  padding-top:1rem;position:relative;z-index:1;}
+.meta strong{color:var(--amber);}
+.meta a{color:var(--mint);text-decoration:none;}
+
+.abstract{background:var(--cream);border-left:5px solid var(--hunter);
+  border-right:5px solid var(--hunter);max-width:900px;margin:2rem auto;
+  padding:1.6rem 2.4rem;font-style:italic;font-size:.96rem;color:#0c1808;}
+.abstract strong{font-style:normal;color:var(--rust);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;
+  max-width:1300px;margin:0 auto;padding:2.4rem 3.2rem;}
+.full{grid-column:1/-1;}
+@media(max-width:900px){
+  .two-col{grid-template-columns:1fr;padding:1.4rem 1.6rem;}
+  header{padding:2.4rem 1.6rem;}
+  header h1{font-size:2.4rem;}
+}
+
+.sb{grid-column:1/-1;display:flex;align-items:center;gap:1.2rem;
+  margin:2.4rem 0 .8rem;padding-top:1.2rem;border-top:2px solid var(--rule);}
+.sb h3{font-family:'Exo 2',sans-serif;font-size:1.45rem;font-weight:700;
+  letter-spacing:.03em;color:var(--forest);white-space:nowrap;}
+.sb::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+p{margin-bottom:1em;text-align:justify;hyphens:auto;}
+h4.sub{font-family:'Libre Baskerville',serif;font-size:1.05rem;
+  color:var(--rust);font-style:italic;font-weight:700;
+  margin:1.4rem 0 .55rem;padding-bottom:.2rem;border-bottom:1px dotted var(--rule);}
+
+.thm{background:var(--thm);border:1px solid #b0c890;border-left:5px solid var(--hunter);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.thm .lbl{font-family:'Roboto Mono',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--hunter);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+.thm .stmt{font-style:italic;font-size:.97rem;color:#0c1808;}
+
+.euler-thm{background:var(--euler);border:1px solid #88c870;border-left:5px solid var(--fern);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.euler-thm .lbl{font-family:'Roboto Mono',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--fern);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+.euler-thm .stmt{font-style:italic;font-size:.97rem;color:#0c1808;}
+
+.rr-thm{background:var(--rr);border:1px solid #c888e0;border-left:5px solid var(--plum);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.rr-thm .lbl{font-family:'Roboto Mono',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--plum);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+.rr-thm .stmt{font-style:italic;font-size:.97rem;color:#1c0828;}
+
+.disc{background:var(--disc);border:1px solid #d8c860;border-left:5px solid var(--gold);
+  padding:1.1rem 1.4rem;margin:1.2rem 0;border-radius:3px;box-shadow:var(--shadow);}
+.disc .lbl{font-family:'Roboto Mono',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--gold);text-transform:uppercase;font-weight:700;display:block;margin-bottom:.4rem;}
+
+.defn{background:var(--defn);border:1px solid #c8c090;border-left:5px solid var(--moss);
+  padding:.95rem 1.3rem;margin:1rem 0;font-size:.95rem;}
+.defn .lbl{font-family:'Roboto Mono',monospace;font-size:.64rem;letter-spacing:.15em;
+  color:var(--moss);text-transform:uppercase;display:block;margin-bottom:.35rem;}
+
+.proof{background:var(--proof);border:1px solid #d8c870;border-left:4px solid var(--gold);
+  padding:1rem 1.4rem;margin:.9rem 0 1.6rem;font-size:.93rem;}
+.proof-hdr{font-variant:small-caps;font-size:.76rem;letter-spacing:.1em;
+  color:var(--gold);display:block;margin-bottom:.5rem;}
+.qed{float:right;color:var(--gold);font-size:1.1rem;}
+
+.ex{background:var(--ex);border:1px solid #d0c060;border-left:4px solid var(--amber);
+  padding:.9rem 1.2rem;margin:.6rem 0;font-size:.93rem;}
+.ex .exl{font-family:'Roboto Mono',monospace;font-size:.64rem;color:var(--amber);
+  letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.35rem;}
+
+.note{background:#f4fff4;border:1px dashed var(--sage);padding:.7rem 1.1rem;
+  font-size:.88rem;border-radius:3px;margin:.9rem 0;}
+.note::before{content:'💡 ';}
+.open{background:#f8f0ff;border:1px solid var(--lav);border-left:4px solid var(--violet);
+  padding:.7rem 1.1rem;font-size:.88rem;border-radius:3px;margin:.9rem 0;}
+.open::before{content:'🔓 ';}
+
+.hist{background:var(--hist);color:#a8c090;padding:1.4rem 1.6rem;
+  border-radius:4px;margin:1.3rem 0;font-size:.87rem;}
+.hist h4{font-family:'Exo 2',sans-serif;font-size:1.1rem;font-weight:700;
+  letter-spacing:.03em;color:var(--straw);margin-bottom:.65rem;}
+.hist p{color:#88a870;text-align:left;}
+
+/* Partition diagram */
+.part-diagram{
+  font-family:'Roboto Mono',monospace;font-size:1.1rem;
+  letter-spacing:.4em;line-height:1.5;
+  color:var(--fern);display:block;margin:.4rem 0;
+}
+
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.9rem 0;}
+th{background:var(--forest);color:#fff;padding:.5rem 1rem;
+  font-variant:small-caps;letter-spacing:.07em;}
+td{padding:.42rem 1rem;text-align:center;border-bottom:1px solid var(--rule);}
+tr:nth-child(even) td{background:rgba(14,32,8,.04);}
+td.hi{background:rgba(26,48,16,.15);font-weight:700;color:var(--hunter);}
+td.yes{background:rgba(42,80,24,.12);color:var(--fern);font-weight:bold;}
+td.no{background:rgba(136,32,16,.08);color:var(--rust);}
+.mono{font-family:'Roboto Mono',monospace;font-size:.8rem;}
+
+.vis{background:#fff;border:1px solid var(--rule);border-radius:5px;
+  padding:1.1rem;margin:1.1rem 0;text-align:center;box-shadow:var(--shadow);}
+.vis figcaption{font-size:.74rem;color:#888;margin-top:.5rem;font-style:italic;}
+.formula{text-align:center;margin:.95rem 0;padding:.55rem;
+  background:rgba(14,32,8,.04);border-radius:3px;font-size:1.04rem;}
+
+.bib{border-bottom:1px solid var(--rule);padding:.6rem 0;font-size:.87rem;}
+.bib-k{font-family:'Roboto Mono',monospace;color:var(--hunter);font-size:.72rem;margin-bottom:.12rem;}
+
+footer{background:var(--ink);color:#304020;text-align:center;padding:1.6rem;
+  font-size:.78rem;border-top:3px solid var(--amber);margin-top:3rem;}
+footer a{color:var(--amber);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="ctag">Studio di Teoria dei Numeri &middot; Capitolo 12</span>
+  <h1>TEORIA ELEMENTARE<br>DELLE PARTIZIONI</h1>
+  <div class="sub">George E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971)</div>
+  <div class="meta">
+    <span><strong>Autore:</strong> Alberto Oliva</span>
+    <span><strong>Email:</strong> <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a></span>
+    <span><strong>Riferimento:</strong> Andrews &mdash; <em>Number Theory</em>, Cap. 12</span>
+    <span><strong>Data:</strong> Aprile 2026</span>
+  </div>
+</header>
+
+<div class="abstract">
+  <strong>Abstract.</strong>
+  Il Capitolo 12 introduce la <em>teoria delle partizioni</em>, uno dei
+  soggetti pi&ugrave; ricchi e sorprendenti della matematica combinatoria.
+  La sezione &sect;12-1 definisce le partizioni e la funzione \(p(n)\),
+  menzionando la formula di Hardy-Ramanujan. La &sect;12-2 introduce la
+  <em>rappresentazione grafica</em> (diagramma di Young) e la
+  <em>partizione coniugata</em>, usando questo strumento per dimostrare il
+  Teorema 12-2: \(p_m(n)=\pi_m(n)\) (al pi&ugrave; \(m\) parti
+  &#8596; nessuna parte maggiore di \(m\)).
+  La &sect;12-3 dimostra il celebre <strong>Teorema di Eulero sulle
+  Partizioni</strong> (Teorema 12-3): il numero di partizioni in parti
+  dispari uguale il numero di partizioni in parti distinte; la prova &egrave;
+  una biiezione esplicita via rappresentazione binaria dei coefficienti.
+  La &sect;12-4 usa un metodo di <em>scoperta empirica</em> per
+  congetturare nuove identit&agrave;: si &ldquo;ridiscopre&rdquo; il Teorema di
+  Eulero e si congettura la prima identit&agrave; di Rogers-Ramanujan
+  (\(D_2(n)=p(S_2,n)\) con \(S_2=\{n:n\equiv1,4\pmod5\}\)),
+  dimostrata poi in Cap. 14. Appare anche il Teorema di Schur su \(\bar D_3\).
+</div>
+
+<div class="two-col">
+
+<!-- STORIA -->
+<div class="sb"><h3>Contesto Storico &amp; Motivazioni</h3></div>
+
+<div>
+  <div class="hist">
+    <h4>EULER E LE PARTIZIONI (1748)</h4>
+    <p>Leonhard Euler fu il primo matematico a studiare sistematicamente
+    la funzione di partizione \(p(n)\). Nel suo <em>Introductio in
+    Analysin Infinitorum</em> (1748) dimostr&ograve; il Teorema delle Partizioni
+    (cap. 12-3) e svilupp&ograve; le funzioni generatrici come strumento
+    principale. Scopr&igrave; anche la formula del Pentagono:
+    \(\prod_{n=1}^\infty(1-x^n)=\sum_{k=-\infty}^\infty(-1)^k x^{k(3k-1)/2}\),
+    una delle identit&agrave; pi&ugrave; straordinarie della matematica.</p>
+  </div>
+  <div class="hist" style="margin-top:.8rem;">
+    <h4>HARDY, RAMANUJAN E LA FORMULA ASINTOTICA (1917)</h4>
+    <p>G.H. Hardy e S. Ramanujan dimostrarono nel 1917 che:
+    \[p(n)\sim\frac{1}{4n\sqrt{3}}\exp\!\left(\pi\sqrt{\frac{2n}{3}}\right).\]
+    Per \(n=200\): \(p(200)=3{,}972{,}999{,}029{,}388\). La formula
+    di Hardy-Ramanujan d&agrave; il valore corretto a pi&ugrave; cifre con solo i primi
+    cinque termini. La congruenza di Ramanujan \(p(5n+4)\equiv0\pmod5\)
+    rimase misteriosa per decenni e coinvolge la teoria delle funzioni
+    modulari.</p>
+  </div>
+</div>
+
+<div>
+  <div class="hist">
+    <h4>ROGERS, RAMANUJAN, SCHUR (1894&ndash;1917)</h4>
+    <p>Leonard James Rogers dimostr&ograve; nel 1894 le due identit&agrave; che portano
+    il suo nome insieme a Ramanujan. Ramanujan le scopr&igrave; indipendentemente
+    intorno al 1913; Schur le dimostr&ograve; anch&rsquo;egli in modo indipendente nel
+    1917. La prima identit&agrave; di Rogers-Ramanujan afferma che il numero di
+    partizioni di \(n\) in cui le parti differiscono di almeno 2 equals il
+    numero di partizioni di \(n\) in parti congruenti a \(1\) o \(4\pmod5\).
+    &Egrave; considerata una delle pi&ugrave; belle identit&agrave; della matematica combinatoria.</p>
+  </div>
+  <div class="hist" style="margin-top:.8rem;">
+    <h4>LA SCOPERTA EMPIRICA COME METODO</h4>
+    <p>Il &sect;12-4 di Andrews &egrave; metodologicamente notevole: invece di
+    dimostrare un risultato, <em>lo scopre</em> seguendo i dati.
+    Si costruiscono tabelle di \(D_d(n)\) e si cerca un insieme \(S\) tale
+    che \(p(S,n)=D_d(n)\). Questo approccio sperimentale alla matematica
+    &egrave; oggi centrale nella ricerca in combinatoria e nella scoperta
+    assistita da computer. Andrews stesso &egrave; uno dei massimi esperti
+    mondiali di identit&agrave; di partizioni.</p>
+  </div>
+</div>
+
+<!-- §12-1 -->
+<div class="sb"><h3>&sect; 12-1 &middot; Introduzione: la Funzione p(n)</h3></div>
+
+<div>
+  <h4 class="sub">Cosa sono le partizioni?</h4>
+  <p>Una <em>partizione</em> di un intero \(n\geq0\) &egrave; una scrittura di \(n\)
+  come somma di interi positivi (i <em>parti</em> o <em>summandi</em>),
+  dove l&rsquo;ordine non conta. Per convenzione si scrivono in ordine non
+  crescente. Le sette partizioni di 5 sono:</p>
+
+  <div class="formula">\[5,\quad 4+1,\quad 3+2,\quad 3+1+1,\quad 2+2+1,\quad 2+1+1+1,\quad 1+1+1+1+1.\]</div>
+
+  <div class="defn">
+    <span class="lbl">Definizione 12-1 &mdash; Partizione</span>
+    Una <strong>partizione</strong> di un intero non negativo \(n\) &egrave; una
+    rappresentazione di \(n\) come somma di interi positivi chiamati
+    <em>parti</em> o <em>summandi</em>. L&rsquo;ordine dei summandi &egrave; irrilevante.
+    Per convenzione: 0 ha un&rsquo;unica partizione (la partizione vuota).
+  </div>
+
+  <div class="defn">
+    <span class="lbl">Definizione 12-2 &mdash; Funzione di Partizione p(n)</span>
+    \(p(n)\) denota il <strong>numero di partizioni</strong> di \(n\).
+    Esempi: \(p(0)=1\), \(p(1)=1\), \(p(2)=2\), \(p(3)=3\), \(p(4)=5\),
+    \(p(5)=7\), \(p(6)=11\), \(p(10)=42\), \(p(100)=190{,}569{,}292\).
+  </div>
+
+  <div class="note">
+    <strong>Formula di Hardy-Ramanujan (1917):</strong>
+    \(p(n)\sim\dfrac{1}{4n\sqrt{3}}\exp\!\left(\pi\sqrt{\dfrac{2n}{3}}\right)\).
+    Per \(n=200\): \(p(200)=3{,}972{,}999{,}029{,}388\). La crescita di
+    \(p(n)\) &egrave; sub-esponenziale ma astronomica. La congruenza di Ramanujan
+    \(p(5n+4)\equiv0\pmod5\) &egrave; tra i risultati pi&ugrave; sorprendenti.
+  </div>
+
+  <h4 class="sub">Tabella di p(n)</h4>
+  <table>
+    <thead><tr><th>n</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="mono">p(n)</td>
+        <td class="hi">1</td><td>1</td><td>2</td><td>3</td><td>5</td>
+        <td>7</td><td>11</td><td>15</td><td>22</td><td>30</td><td class="hi">42</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div>
+  <!-- SVG: partitions of 5 visualized as Young diagrams -->
+  <div class="vis">
+    <svg viewBox="0 0 310 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle"
+        font-family="Exo 2,sans-serif" font-size="13" fill="#0e2008"
+        font-weight="700" letter-spacing=".04em">Partizioni di 5 — Diagrammi di Young</text>
+
+      <!-- 5 -->
+      <text x="22" y="36" font-family="Roboto Mono,monospace" font-size="9" fill="#406030">5</text>
+      <g fill="#2a5018">
+        <rect x="8"  y="40" width="10" height="10" rx="1"/>
+        <rect x="20" y="40" width="10" height="10" rx="1"/>
+        <rect x="32" y="40" width="10" height="10" rx="1"/>
+        <rect x="44" y="40" width="10" height="10" rx="1"/>
+        <rect x="56" y="40" width="10" height="10" rx="1"/>
+      </g>
+
+      <!-- 4+1 -->
+      <text x="90" y="36" font-family="Roboto Mono,monospace" font-size="9" fill="#406030">4+1</text>
+      <g fill="#2a5018">
+        <rect x="76" y="40" width="10" height="10" rx="1"/>
+        <rect x="88" y="40" width="10" height="10" rx="1"/>
+        <rect x="100" y="40" width="10" height="10" rx="1"/>
+        <rect x="112" y="40" width="10" height="10" rx="1"/>
+        <rect x="76" y="52" width="10" height="10" rx="1"/>
+      </g>
+
+      <!-- 3+2 -->
+      <text x="154" y="36" font-family="Roboto Mono,monospace" font-size="9" fill="#406030">3+2</text>
+      <g fill="#2a5018">
+        <rect x="140" y="40" width="10" height="10" rx="1"/>
+        <rect x="152" y="40" width="10" height="10" rx="1"/>
+        <rect x="164" y="40" width="10" height="10" rx="1"/>
+        <rect x="140" y="52" width="10" height="10" rx="1"/>
+        <rect x="152" y="52" width="10" height="10" rx="1"/>
+      </g>
+
+      <!-- 3+1+1 -->
+      <text x="220" y="36" font-family="Roboto Mono,monospace" font-size="9" fill="#406030">3+1+1</text>
+      <g fill="#2a5018">
+        <rect x="206" y="40" width="10" height="10" rx="1"/>
+        <rect x="218" y="40" width="10" height="10" rx="1"/>
+        <rect x="230" y="40" width="10" height="10" rx="1"/>
+        <rect x="206" y="52" width="10" height="10" rx="1"/>
+        <rect x="206" y="64" width="10" height="10" rx="1"/>
+      </g>
+
+      <!-- 2+2+1 -->
+      <text x="20" y="100" font-family="Roboto Mono,monospace" font-size="9" fill="#406030">2+2+1</text>
+      <g fill="#2a5018">
+        <rect x="8"  y="104" width="10" height="10" rx="1"/>
+        <rect x="20" y="104" width="10" height="10" rx="1"/>
+        <rect x="8"  y="116" width="10" height="10" rx="1"/>
+        <rect x="20" y="116" width="10" height="10" rx="1"/>
+        <rect x="8"  y="128" width="10" height="10" rx="1"/>
+      </g>
+
+      <!-- 2+1+1+1 -->
+      <text x="88" y="100" font-family="Roboto Mono,monospace" font-size="9" fill="#406030">2+1+1+1</text>
+      <g fill="#2a5018">
+        <rect x="76" y="104" width="10" height="10" rx="1"/>
+        <rect x="88" y="104" width="10" height="10" rx="1"/>
+        <rect x="76" y="116" width="10" height="10" rx="1"/>
+        <rect x="76" y="128" width="10" height="10" rx="1"/>
+        <rect x="76" y="140" width="10" height="10" rx="1"/>
+      </g>
+
+      <!-- 1+1+1+1+1 -->
+      <text x="155" y="100" font-family="Roboto Mono,monospace" font-size="9" fill="#406030">1&#215;5</text>
+      <g fill="#2a5018">
+        <rect x="150" y="104" width="10" height="10" rx="1"/>
+        <rect x="150" y="116" width="10" height="10" rx="1"/>
+        <rect x="150" y="128" width="10" height="10" rx="1"/>
+        <rect x="150" y="140" width="10" height="10" rx="1"/>
+        <rect x="150" y="152" width="10" height="10" rx="1"/>
+      </g>
+
+      <!-- Summary -->
+      <text x="230" y="120" text-anchor="middle"
+        font-family="Exo 2,sans-serif" font-size="12" fill="#0e2008" font-weight="700">
+        p(5) = 7
+      </text>
+      <text x="230" y="138" text-anchor="middle"
+        font-family="Roboto Mono,monospace" font-size="9" fill="#406030">
+        7 partizioni totali
+      </text>
+
+      <!-- Congruence note -->
+      <rect x="8" y="170" width="294" height="24" rx="3" fill="#0e2008"/>
+      <text x="155" y="186" text-anchor="middle"
+        font-family="Roboto Mono,monospace" font-size="9" fill="#c0d890">
+        Ramanujan: p(5n+4) &#8801; 0 (mod 5) &mdash; es. p(4)=5, p(9)=30, p(14)=135
+      </text>
+    </svg>
+    <figcaption>Le 7 partizioni di 5 visualizzate come diagrammi di Young. Ogni riga corrisponde a una parte della partizione.</figcaption>
+  </div>
+</div>
+
+<!-- §12-2 -->
+<div class="sb"><h3>&sect; 12-2 &middot; Rappresentazione Grafica e Coniugata</h3></div>
+
+<div>
+  <h4 class="sub">Il Diagramma di Young e la Partizione Coniugata</h4>
+  <p>La <em>rappresentazione grafica</em> di una partizione usa file di punti
+  equidistanti: la \(i\)-esima riga ha tanti punti quante unit&agrave; ha la
+  \(i\)-esima parte. I punti di sinistra di ogni riga sono allineati
+  verticalmente. Leggendo i punti per <em>colonne</em> invece che per righe
+  si ottiene la <em>partizione coniugata</em>.</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 12-3 &mdash; Partizione Coniugata</span>
+    La <strong>partizione coniugata</strong> di una partizione si forma
+    leggendo il numero di punti nelle colonne successive del diagramma
+    grafico. Il coniugato del coniugato restituisce la partizione originale.
+  </div>
+
+  <div class="ex">
+    <span class="exl">Esempio 12-4 &mdash; Coniugata di 5+4+1 (partizione di 10)</span>
+    Diagramma: riga 1 = 5 punti, riga 2 = 4 punti, riga 3 = 1 punto.<br>
+    Colonne: col.1=3, col.2=2, col.3=2, col.4=2, col.5=1.<br>
+    Coniugata: \(10=3+2+2+2+1\). &#10003;
+  </div>
+
+  <div class="ex">
+    <span class="exl">Esempio 12-5 &mdash; Coniugata di 8+4+3+1+1 (partizione di 17)</span>
+    Col.1=5, col.2=3, col.3=3, col.4=2, col.5=1, col.6=1, col.7=1, col.8=1.<br>
+    Coniugata: \(17=5+3+3+2+1+1+1+1\). &#10003;
+  </div>
+
+  <div class="thm">
+    <span class="lbl">Teorema 12-2 &mdash; Simmetria tra parti e grandezza delle parti</span>
+    <div class="stmt">Se \(p_m(n)\) denota il numero di partizioni di \(n\) in
+    cui compaiono al pi&ugrave; \(m\) parti, e se \(\pi_m(n)\) denota il numero
+    di partizioni di \(n\) in cui nessuna parte &egrave; maggiore di \(m\), allora:
+    \[p_m(n)=\pi_m(n).\]</div>
+  </div>
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione</span>
+    Stabiliamo una biiezione. Ogni partizione di \(n\) con al pi&ugrave; \(m\) parti
+    ha una rappresentazione grafica con al pi&ugrave; \(m\) righe: quindi ogni
+    colonna ha al pi&ugrave; \(m\) punti. La partizione coniugata ha quindi nessuna
+    parte maggiore di \(m\). Viceversa, una partizione con nessuna parte
+    maggiore di \(m\) ha colonne di lunghezza \(\leq m\): la sua coniugata ha
+    al pi&ugrave; \(m\) righe. La coniugazione &egrave; una biiezione tra i due insiemi.
+    <span class="qed">&#9632;</span>
+  </div>
+</div>
+
+<div>
+  <!-- Visual: conjugate partition bijection -->
+  <div class="vis">
+    <svg viewBox="0 0 310 210" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <text x="155" y="14" text-anchor="middle"
+        font-family="Exo 2,sans-serif" font-size="12" fill="#0e2008"
+        font-weight="700" letter-spacing=".04em">Biiezione: Thm 12-2 (n=5, m=3)</text>
+      <text x="155" y="28" text-anchor="middle"
+        font-family="Roboto Mono,monospace" font-size="9" fill="#666">
+        &#8592; al pi&#249; 3 parti &nbsp; | &nbsp; nessuna parte &gt; 3 &#8594;
+      </text>
+
+      <!-- Left: partitions with ≤3 parts -->
+      <text x="60" y="47" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018" font-weight="bold">&#8804;3 parti</text>
+      <!-- 5 -->
+      <g fill="#2a5018" opacity=".8">
+        <rect x="10" y="55" width="8" height="8" rx="1"/>
+        <rect x="20" y="55" width="8" height="8" rx="1"/>
+        <rect x="30" y="55" width="8" height="8" rx="1"/>
+        <rect x="40" y="55" width="8" height="8" rx="1"/>
+        <rect x="50" y="55" width="8" height="8" rx="1"/>
+      </g>
+      <text x="65" y="62" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018">5</text>
+
+      <!-- 4+1 -->
+      <g fill="#2a5018" opacity=".8">
+        <rect x="10" y="75" width="8" height="8" rx="1"/>
+        <rect x="20" y="75" width="8" height="8" rx="1"/>
+        <rect x="30" y="75" width="8" height="8" rx="1"/>
+        <rect x="40" y="75" width="8" height="8" rx="1"/>
+        <rect x="10" y="85" width="8" height="8" rx="1"/>
+      </g>
+      <text x="65" y="82" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018">4+1</text>
+
+      <!-- 3+2 -->
+      <g fill="#2a5018" opacity=".8">
+        <rect x="10" y="105" width="8" height="8" rx="1"/>
+        <rect x="20" y="105" width="8" height="8" rx="1"/>
+        <rect x="30" y="105" width="8" height="8" rx="1"/>
+        <rect x="10" y="115" width="8" height="8" rx="1"/>
+        <rect x="20" y="115" width="8" height="8" rx="1"/>
+      </g>
+      <text x="65" y="112" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018">3+2</text>
+
+      <!-- 3+1+1 -->
+      <g fill="#2a5018" opacity=".8">
+        <rect x="10" y="135" width="8" height="8" rx="1"/>
+        <rect x="20" y="135" width="8" height="8" rx="1"/>
+        <rect x="30" y="135" width="8" height="8" rx="1"/>
+        <rect x="10" y="145" width="8" height="8" rx="1"/>
+        <rect x="10" y="155" width="8" height="8" rx="1"/>
+      </g>
+      <text x="65" y="148" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018">3+1+1</text>
+
+      <!-- 2+2+1 -->
+      <g fill="#2a5018" opacity=".8">
+        <rect x="10" y="170" width="8" height="8" rx="1"/>
+        <rect x="20" y="170" width="8" height="8" rx="1"/>
+        <rect x="10" y="180" width="8" height="8" rx="1"/>
+        <rect x="20" y="180" width="8" height="8" rx="1"/>
+        <rect x="10" y="190" width="8" height="8" rx="1"/>
+      </g>
+      <text x="65" y="183" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018">2+2+1</text>
+
+      <!-- Arrows -->
+      <line x1="115" y1="60" x2="145" y2="60" stroke="#b87808" stroke-width="1.5" marker-end="url(#a12c)"/>
+      <line x1="115" y1="82" x2="145" y2="100" stroke="#b87808" stroke-width="1.5" marker-end="url(#a12c)"/>
+      <line x1="115" y1="112" x2="145" y2="128" stroke="#b87808" stroke-width="1.5" marker-end="url(#a12c)"/>
+      <line x1="115" y1="148" x2="145" y2="148" stroke="#b87808" stroke-width="1.5" marker-end="url(#a12c)"/>
+      <line x1="115" y1="183" x2="145" y2="168" stroke="#b87808" stroke-width="1.5" marker-end="url(#a12c)"/>
+
+      <defs>
+        <marker id="a12c" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#b87808"/>
+        </marker>
+      </defs>
+
+      <!-- Right: partitions with no part > 3 -->
+      <text x="228" y="47" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018" font-weight="bold">parte &#8804; 3</text>
+
+      <text x="195" y="62" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018">1+1+1+1+1</text>
+      <text x="195" y="100" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018">2+1+1+1</text>
+      <text x="195" y="128" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018">2+2+1</text>
+      <text x="195" y="148" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018">3+1+1</text>
+      <text x="195" y="168" font-family="Roboto Mono,monospace" font-size="9" fill="#2a5018">3+2</text>
+    </svg>
+    <figcaption>La coniugazione &egrave; una biiezione tra &ldquo;al pi&ugrave; \(m=3\) parti&rdquo; e &ldquo;nessuna parte &gt; \(m=3\)&rdquo;: entrambi gli insiemi hanno 5 elementi per \(n=5\).</figcaption>
+  </div>
+</div>
+
+<!-- §12-3 -->
+<div class="sb"><h3>&sect; 12-3 &middot; Il Teorema di Eulero sulle Partizioni</h3></div>
+
+<div>
+  <h4 class="sub">Parti dispari vs. parti distinte</h4>
+  <p>Il Teorema 12-1 (enunciato in &sect;12-1) afferma che il numero di
+  partizioni di \(n\) in parti <em>tutte dispari</em> uguale il numero di
+  partizioni in parti <em>tutte distinte</em>. Questo &egrave; sorprendente:
+  i due insiemi di partizioni sembrano definiti in modo completamente
+  diverso, eppure hanno sempre la stessa cardinalit&agrave;.</p>
+
+  <p>Per \(n=5\): partizioni in parti dispari: \(5,\; 3+1+1,\; 1+1+1+1+1\)
+  (tre); partizioni in parti distinte: \(5,\; 4+1,\; 3+2\) (tre). &#10003;</p>
+
+  <div class="euler-thm">
+    <span class="lbl">Teorema 12-3 &mdash; Teorema di Eulero (1748)</span>
+    <div class="stmt">Il numero di partizioni di \(n\) in cui tutte le parti
+    sono dispari uguale il numero di partizioni di \(n\) in cui tutte le
+    parti sono distinte.</div>
+  </div>
+
+  <div class="proof">
+    <span class="proof-hdr">Dimostrazione (via biiezione esplicita)</span>
+    Costruiamo una biiezione \(\varphi\) tra le due famiglie.<br><br>
+
+    <strong>Da &ldquo;parti dispari&rdquo; a &ldquo;parti distinte&rdquo;:</strong>
+    Data una partizione in parti dispari, ogni parte dispari \(i\) compare
+    \(f_i\) volte (\(f_i\geq0\)). Scriviamo \(f_i\) in base 2:
+    \(f_i = 2^{a_i}+2^{b_i}+\cdots\) (somma di distinte potenze di 2).
+    Allora la \(i\)-esima parte genera i summandi \(2^{a_i}\cdot i,\;
+    2^{b_i}\cdot i,\;\ldots\) Poich&eacute; numeri con lo stesso fattore
+    dispari largest \(i\) e stesso esponente di 2 sono uguali, ma combinazioni
+    diverse di \((i,\text{esponente})\) danno numeri distinti.
+    L&rsquo;espressione risultante &egrave; una partizione in parti distinte.<br><br>
+
+    <strong>Inversa (da &ldquo;parti distinte&rdquo; a &ldquo;parti dispari&rdquo;):</strong>
+    Ogni parte \(m\) si scrive come \(m=2^k\cdot q\) con \(q\) dispari.
+    Si raccolgono tutte le parti con lo stesso fattore dispari \(q\):
+    le loro potenze di 2 si sommano dando il coefficiente \(f_q\).
+    Il risultato &egrave; \(f_q\) copie di \(q\): una partizione in parti dispari.<br><br>
+
+    Le due mappe sono inverse l&rsquo;una dell&rsquo;altra (TFA: la decomposizione
+    di \(f_i\) in potenze di 2 &egrave; unica). <span class="qed">&#9632;</span>
+  </div>
+</div>
+
+<div>
+  <h4 class="sub">Esempio 12-7 — Biiezione per n=5</h4>
+  <table>
+    <thead><tr><th>Parti dispari</th><th>&#8594; codifica</th><th>&#8594; Parti distinte</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>\(5\)</td>
+        <td class="mono">\(f_5=1=2^0\)</td>
+        <td>\(5\)</td>
+      </tr>
+      <tr>
+        <td>\(3+1+1\)</td>
+        <td class="mono">\(f_1=2=2^1,\;f_3=1=2^0\)</td>
+        <td>\(2\cdot1 + 1\cdot3=2+3\)</td>
+      </tr>
+      <tr>
+        <td>\(1+1+1+1+1\)</td>
+        <td class="mono">\(f_1=5=2^2+2^0\)</td>
+        <td>\(4\cdot1+1\cdot1=4+1\)</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:.78rem;color:#666;font-style:italic;">
+    Le tre partizioni in parti dispari corrispondono biunivocamente alle tre partizioni in parti distinte. &#10003;
+  </p>
+
+  <h4 class="sub">Tabella: Parti Dispari vs. Parti Distinte</h4>
+  <table>
+    <thead><tr><th>n</th><th>Parti dispari</th><th>Parti distinte</th><th>Uguali?</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>1</td><td>1</td><td class="yes">&#10003;</td></tr>
+      <tr><td>2</td><td>1</td><td>1</td><td class="yes">&#10003;</td></tr>
+      <tr><td>3</td><td>2</td><td>2</td><td class="yes">&#10003;</td></tr>
+      <tr><td>4</td><td>2</td><td>2</td><td class="yes">&#10003;</td></tr>
+      <tr><td>5</td><td>3</td><td>3</td><td class="yes">&#10003;</td></tr>
+      <tr><td>6</td><td>4</td><td>4</td><td class="yes">&#10003;</td></tr>
+      <tr><td>7</td><td>5</td><td>5</td><td class="yes">&#10003;</td></tr>
+      <tr><td>8</td><td>6</td><td>6</td><td class="yes">&#10003;</td></tr>
+      <tr><td>9</td><td>8</td><td>8</td><td class="yes">&#10003;</td></tr>
+      <tr><td>10</td><td>10</td><td>10</td><td class="yes">&#10003;</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- §12-4 -->
+<div class="sb"><h3>&sect; 12-4 &middot; Scoperta di Identit&agrave; di Partizioni</h3></div>
+
+<div>
+  <h4 class="sub">Il metodo empirico: costruzione di tabelle</h4>
+  <p>Andrews presenta un metodo sorprendente: invece di dimostrare un
+  teorema, lo <em>scopre</em> costruendo tabelle. L&rsquo;idea: dato un tipo
+  di partizione \(D_d(n)\), si cerca un insieme \(S\) tale che
+  \(p(S,n)=D_d(n)\) per ogni \(n\). Si aggiunge \(n\) a \(S\) se e solo se
+  ci&ograve; &egrave; necessario per far quadrare i conti.</p>
+
+  <div class="defn">
+    <span class="lbl">Definizione 12-4 &mdash; p(S,n)</span>
+    Se \(S\) &egrave; un insieme di interi positivi, \(p(S,n)\) denota il numero
+    di partizioni di \(n\) in cui ogni summando &egrave; un elemento di \(S\).
+  </div>
+
+  <div class="defn">
+    <span class="lbl">Definizione 12-5 &mdash; D&#8324;(n)</span>
+    \(D_d(n)\) denota il numero di partizioni di \(n\) in cui qualsiasi
+    due summandi differiscono di almeno \(d\).
+    Casi speciali: \(D_1(n)=\) partizioni in parti distinte; \(D_2(n)=\)
+    partizioni con gap \(\geq2\) tra qualsiasi due parti.
+  </div>
+
+  <h4 class="sub">Problema 12-1: Riscoprire il Teorema di Eulero</h4>
+  <p>Se \(D_1(n)\) &egrave; il numero di partizioni in parti distinte,
+  esiste un insieme \(S_1\) con \(p(S_1,n)=D_1(n)\) per ogni \(n\)?
+  Costruendo la Tabella 12-1 (inclusa da Andrews), si scopre che
+  \(1\in S_1\), \(2\notin S_1\), \(3\in S_1\), \(4\notin S_1\), \(5\in S_1\),
+  \(6\notin S_1\), \(7\in S_1\), \ldots: <strong>\(S_1\) &egrave; l&rsquo;insieme
+  degli interi positivi dispari</strong>. Questo &egrave; esattamente il
+  Teorema di Eulero (Thm 12-3)!</p>
+</div>
+
+<div>
+  <h4 class="sub">Problema 12-2: Prima Identit&agrave; di Rogers-Ramanujan</h4>
+  <p>Sia \(D_2(n)\) il numero di partizioni di \(n\) con gap \(\geq2\).
+  Esiste un insieme \(S_2\) con \(p(S_2,n)=D_2(n)\)?
+  Dalla Tabella 12-2 (riportata da Andrews) si scopre che i primi elementi
+  di \(S_2\) sono: \(1,4,6,9,11,14,16,\ldots\) &mdash; tutti i numeri
+  congruenti a \(\pm1\pmod5\)! Andrews congettura:</p>
+
+  <div class="rr-thm">
+    <span class="lbl">Congettura 12-2 &mdash; Prima Identit&agrave; di Rogers-Ramanujan</span>
+    <div class="stmt">Il numero di partizioni di \(n\) in cui qualsiasi due
+    parti differiscono di almeno 2 uguale il numero di partizioni di \(n\)
+    in parti congruenti a \(\pm1\pmod5\) (cio&egrave;, in parti \(\equiv1\) o
+    \(4\pmod5\)).
+    \[D_2(n)=p(S_2,n),\quad S_2=\{n\in\mathbb{Z}_{>0}:n\equiv\pm1\pmod5\}.\]
+    Questa &egrave; la <strong>Prima Identit&agrave; di Rogers-Ramanujan</strong>,
+    dimostrata in Capitolo 14.</div>
+  </div>
+
+  <!-- Table D2(n) vs p(S2,n) -->
+  <h4 class="sub" style="margin-top:1rem;">Tabella: D&#8322;(n) e partizioni con gap &#8805;2</h4>
+  <table>
+    <thead><tr><th>n</th><th>D&#8322;(n)</th><th>S&#8322; include n?</th><th>Partizioni con gap&#8805;2</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>1</td><td class="yes">1&#8712;S&#8322;</td><td>\(\{1\}\)</td></tr>
+      <tr><td>2</td><td>1</td><td class="no">2&#8713;S&#8322;</td><td>\(\{2\}\)</td></tr>
+      <tr><td>3</td><td>1</td><td class="no">3&#8713;S&#8322;</td><td>\(\{3\}\)</td></tr>
+      <tr><td>4</td><td>2</td><td class="yes">4&#8712;S&#8322;</td><td>\(\{4\},\{3+1\}\)</td></tr>
+      <tr><td>5</td><td>2</td><td class="no">5&#8713;S&#8322;</td><td>\(\{5\},\{4+1\}\)</td></tr>
+      <tr><td>6</td><td>3</td><td class="yes">6&#8712;S&#8322;</td><td>\(\{6\},\{5+1\},\{4+2\}\)</td></tr>
+      <tr><td>9</td><td>5</td><td class="yes">9&#8712;S&#8322;</td><td>\(\{9\},\{8+1\},\ldots\)</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:.78rem;color:#666;font-style:italic;">
+    \(S_2=\{1,4,6,9,11,14,16,19,\ldots\}=\{n:n\equiv1\text{ o }4\pmod5\}\). &#10003;
+  </p>
+</div>
+
+<!-- Problema 12-3 e Schur -->
+<div class="full">
+  <h4 class="sub">Problema 12-3: Il Fallimento di D&#8323;(n) e il Teorema di Schur</h4>
+  <p>Studiando \(D_3(n)\) (gap \(\geq3\)), la Tabella 12-3 mostra che
+  per \(n=10\): \(D_3(10)=4\) ma sia \(10\in\mathscr{S}_3\) che
+  \(10\notin\mathscr{S}_3\) portano a \(p(\mathscr{S}_3,10)\neq4\).
+  Andrews dimostra quindi:</p>
+
+  <div class="thm">
+    <span class="lbl">Teorema 12-4 &mdash; Non esiste S&#8323;</span>
+    <div class="stmt">Non esiste alcun insieme \(\mathscr{S}_3\) di interi
+    tale che \(p(\mathscr{S}_3,n)=D_3(n)\) per ogni \(n\).</div>
+  </div>
+
+  <p>Tuttavia Andrews introduce una variante \(\bar{D}_3(n)\) (partizioni
+  con gap \(\geq3\) tra qualsiasi due parti, e senza multipli consecutivi
+  di 3) e presenta il:</p>
+
+  <div class="rr-thm">
+    <span class="lbl">Teorema di Schur (1917) — dimostrato in Cap. 14</span>
+    <div class="stmt">Sia \(S_3=\{n\in\mathbb{Z}_{>0}:n\equiv\pm1\pmod6\}\)
+    (cio&egrave; \(n\equiv1\) o \(5\pmod6\)). Se \(\bar{D}_3(n)\) denota il numero
+    di partizioni di \(n\) con gap \(\geq3\) tra qualsiasi due parti e
+    senza che due multipli consecutivi di 3 compaiano entrambi, allora:
+    \[p(S_3,n)=\bar{D}_3(n).\]</div>
+  </div>
+
+  <!-- Exercises §12-4 discovery -->
+  <h4 class="sub">Esercizi &sect;12-4 &mdash; Scoperta di nuove identit&agrave;</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div class="ex">
+      <span class="exl">Esercizi 1&ndash;4: Trovare W&#8321;, W&#8322;, W&#8323;, W&#8324;</span>
+      Ogni esercizio chiede di trovare un insieme \(W_j\) tale che
+      \(E_j(n)=p(W_j,n)\) per ogni \(n\).
+      \(W_1\): per le partizioni con gap \(\geq2\) e senza consecutivi pari.
+      \(W_2\): con gap \(\geq2\) e senza consecutivi dispari.
+      \(W_3\): con gap \(\geq2\), nessuna parte &lt; 3, senza consecutivi pari.
+      \(W_4\): con gap \(\geq2\), nessuna parte &lt; 2, senza consecutivi dispari.
+      Questi problemi conducono a identit&agrave; legate alle serie di Rogers.
+    </div>
+    <div class="ex">
+      <span class="exl">Esercizio 5: E&#8325;(n) &mdash; nessuna parte pi&#249; di due volte</span>
+      \(E_5(n)\) = partizioni di \(n\) in cui nessuna parte compare pi&ugrave; di
+      due volte. Costruendo la tabella: si scopre che \(W_5=\{n:n\not\equiv0\pmod3\}\),
+      cio&egrave; i positivi non divisibili per 3. Questo &egrave; una variante del
+      Teorema di Eulero (k=3 nel Thm 12-3 generalizzato dell&rsquo;Es. 2 di &sect;12-3).
+    </div>
+  </div>
+</div>
+
+<!-- Mappa concettuale -->
+<div class="full" style="margin-top:.5rem;">
+  <h4 class="sub">Mappa Concettuale &mdash; Struttura del Capitolo 12</h4>
+  <div class="vis">
+    <svg viewBox="0 0 720 195" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="a12" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#0e2008"/>
+        </marker>
+        <marker id="a12e" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#2a5018"/>
+        </marker>
+        <marker id="a12r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#4a1058"/>
+        </marker>
+      </defs>
+      <!-- Def p(n) -->
+      <rect x="5" y="78" width="115" height="44" rx="4" fill="#0e2008"/>
+      <text x="62" y="96" text-anchor="middle" fill="white"
+        font-family="Exo 2,sans-serif" font-size="11" font-weight="700">Def 12-1,2</text>
+      <text x="62" y="112" text-anchor="middle" fill="#a8c890"
+        font-family="Roboto Mono,monospace" font-size="8">Partizioni, p(n)</text>
+
+      <!-- Thm 12-2 -->
+      <rect x="140" y="40" width="128" height="44" rx="4" fill="#1a3010"/>
+      <text x="204" y="58" text-anchor="middle" fill="white"
+        font-family="Exo 2,sans-serif" font-size="11" font-weight="700">Thm 12-2</text>
+      <text x="204" y="73" text-anchor="middle" fill="#90c880"
+        font-family="Roboto Mono,monospace" font-size="8">p_m(n)=&#960;_m(n)</text>
+
+      <!-- Def 12-3 coniugata -->
+      <rect x="140" y="120" width="128" height="44" rx="4" fill="#1a3010" opacity=".85"/>
+      <text x="204" y="138" text-anchor="middle" fill="white"
+        font-family="Exo 2,sans-serif" font-size="11" font-weight="700">Def 12-3</text>
+      <text x="204" y="153" text-anchor="middle" fill="#90c880"
+        font-family="Roboto Mono,monospace" font-size="8">Coniugata</text>
+
+      <!-- Thm 12-3 Euler -->
+      <rect x="288" y="78" width="140" height="44" rx="4" fill="#2a5018"/>
+      <text x="358" y="96" text-anchor="middle" fill="white"
+        font-family="Exo 2,sans-serif" font-size="12" font-weight="700">Thm 12-3</text>
+      <text x="358" y="111" text-anchor="middle" fill="#c0e890"
+        font-family="Roboto Mono,monospace" font-size="8">Eulero: dispari=distinte</text>
+
+      <!-- Def S, Dd(n) -->
+      <rect x="448" y="38" width="130" height="44" rx="4" fill="#987808"/>
+      <text x="513" y="57" text-anchor="middle" fill="white"
+        font-family="Exo 2,sans-serif" font-size="11" font-weight="700">Def 12-4,5</text>
+      <text x="513" y="72" text-anchor="middle" fill="#f0e080"
+        font-family="Roboto Mono,monospace" font-size="8">p(S,n), D_d(n)</text>
+
+      <!-- RR conjecture -->
+      <rect x="448" y="118" width="130" height="44" rx="4" fill="#4a1058"/>
+      <text x="513" y="137" text-anchor="middle" fill="white"
+        font-family="Exo 2,sans-serif" font-size="10" font-weight="700">Rogers-Ramanujan</text>
+      <text x="513" y="152" text-anchor="middle" fill="#e0b0ff"
+        font-family="Roboto Mono,monospace" font-size="8">D&#8322;(n)=p(S&#8322;,n)</text>
+
+      <!-- Cap 14 -->
+      <rect x="596" y="65" width="120" height="68" rx="4" fill="#1a3010"/>
+      <text x="656" y="90" text-anchor="middle" fill="white"
+        font-family="Exo 2,sans-serif" font-size="13" font-weight="700">Cap. 14</text>
+      <text x="656" y="108" text-anchor="middle" fill="#90c880"
+        font-family="Roboto Mono,monospace" font-size="8">Rogers-Ramanujan</text>
+      <text x="656" y="122" text-anchor="middle" fill="#90c880"
+        font-family="Roboto Mono,monospace" font-size="8">+ Schur (dim.)</text>
+
+      <!-- Arrows -->
+      <line x1="120" y1="100" x2="138" y2="68" stroke="#0e2008" stroke-width="1.5" marker-end="url(#a12)"/>
+      <line x1="120" y1="100" x2="138" y2="138" stroke="#0e2008" stroke-width="1.5" marker-end="url(#a12)"/>
+      <line x1="268" y1="68" x2="286" y2="90" stroke="#2a5018" stroke-width="1.5" marker-end="url(#a12e)"/>
+      <line x1="268" y1="138" x2="286" y2="108" stroke="#2a5018" stroke-width="1.5" marker-end="url(#a12e)"/>
+      <line x1="428" y1="100" x2="446" y2="68" stroke="#987808" stroke-width="1.5" marker-end="url(#a12)"/>
+      <line x1="428" y1="100" x2="446" y2="135" stroke="#4a1058" stroke-width="1.5" marker-end="url(#a12r)"/>
+      <line x1="578" y1="68" x2="594" y2="88" stroke="#2a5018" stroke-width="1.5" marker-end="url(#a12e)"/>
+      <line x1="578" y1="138" x2="594" y2="118" stroke="#4a1058" stroke-width="1.5" marker-end="url(#a12r)"/>
+
+      <text x="360" y="184" text-anchor="middle"
+        font-family="Libre Baskerville,serif" font-size="10" fill="#888" font-style="italic">
+        Il Cap. 12 scopre empiricamente identit&#224; che il Cap. 14 dimostrer&#224;
+      </text>
+    </svg>
+  </div>
+</div>
+
+<!-- BIBLIOGRAFIA -->
+<div class="sb"><h3>&sect; Riferimenti Bibliografici</h3></div>
+<div class="full">
+  <div class="bib"><div class="bib-k">[And71]</div>Andrews, G.E. (1971). <em>Number Theory</em>. W.B. Saunders. &mdash; <strong>Riferimento principale.</strong></div>
+  <div class="bib"><div class="bib-k">[Eul48]</div>Euler, L. (1748). <em>Introductio in Analysin Infinitorum</em>. Lausanne. &mdash; Prima trattazione sistematica di \(p(n)\), funzioni generatrici, Thm 12-3.</div>
+  <div class="bib"><div class="bib-k">[HarRam18]</div>Hardy, G.H. &amp; Ramanujan, S. (1918). Asymptotic formulae in combinatory analysis. <em>Proc. London Math. Soc.</em> 17. &mdash; Formula asintotica per \(p(n)\), congruenze di Ramanujan.</div>
+  <div class="bib"><div class="bib-k">[Rog94]</div>Rogers, L.J. (1894). Second memoir on the expansion of certain infinite products. <em>Proc. London Math. Soc.</em> 25. &mdash; Prima dimostrazione delle identit&agrave; Rogers-Ramanujan.</div>
+  <div class="bib"><div class="bib-k">[Ram13]</div>Ramanujan, S. (1913&ndash;1919). <em>Notebooks</em>. &mdash; Scoperta indipendente delle identit&agrave; Rogers-Ramanujan.</div>
+  <div class="bib"><div class="bib-k">[Sch17]</div>Schur, I.J. (1917). Zur additiven Zahlentheorie. <em>Sitzungsber. Preuss. Akad. Wiss.</em> &mdash; Dimostrazione indipendente delle RR e del Teorema di Schur.</div>
+  <div class="bib"><div class="bib-k">[And76]</div>Andrews, G.E. (1976). <em>The Theory of Partitions</em>. Addison-Wesley. &mdash; Trattazione enciclopedica delle partizioni (l&rsquo;autore stesso).</div>
+  <div class="bib"><div class="bib-k">[HarWri08]</div>Hardy, G.H. &amp; Wright, E.M. (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford. &mdash; Capitolo 19: partizioni, funzioni generatrici.</div>
+  <div class="bib"><div class="bib-k">[Apo76]</div>Apostol, T.M. (1976). <em>Introduction to Analytic Number Theory</em>. Springer. &mdash; Capitolo 14: partizioni in contesto analitico.</div>
+  <div class="bib"><div class="bib-k">[Sta99]</div>Stanley, R.P. (1999). <em>Enumerative Combinatorics</em>, Vol. 1. Cambridge. &mdash; Diagrammi di Young, RSK, identit&agrave; di partizioni.</div>
+</div>
+
+</div><!-- end two-col -->
+
+<footer>
+  Studio redatto da <strong>Alberto Oliva</strong> &mdash;
+  <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a> &middot;
+  Rif.: G.E. Andrews, <em>Number Theory</em> (W.B. Saunders, 1971) &mdash; Capitolo 12 &middot;
+  Aprile 2026
+</footer>
+</body>
+</html>

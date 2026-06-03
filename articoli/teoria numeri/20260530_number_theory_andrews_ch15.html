@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Punti Reticolari — Studio sulla Teoria dei Numeri · Alberto Oliva</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Spectral+SC:wght@500;600&display=swap" rel="stylesheet">
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']],
+    tags: 'none'
+  },
+  chtml: { scale: 1.02 },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+
+<style>
+  :root{
+    --paper:#faf6ec;
+    --paper-edge:#efe6d2;
+    --bg:#e7ddc7;
+    --ink:#211c14;
+    --ink-soft:#4a4234;
+    --rule:#cdbf9f;
+    --grid:#ddd1b3;
+    --oxblood:#8a2f22;
+    --oxblood-deep:#6e241a;
+    --gold:#b08227;
+    --gold-soft:#cbab63;
+    --shadow:rgba(60,45,20,.18);
+  }
+
+  *{box-sizing:border-box;}
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 20% 0%, #efe6d0 0%, var(--bg) 55%, #ded2b6 100%);
+    color:var(--ink);
+    font-family:"Spectral", Georgia, serif;
+    font-size:17px;
+    line-height:1.5;
+    padding:40px 18px 80px;
+  }
+
+  /* ---- paper sheet ---- */
+  .sheet{
+    max-width:1080px;
+    margin:0 auto;
+    background:var(--paper);
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(180,150,90,.018) 28px, rgba(180,150,90,.018) 29px);
+    border:1px solid var(--paper-edge);
+    box-shadow:0 1px 0 #fff inset, 0 18px 50px -18px var(--shadow), 0 4px 14px -6px var(--shadow);
+    padding:54px 60px 64px;
+    position:relative;
+  }
+  .sheet::before{
+    content:"";position:absolute;inset:10px;border:1px solid rgba(176,130,39,.25);
+    pointer-events:none;
+  }
+
+  /* ---- masthead ---- */
+  .masthead{ text-align:center; position:relative; padding-bottom:22px; margin-bottom:30px;}
+  .kicker{
+    font-family:"Spectral SC", serif;
+    letter-spacing:.32em; text-transform:uppercase;
+    font-size:12.5px; color:var(--oxblood);
+    margin-bottom:18px;
+  }
+  .kicker .dot{ color:var(--gold); margin:0 .5em;}
+  h1.title{
+    font-family:"Fraunces", serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(30px, 5vw, 46px);
+    line-height:1.04;
+    margin:.1em 0 .15em;
+    letter-spacing:-.01em;
+  }
+  h1.title em{ font-style:italic; color:var(--oxblood-deep);}
+  .subtitle{
+    font-family:"Fraunces", serif; font-weight:400; font-style:italic;
+    font-size:clamp(16px,2.4vw,21px); color:var(--ink-soft);
+    margin:0 auto; max-width:42ch;
+  }
+  .byline{
+    margin-top:20px; font-size:15px; color:var(--ink-soft);
+  }
+  .byline .author{ font-family:"Spectral SC",serif; letter-spacing:.12em; color:var(--ink); font-size:16px;}
+  .byline a{ color:var(--oxblood); text-decoration:none; border-bottom:1px dotted var(--gold-soft);}
+  .refline{
+    margin-top:12px; font-size:13.5px; font-style:italic; color:var(--ink-soft);
+  }
+  .ornament{ color:var(--gold); font-size:18px; letter-spacing:.5em; margin:18px 0 4px;}
+
+  /* ---- abstract ---- */
+  .abstract{
+    border-top:2px solid var(--ink);
+    border-bottom:1px solid var(--rule);
+    padding:20px 36px;
+    margin:0 0 32px;
+    font-size:15.5px; line-height:1.55;
+  }
+  .abstract h4{
+    font-family:"Spectral SC",serif; letter-spacing:.2em; text-transform:uppercase;
+    font-size:12px; color:var(--oxblood); margin:0 0 8px; text-align:center;
+  }
+  .abstract p{ margin:0 0 .6em; text-align:justify;}
+  .dropcap::first-letter{
+    font-family:"Fraunces",serif; font-weight:700;
+    float:left; font-size:3.4em; line-height:.74; padding:.05em .08em 0 0;
+    color:var(--oxblood);
+  }
+  .keywords{ font-size:13px; color:var(--ink-soft); margin-top:6px;}
+  .keywords b{ font-family:"Spectral SC",serif; letter-spacing:.1em; color:var(--ink); }
+
+  /* ---- two-column body ---- */
+  .body{ column-count:2; column-gap:38px; column-rule:1px solid var(--rule); text-align:justify; hyphens:auto; }
+  .body p{ margin:0 0 .8em; }
+  .body p.flow{ text-indent:1.3em; }
+  .body p.flow.lead{ text-indent:0; }
+
+  h2.sec{
+    column-span:all;
+    font-family:"Fraunces",serif; font-weight:600; font-size:24px;
+    margin:36px 0 6px; padding-top:14px; border-top:1px solid var(--rule);
+    letter-spacing:-.005em;
+  }
+  h2.sec .num{ color:var(--oxblood); font-style:italic; margin-right:.5em;}
+  h2.sec.first{ border-top:none; margin-top:6px;}
+  h3.sub{
+    font-family:"Spectral SC",serif; letter-spacing:.12em; text-transform:uppercase;
+    font-size:13.5px; color:var(--oxblood-deep); margin:18px 0 6px;
+  }
+
+  /* ---- theorem / definition boxes ---- */
+  .thm, .defn, .lemma, .exer{
+    break-inside:avoid; margin:14px 0 16px; padding:14px 16px 14px 18px;
+    font-size:15.5px; line-height:1.5; position:relative; border-radius:2px;
+  }
+  .thm{ background:linear-gradient(180deg,#fbf2e2,#f7ecd6); border:1px solid #e6d4ab; border-left:4px solid var(--oxblood);}
+  .defn{ background:#f3f1e4; border:1px solid #ddd9c2; border-left:4px solid var(--gold);}
+  .lemma{ background:#f4efe2; border:1px solid #e0d8bf; border-left:4px solid var(--ink-soft);}
+  .exer{ background:#f6f0e3; border:1px dashed #cbbd97; }
+  .thm .label,.defn .label,.lemma .label,.exer .label{
+    font-family:"Spectral SC",serif; letter-spacing:.12em; text-transform:uppercase;
+    font-size:12px; font-weight:600; color:var(--oxblood-deep); display:block; margin-bottom:4px;
+  }
+  .defn .label{ color:#8a6a18;} .lemma .label{ color:var(--ink-soft);}
+  .thm em.statement{ font-style:italic; }
+  .proof{ margin:.4em 0 .8em; font-size:15px;}
+  .proof .pf{ font-style:italic; color:var(--oxblood); font-family:"Spectral SC",serif; letter-spacing:.08em; font-size:12.5px; text-transform:uppercase; margin-right:.4em;}
+  .qed{ float:right; color:var(--oxblood); }
+
+  /* ---- numbered equations ---- */
+  .eq{ position:relative; margin:.4em 0 .9em; }
+  .eq .eqno{ position:absolute; right:0; top:50%; transform:translateY(-50%);
+    font-size:13px; color:var(--ink-soft); font-variant-numeric:tabular-nums;}
+  mjx-container[display="true"]{ margin:.4em 0 !important; }
+
+  /* ---- figures ---- */
+  figure{ break-inside:avoid; margin:16px 0 18px; text-align:center; }
+  figure.wide{ column-span:all; margin:22px auto; max-width:760px;}
+  .figcard{
+    background:#fffdf6; border:1px solid #e6dcc2; border-radius:3px;
+    padding:14px 14px 6px; box-shadow:0 6px 18px -12px var(--shadow);
+    display:inline-block;
+  }
+  figure svg{ display:block; margin:0 auto; max-width:100%; height:auto; }
+  figcaption{
+    font-size:13px; color:var(--ink-soft); margin-top:8px; line-height:1.4;
+    font-style:italic;
+  }
+  figcaption b{ font-style:normal; font-family:"Spectral SC",serif; letter-spacing:.08em; color:var(--oxblood); font-size:12px; }
+  .figrow{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; align-items:flex-start;}
+
+  /* ---- historical note ---- */
+  .hist{
+    break-inside:avoid; margin:16px 0; padding:14px 16px;
+    background:linear-gradient(180deg,#f4ece0,#efe6d4);
+    border:1px solid #e0d4b6; border-left:4px solid var(--gold);
+    font-size:14.5px; line-height:1.5;
+  }
+  .hist .htag{
+    font-family:"Spectral SC",serif; letter-spacing:.16em; text-transform:uppercase;
+    font-size:11.5px; color:#8a6a18; display:flex; align-items:center; gap:8px; margin-bottom:7px;
+  }
+  .hist .htag::before{ content:"❧"; color:var(--gold); font-size:15px;}
+  .hist p{ margin:0 0 .5em; }
+  .hist p:last-child{ margin-bottom:0;}
+
+  table.vals{ break-inside:avoid; border-collapse:collapse; font-size:13px; margin:6px auto; font-variant-numeric:tabular-nums;}
+  table.vals caption{ font-size:12px; color:var(--ink-soft); font-style:italic; margin-bottom:5px;}
+  table.vals th,table.vals td{ padding:2px 9px; text-align:center;}
+  table.vals thead th{ border-bottom:1.5px solid var(--ink); font-family:"Spectral SC",serif; font-weight:500;}
+  table.vals tbody tr:nth-child(even){ background:rgba(176,130,39,.07);}
+
+  /* ---- references ---- */
+  .endmatter{ column-span:all; margin-top:34px; border-top:2px solid var(--ink); padding-top:18px;}
+  .endmatter h2{ font-family:"Fraunces",serif; font-weight:600; font-size:21px; margin:0 0 10px;}
+  ol.refs{ font-size:14px; line-height:1.5; padding-left:1.3em; color:var(--ink-soft); columns:2; column-gap:38px;}
+  ol.refs li{ margin-bottom:9px; break-inside:avoid; padding-left:.2em;}
+  ol.refs li::marker{ color:var(--oxblood); font-family:"Spectral SC",serif;}
+  ol.refs b, ol.refs i{ color:var(--ink);}
+
+  .colophon{ column-span:all; margin-top:28px; text-align:center; font-size:12.5px; color:var(--ink-soft); font-style:italic;}
+  .colophon .rule{ color:var(--gold); letter-spacing:.6em; margin-bottom:10px;}
+
+  @media (max-width:720px){
+    body{ padding:14px 6px 50px; font-size:16px;}
+    .sheet{ padding:30px 20px 38px;}
+    .sheet::before{ inset:6px;}
+    .body{ column-count:1; }
+    ol.refs{ columns:1;}
+    .abstract{ padding:16px 8px;}
+  }
+</style>
+</head>
+<body>
+<main class="sheet">
+
+  <!-- ================= MASTHEAD ================= -->
+  <header class="masthead">
+    <div class="kicker">Studio sulla Teoria dei Numeri <span class="dot">◆</span> Quaderni di Matematica</div>
+    <h1 class="title">Punti Reticolari</h1>
+    <p class="subtitle">Il problema del cerchio di Gauss e il problema dei divisori di Dirichlet</p>
+    <div class="ornament">∴ ❧ ∴</div>
+    <div class="byline">
+      <span class="author">Alberto Oliva</span><br>
+      <a href="mailto:eng.aoliva@gmail.com">eng.aoliva@gmail.com</a>
+    </div>
+    <div class="refline">
+      Riferimento principale: G. E. Andrews, <i>Number Theory</i>, W. B. Saunders Company,
+      Philadelphia (1971) — Parte IV, Capitolo 15 «Lattice Points».
+    </div>
+  </header>
+
+  <!-- ================= ABSTRACT ================= -->
+  <section class="abstract">
+    <h4>Sommario</h4>
+    <p class="dropcap">Questo studio percorre per intero il Capitolo 15 del trattato di George E. Andrews, dedicato alla
+      <i>geometria dei numeri</i> elementare. Il filo conduttore è semplice e potente: tradurre due domande aritmetiche
+      in un conteggio di <i>punti reticolari</i> e stimarne il valore medio per via geometrica. La prima domanda riguarda
+      \(r_2(n)\), il numero di modi di scrivere \(n\) come somma di due quadrati, e conduce al <b>Teorema 15&#8209;1</b>
+      (problema del cerchio di Gauss). La seconda riguarda \(d(n)\), il numero di divisori di \(n\), e conduce al
+      <b>Teorema 15&#8209;2</b> (problema dei divisori di Dirichlet). Vengono ricostruite tutte le dimostrazioni, introdotta
+      la notazione \(O\)-grande con il relativo lemma, svolti gli esercizi finali e ricostruito il contesto storico fino
+      ai risultati moderni di Huxley.</p>
+    <p class="keywords"><b>Parole chiave:</b> punti reticolari · \(r_2(n)\) · \(d(n)\) · valore medio · notazione \(O\)-grande ·
+      problema del cerchio di Gauss · problema dei divisori di Dirichlet · geometria dei numeri.</p>
+  </section>
+
+  <!-- ================= BODY (2 columns) ================= -->
+  <div class="body">
+
+    <!-- ---------- INTRO ---------- -->
+    <h2 class="sec first">Introduzione · Aritmetica e geometria</h2>
+
+    <p class="flow lead">Avendo studiato problemi di natura sia moltiplicativa sia additiva, in questa parte conclusiva
+      del testo Andrews mostra come la <i>geometria</i> possa fornire informazioni preziose su entrambi i terreni. Il
+      ponte fra teoria dei numeri e geometria è la geometria analitica: l'associazione fra coppie ordinate \((x,y)\) e
+      punti del piano. Ricordiamo che un <b>punto reticolare</b> (o punto del reticolo) è un punto del piano \(xy\) le
+      cui coordinate sono entrambe intere.</p>
+
+    <p class="flow">L'idea germinale è osservare che molte funzioni aritmetiche «contano» in realtà punti reticolari su
+      curve. Nel primo quadrante, il numero di punti reticolari che giacciono sull'iperbole</p>
+
+    <div class="eq">\[ xy = n \]</div>
+
+    <p class="flow lead">è esattamente \(d(n)\), il numero di divisori di \(n\), funzione centrale della Parte I. In modo
+      del tutto analogo, il numero di punti reticolari che giacciono sulla circonferenza</p>
+
+    <div class="eq">\[ x^2 + y^2 = n \]</div>
+
+    <p class="flow lead">è \(r_2(n)\), il numero di rappresentazioni di \(n\) come somma di due quadrati, argomento della
+      Parte III. Lo studio avanzato dei punti reticolari costituisce un intero ramo della teoria dei numeri — la
+      <i>Geometria dei Numeri</i> — di cui qui si saggia soltanto un assaggio elementare, affrontando due problemi:</p>
+
+    <p class="flow">(1) Quanto è grande \(r_2(n)\)? &nbsp;(2) Quanto è grande \(d(n)\)? Non potremo dare risposte esatte:
+      entrambe le funzioni oscillano in modo irregolare. Dovremo accontentarci dei loro <b>valori medi</b>, cioè di stime
+      di</p>
+
+    <div class="eq">\[ \frac{1}{N}\sum_{n=0}^{N} r_2(n) \qquad\text{e}\qquad \frac{1}{N}\sum_{n=1}^{N} d(n), \]</div>
+
+    <p class="flow lead">stime che si riveleranno sorprendentemente accurate.</p>
+
+    <div class="hist">
+      <div class="htag">Nota storica · La geometria dei numeri</div>
+      <p>La disciplina cui appartiene questo capitolo fu fondata da <b>Hermann Minkowski</b> (1864&#8211;1909) con
+        <i>Geometrie der Zahlen</i> (1896): teoremi aritmetici dedotti da proprietà di volume e convessità. I due problemi
+        qui trattati la precedono storicamente — risalgono a <b>Gauss</b> e a <b>Dirichlet</b> nella prima metà
+        dell'Ottocento — ma ne condividono lo spirito: <i>contare punti interi è misurare un'area</i>.</p>
+    </div>
+
+    <!-- ================= SECTION 15-1 ================= -->
+    <h2 class="sec"><span class="num">15&#8209;1</span>Il problema del cerchio di Gauss</h2>
+
+    <p class="flow lead">Il problema di stimare \(\frac1N\sum_{n=0}^{N} r_2(n)\) è noto come <b>problema del cerchio di
+      Gauss</b>. Conviene fissare la convenzione di conteggio: due rappresentazioni \(a^2+b^2=n\) e \(c^2+d^2=n\) sono
+      considerate <i>distinte</i> se \(a\neq c\) oppure \(b\neq d\) (anche solo per il segno o per l'ordine). Così</p>
+
+    <div class="eq">\[ r_2(1)=4,\quad 1=1^2+0^2=0^2+1^2=0^2+(-1)^2=(-1)^2+0^2. \]</div>
+
+    <p class="flow lead">I valori di \(r_2(n)\) saltano in modo capriccioso (\(r_2(3)=r_2(6)=r_2(7)=0\), mentre
+      \(r_2(5)=8\)), ma la <i>media</i> si comporta con regolarità, tendendo a \(\pi\). È il contenuto del teorema
+      centrale.</p>
+
+    <div class="thm">
+      <span class="label">Teorema 15&#8209;1</span>
+      <em class="statement">Vale \(\displaystyle \lim_{N\to\infty}\frac{1}{N}\sum_{n=0}^{N} r_2(n)=\pi.\)</em>
+    </div>
+
+    <table class="vals">
+      <caption>Tabella 15&#8209;1 — la media converge verso \(\pi\approx 3.1416\)</caption>
+      <thead><tr><th>\(n\)</th><th>\(r_2(n)\)</th><th>\(\frac1N\sum_0^N r_2\)</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>4</td><td>5.00</td></tr>
+        <tr><td>4</td><td>4</td><td>3.25</td></tr>
+        <tr><td>9</td><td>4</td><td>3.22</td></tr>
+        <tr><td>14</td><td>0</td><td>3.21</td></tr>
+        <tr><td>19</td><td>0</td><td>3.21</td></tr>
+      </tbody>
+    </table>
+
+    <p class="flow"><b>Dimostrazione (l'idea geometrica).</b> Sia \(\mathscr{C}(N)\) l'insieme di tutti i punti del piano
+      \(xy\) interni o appartenenti alla circonferenza \(x^2+y^2=N\). Poiché \(r_2(n)\) conta i punti reticolari
+      <i>sulla</i> circonferenza \(x^2+y^2=n\), la somma \(\sum_{n=0}^{N} r_2(n)\) è esattamente il numero di punti
+      reticolari contenuti nel disco \(\mathscr{C}(N)\). La Figura&nbsp;1 illustra il caso \(N=4\): vi sono \(13\) punti
+      reticolari.</p>
+
+    <figure class="wide">
+      <div class="figrow">
+        <div class="figcard">
+          <!-- FIGURE 1: lattice points in disk N=4 -->
+          <svg viewBox="0 0 320 320" width="300" role="img" aria-label="Punti reticolari nel disco di raggio 2">
+            <defs></defs>
+            <!-- grid -->
+            <g stroke="#ddd1b3" stroke-width="1">
+              <line x1="40" y1="40" x2="40" y2="280"/><line x1="80" y1="40" x2="80" y2="280"/>
+              <line x1="120" y1="40" x2="120" y2="280"/><line x1="200" y1="40" x2="200" y2="280"/>
+              <line x1="240" y1="40" x2="240" y2="280"/><line x1="280" y1="40" x2="280" y2="280"/>
+              <line x1="40" y1="40" x2="280" y2="40"/><line x1="40" y1="80" x2="280" y2="80"/>
+              <line x1="40" y1="120" x2="280" y2="120"/><line x1="40" y1="200" x2="280" y2="200"/>
+              <line x1="40" y1="240" x2="280" y2="240"/><line x1="40" y1="280" x2="280" y2="280"/>
+            </g>
+            <!-- shaded disk -->
+            <circle cx="160" cy="160" r="80" fill="rgba(138,47,34,.10)" stroke="none"/>
+            <!-- concentric circles -->
+            <g fill="none" stroke="#cbab63" stroke-width="1">
+              <circle cx="160" cy="160" r="40"/><circle cx="160" cy="160" r="56.57"/>
+              <circle cx="160" cy="160" r="69.28"/>
+            </g>
+            <circle cx="160" cy="160" r="80" fill="none" stroke="#8a2f22" stroke-width="2"/>
+            <!-- axes -->
+            <g stroke="#211c14" stroke-width="1.4">
+              <line x1="160" y1="36" x2="160" y2="288"/><line x1="36" y1="160" x2="288" y2="160"/>
+            </g>
+            <text x="166" y="44" font-size="12" fill="#211c14" font-family="Spectral">y</text>
+            <text x="280" y="174" font-size="12" fill="#211c14" font-family="Spectral">x</text>
+            <!-- 13 lattice points -->
+            <g fill="#211c14">
+              <circle cx="160" cy="160" r="4.2"/>
+              <circle cx="200" cy="160" r="4.2"/><circle cx="120" cy="160" r="4.2"/>
+              <circle cx="160" cy="120" r="4.2"/><circle cx="160" cy="200" r="4.2"/>
+              <circle cx="200" cy="120" r="4.2"/><circle cx="200" cy="200" r="4.2"/>
+              <circle cx="120" cy="120" r="4.2"/><circle cx="120" cy="200" r="4.2"/>
+              <circle cx="240" cy="160" r="4.2"/><circle cx="80" cy="160" r="4.2"/>
+              <circle cx="160" cy="80" r="4.2"/><circle cx="160" cy="240" r="4.2"/>
+            </g>
+          </svg>
+          <figcaption><b>Figura 1.</b> La regione \(\mathscr{C}(4)\): \(13\) punti reticolari nel disco \(x^2+y^2\le 4\),
+            cioè \(\sum_{n=0}^{4} r_2(n)=1+4+4+0+4=13\).</figcaption>
+        </div>
+
+        <div class="figcard">
+          <!-- FIGURE 2: region P(4) staircase -->
+          <svg viewBox="0 0 320 320" width="300" role="img" aria-label="Regione P(4) di quadrati unitari">
+            <!-- grid -->
+            <g stroke="#ddd1b3" stroke-width="1">
+              <line x1="40" y1="40" x2="40" y2="280"/><line x1="80" y1="40" x2="80" y2="280"/>
+              <line x1="120" y1="40" x2="120" y2="280"/><line x1="200" y1="40" x2="200" y2="280"/>
+              <line x1="240" y1="40" x2="240" y2="280"/><line x1="280" y1="40" x2="280" y2="280"/>
+              <line x1="40" y1="40" x2="280" y2="40"/><line x1="40" y1="80" x2="280" y2="80"/>
+              <line x1="40" y1="120" x2="280" y2="120"/><line x1="40" y1="200" x2="280" y2="200"/>
+              <line x1="40" y1="240" x2="280" y2="240"/><line x1="40" y1="280" x2="280" y2="280"/>
+            </g>
+            <!-- 13 unit squares (upper-left corner = lattice point) -->
+            <g fill="rgba(176,130,39,.22)" stroke="#b08227" stroke-width="1">
+              <rect x="160" y="160" width="40" height="40"/>
+              <rect x="200" y="160" width="40" height="40"/><rect x="120" y="160" width="40" height="40"/>
+              <rect x="160" y="120" width="40" height="40"/><rect x="160" y="200" width="40" height="40"/>
+              <rect x="200" y="120" width="40" height="40"/><rect x="200" y="200" width="40" height="40"/>
+              <rect x="120" y="120" width="40" height="40"/><rect x="120" y="200" width="40" height="40"/>
+              <rect x="240" y="160" width="40" height="40"/><rect x="80" y="160" width="40" height="40"/>
+              <rect x="160" y="80" width="40" height="40"/><rect x="160" y="240" width="40" height="40"/>
+            </g>
+            <!-- reference circle -->
+            <circle cx="160" cy="160" r="80" fill="none" stroke="#8a2f22" stroke-width="1.4" stroke-dasharray="4 3"/>
+            <!-- axes -->
+            <g stroke="#211c14" stroke-width="1.4">
+              <line x1="160" y1="36" x2="160" y2="288"/><line x1="36" y1="160" x2="288" y2="160"/>
+            </g>
+            <!-- highlight square of Q=(1,1) -->
+            <rect x="200" y="120" width="40" height="40" fill="rgba(138,47,34,.30)" stroke="#8a2f22" stroke-width="1.6"/>
+            <circle cx="200" cy="120" r="4" fill="#211c14"/>
+            <text x="204" y="116" font-size="11" fill="#211c14" font-family="Spectral">(1,1)</text>
+          </svg>
+          <figcaption><b>Figura 2.</b> La regione \(P(4)\): a ogni punto reticolare \(Q\) si associa il quadrato unitario
+            di cui \(Q\) è l'angolo in alto a sinistra (in rosso quello di \(Q=(1,1)\)). Area \(=13\).</figcaption>
+        </div>
+      </div>
+    </figure>
+
+    <p class="flow">A ogni punto reticolare \(Q\) di \(\mathscr{C}(N)\) associamo un quadrato unitario di cui \(Q\) è
+      l'angolo superiore sinistro (Figura&nbsp;2). Sia \(P(N)\) la regione formata da tutti questi quadratini. Se
+      \(\mathscr{A}(R)\) denota l'area della regione \(R\), allora — poiché ogni punto reticolare contribuisce con
+      esattamente un quadrato unitario —</p>
+
+    <div class="eq">
+      <span class="eqno">(15&#8209;1&#8209;1)</span>
+      \[ \mathscr{A}\!\big(P(N)\big)=\sum_{n=0}^{N} r_2(n). \]
+    </div>
+
+    <p class="flow lead">Qui sta il passaggio cruciale, geometrico. Ogni punto della frontiera di \(P(N)\) dista al più
+      \(\sqrt2\) dalla frontiera di \(\mathscr{C}(N)\), perché ogni quadratino ha diagonale \(\sqrt2\). Dunque \(P(N)\) è
+      contenuta nel disco di raggio \(\sqrt N+\sqrt2\) e, contemporaneamente, contiene il disco di raggio
+      \(\sqrt N-\sqrt2\) (Figura&nbsp;3). Confrontando le tre aree:</p>
+
+    <figure class="wide">
+      <div class="figcard">
+        <!-- FIGURE 3: bounding circles -->
+        <svg viewBox="0 0 360 360" width="360" role="img" aria-label="Cerchi che contengono e sono contenuti in P(4)">
+          <g stroke="#ddd1b3" stroke-width="1">
+            <line x1="35" y1="55" x2="35" y2="295"/><line x1="70" y1="55" x2="70" y2="295"/>
+            <line x1="105" y1="55" x2="105" y2="295"/><line x1="140" y1="55" x2="140" y2="295"/>
+            <line x1="210" y1="55" x2="210" y2="295"/><line x1="245" y1="55" x2="245" y2="295"/>
+            <line x1="280" y1="55" x2="280" y2="295"/><line x1="315" y1="55" x2="315" y2="295"/>
+            <line x1="35" y1="55" x2="315" y2="55"/><line x1="35" y1="90" x2="315" y2="90"/>
+            <line x1="35" y1="125" x2="315" y2="125"/><line x1="35" y1="230" x2="315" y2="230"/>
+            <line x1="35" y1="265" x2="315" y2="265"/><line x1="35" y1="295" x2="315" y2="295"/>
+          </g>
+          <!-- P(N) staircase, scale 35, center 175,175 -->
+          <g fill="rgba(176,130,39,.20)" stroke="#b08227" stroke-width="1">
+            <rect x="175" y="175" width="35" height="35"/><rect x="210" y="175" width="35" height="35"/>
+            <rect x="140" y="175" width="35" height="35"/><rect x="175" y="140" width="35" height="35"/>
+            <rect x="175" y="210" width="35" height="35"/><rect x="210" y="140" width="35" height="35"/>
+            <rect x="210" y="210" width="35" height="35"/><rect x="140" y="140" width="35" height="35"/>
+            <rect x="140" y="210" width="35" height="35"/><rect x="245" y="175" width="35" height="35"/>
+            <rect x="105" y="175" width="35" height="35"/><rect x="175" y="105" width="35" height="35"/>
+            <rect x="175" y="245" width="35" height="35"/>
+          </g>
+          <!-- outer circle r = (2+sqrt2)*35 = 119.5 -->
+          <circle cx="175" cy="175" r="119.5" fill="none" stroke="#8a2f22" stroke-width="2"/>
+          <!-- inner circle r = (2-sqrt2)*35 = 20.5 -->
+          <circle cx="175" cy="175" r="20.5" fill="none" stroke="#6e241a" stroke-width="2" stroke-dasharray="4 3"/>
+          <g stroke="#211c14" stroke-width="1.3">
+            <line x1="175" y1="50" x2="175" y2="300"/><line x1="30" y1="175" x2="320" y2="175"/>
+          </g>
+          <text x="298" y="66" font-size="12" fill="#8a2f22" font-family="Spectral">√N+√2</text>
+          <text x="180" y="168" font-size="11" fill="#6e241a" font-family="Spectral">√N−√2</text>
+        </svg>
+        <figcaption><b>Figura 3.</b> Caso \(N=4\): la regione a gradini \(P(4)\) è racchiusa fra il disco di raggio
+          \(\sqrt N-\sqrt2\) (tratteggiato) e il disco di raggio \(\sqrt N+\sqrt2\) (pieno).</figcaption>
+      </div>
+    </figure>
+
+    <div class="eq">
+      <span class="eqno">(15&#8209;1&#8209;2)</span>
+      \[ \pi\big(\sqrt N-\sqrt2\,\big)^2 < \mathscr{A}\!\big(P(N)\big) < \pi\big(\sqrt N+\sqrt2\,\big)^2. \]
+    </div>
+
+    <p class="flow lead">Sostituendo la (15&#8209;1&#8209;1) nella (15&#8209;1&#8209;2) e sviluppando i quadrati,
+      \(\pi\big(N-2\sqrt2\,\sqrt N+2\big)<\sum r_2(n)<\pi\big(N+2\sqrt2\,\sqrt N+2\big)\), ossia</p>
+
+    <div class="eq">\[ -\pi\,2\sqrt2\,\sqrt N \;<\; \sum_{n=0}^{N} r_2(n)-(N+2)\pi \;<\; \pi\,2\sqrt2\,\sqrt N. \]</div>
+
+    <p class="flow lead">Dividendo per \(N\) si ottiene la stima fondamentale</p>
+
+    <div class="eq">
+      <span class="eqno">(15&#8209;1&#8209;3)</span>
+      \[ \left|\,\frac{1}{N}\sum_{n=0}^{N} r_2(n)-\frac{(N+2)\pi}{N}\,\right| < \frac{\pi\,2\sqrt2}{\sqrt N}. \]
+    </div>
+
+    <p class="flow lead">Al tendere di \(N\to\infty\) il membro destro va a zero e \(\dfrac{(N+2)\pi}{N}\to\pi\); quindi il
+      valore medio converge a \(\pi\), come asserito. <span class="qed">∎</span></p>
+
+    <h3 class="sub">La notazione O-grande</h3>
+
+    <p class="flow lead">Per riformulare il risultato in modo più espressivo, Andrews introduce la notazione di Landau,
+      strumento onnipresente nella teoria analitica dei numeri.</p>
+
+    <div class="defn">
+      <span class="label">Definizione 15&#8209;1 · O&#8209;grande</span>
+      Scriviamo \(f(N)=O\big(g(N)\big)\) — letto «\(f(N)\) è \(O\)-grande di \(g(N)\)» — se esiste una costante \(K\)
+      tale che \(|f(N)|\le K\,g(N)\) per ogni \(N\) sufficientemente grande.
+    </div>
+
+    <div class="lemma">
+      <span class="label">Lemma</span>
+      Se \(h(x)=O\big(f(x)\big)\), allora \(\;O\big(h(x)\big)+O\big(f(x)\big)=O\big(f(x)\big).\)
+      <div class="proof"><span class="pf">Dim.</span> Siano \(g_1(x)=O(h(x))\) e \(g_2(x)=O(f(x))\). Allora esistono
+        costanti con \(|g_1|\le K_1 h\), \(|g_2|\le K_2 f\) e \(|h|\le K_3 f\). Quindi
+        \(|g_1+g_2|\le |g_1|+|g_2|\le K_1 h+K_2 f\le K_1 K_3 f+K_2 f=(K_1K_3+K_2)f=Kf\). <span class="qed">∎</span></div>
+    </div>
+
+    <p class="flow lead">Con questo linguaggio la (15&#8209;1&#8209;3) diventa
+      \(\sum_{n=0}^{N} r_2(n)-\pi N-2\pi=O(\sqrt N)\); e poiché \(2\pi=O(\sqrt N)\), per il Lemma si riassorbe il termine
+      costante, ottenendo la forma compatta del risultato di Gauss:</p>
+
+    <div class="eq">
+      <span class="eqno">(15&#8209;1&#8209;4)</span>
+      \[ \sum_{n=0}^{N} r_2(n)=\pi N+O(\sqrt N). \]
+    </div>
+
+    <p class="flow lead">In parole: la somma vale approssimativamente \(\pi N\), con un errore al più di un multiplo costante
+      di \(\sqrt N\).</p>
+
+    <div class="hist">
+      <div class="htag">Nota storica · Da Gauss a Huxley</div>
+      <p>Il contributo di <b>Carl Friedrich Gauss</b> (1777&#8211;1855) si arrestò proprio alla (15&#8209;1&#8209;4).
+        Trascorsero settant'anni prima che <b>Wacław Sierpiński</b>, nel 1906, dimostrasse il risultato assai più forte</p>
+      <div class="eq">\[ \sum_{n=0}^{N} r_2(n)=\pi N+O\!\big(N^{1/3}\big). \tag*{(15-1-5)} \]</div>
+      <p>Matematici successivi hanno abbassato ancora l'esponente \(1/3\): Andrews cita \(27/82\approx0.329\) (van der
+        Corput). Il record odierno, espresso sull'esponente di \(N\), è \(\tfrac{131}{416}\approx 0.3149\), ottenuto da
+        <b>M. N. Huxley</b> nel 2003 con sofisticate stime di somme esponenziali. Si sa che la (15&#8209;1&#8209;5) è
+        <i>falsa</i> con esponente \(1/4\) (limite inferiore di Hardy&#8211;Landau, 1915): l'esponente ottimale,
+        congetturato uguale a \(1/4+\varepsilon\), resta tuttora ignoto. È uno dei grandi problemi aperti della
+        matematica.</p>
+    </div>
+
+    <div class="exer">
+      <span class="label">Esercizi · §15&#8209;1</span>
+      <p style="margin:.3em 0;"><b>1.</b> Se \(r_3(n)\) denota il numero di rappresentazioni di \(n\) come somma di
+        <i>tre</i> quadrati, dimostrare che \(\displaystyle\sum_{n=0}^{N} r_3(n)=\tfrac{4}{3}\pi N^{3/2}+O(N)\).</p>
+      <p style="margin:.3em 0;"><b>2.</b> Dimostrare che il numero di punti reticolari nella regione
+        \(|y|+x^2\le N\) è \(\;\tfrac{4}{3}N^{3/2}+O(N)\).</p>
+    </div>
+
+    <p class="flow lead"><b>Soluzione dell'esercizio 1 (traccia).</b> Si ripete l'argomento di Gauss in dimensione tre.
+      La somma \(\sum_{n=0}^{N} r_3(n)\) conta i punti reticolari nella <i>palla</i> di raggio \(\sqrt N\) centrata
+      nell'origine. Associando a ogni punto reticolare un cubo unitario, la regione di cubi è compresa fra le palle di
+      raggio \(\sqrt N\mp\sqrt3\) (la diagonale del cubo unitario è \(\sqrt3\)). Poiché il volume della palla di raggio
+      \(\rho\) è \(\tfrac{4}{3}\pi\rho^3\),</p>
+
+    <div class="eq">\[ \tfrac{4}{3}\pi\big(\sqrt N-\sqrt3\big)^3 < \sum_{n=0}^{N} r_3(n) < \tfrac{4}{3}\pi\big(\sqrt N+\sqrt3\big)^3, \]</div>
+
+    <p class="flow lead">e sviluppando il cubo i termini secondari sono \(O(N)\): il termine dominante è
+      \(\tfrac{4}{3}\pi N^{3/2}\). L'esercizio 2 è la versione bidimensionale dello stesso ragionamento applicato alla
+      regione parabolica \(|y|\le N-x^2\), la cui area si calcola per integrazione elementare.</p>
+
+    <!-- ================= SECTION 15-2 ================= -->
+    <h2 class="sec"><span class="num">15&#8209;2</span>Il problema dei divisori di Dirichlet</h2>
+
+    <p class="flow lead">Cerchiamo ora un valore medio per il numero \(d(n)\) di divisori di \(n\). Il risultato è più
+      fine del precedente, perché compare un termine logaritmico.</p>
+
+    <div class="thm">
+      <span class="label">Teorema 15&#8209;2</span>
+      <em class="statement">Esiste una costante \(c\) tale che
+        \(\displaystyle \sum_{n=1}^{N} d(n)=N\log N+cN+O(\sqrt N).\)</em>
+    </div>
+
+    <p class="flow"><b>Dimostrazione.</b> La funzione \(d(n)\) conta i punti reticolari della forma \((x,y)\) con
+      \(x>0,\ y>0,\ xy=n\): cioè i punti reticolari sull'iperbole \(xy=n\) nel primo quadrante (Figura&nbsp;4). Di
+      conseguenza \(\sum_{n=1}^{N} d(n)\) è il numero di punti reticolari a coordinate positive che giacciono <i>su o
+      sotto</i> l'iperbole \(xy=N\).</p>
+
+    <figure class="wide">
+      <div class="figrow">
+        <div class="figcard">
+          <!-- FIGURE 4: hyperbolas n=1..6 -->
+          <svg viewBox="0 0 360 320" width="320" role="img" aria-label="Iperboli xy=n per n da 1 a 6">
+            <g stroke="#ddd1b3" stroke-width="1">
+              <line x1="80" y1="40" x2="80" y2="280"/><line x1="120" y1="40" x2="120" y2="280"/>
+              <line x1="160" y1="40" x2="160" y2="280"/><line x1="200" y1="40" x2="200" y2="280"/>
+              <line x1="240" y1="40" x2="240" y2="280"/><line x1="280" y1="40" x2="280" y2="280"/>
+              <line x1="320" y1="40" x2="320" y2="280"/>
+              <line x1="40" y1="240" x2="335" y2="240"/><line x1="40" y1="200" x2="335" y2="200"/>
+              <line x1="40" y1="160" x2="335" y2="160"/><line x1="40" y1="120" x2="335" y2="120"/>
+              <line x1="40" y1="80" x2="335" y2="80"/>
+            </g>
+            <!-- axes: origin (40,280), scale 40 -->
+            <g stroke="#211c14" stroke-width="1.4">
+              <line x1="40" y1="40" x2="40" y2="285"/><line x1="36" y1="280" x2="335" y2="280"/>
+            </g>
+            <text x="30" y="295" font-size="11" fill="#211c14" font-family="Spectral">(0,0)</text>
+            <text x="330" y="294" font-size="12" fill="#211c14" font-family="Spectral">x</text>
+            <text x="46" y="48" font-size="12" fill="#211c14" font-family="Spectral">y</text>
+            <!-- hyperbolas xy=n, y_px = 280 - 40*(n/x), x_px = 40 + 40*x -->
+            <g fill="none" stroke="#8a2f22" stroke-width="1.6">
+              <path d="M 80 240 Q 150 263 320 273"/>            <!-- n=1 -->
+              <path d="M 80 200 Q 130 248 320 265"/>            <!-- n=2 -->
+              <path d="M 80 160 Q 130 232 320 258"/>            <!-- n=3 -->
+              <path d="M 80 120 Q 125 215 320 250"/>            <!-- n=4 -->
+              <path d="M 88 96 Q 140 205 320 243"/>             <!-- n=5 -->
+              <path d="M 96 80 Q 150 196 320 235"/>             <!-- n=6 -->
+            </g>
+            <!-- lattice points on hyperbolas (integer divisor pairs) -->
+            <g fill="#211c14">
+              <circle cx="80" cy="240" r="3.4"/>                       <!-- (1,1) n=1 -->
+              <circle cx="80" cy="200" r="3.4"/><circle cx="120" cy="240" r="3.4"/> <!-- n=2 -->
+              <circle cx="80" cy="160" r="3.4"/><circle cx="160" cy="240" r="3.4"/> <!-- n=3 -->
+              <circle cx="80" cy="120" r="3.4"/><circle cx="120" cy="200" r="3.4"/><circle cx="200" cy="240" r="3.4"/> <!-- n=4 -->
+              <circle cx="80" cy="80" r="3.4"/><circle cx="240" cy="240" r="3.4"/>  <!-- n=5 -->
+              <circle cx="120" cy="160" r="3.4"/><circle cx="160" cy="200" r="3.4"/><circle cx="280" cy="240" r="3.4"/> <!-- n=6 partials -->
+            </g>
+            <g font-size="10.5" fill="#6e241a" font-family="Spectral" font-style="italic">
+              <text x="220" y="268">n=1</text><text x="220" y="260">n=2</text>
+              <text x="220" y="252">n=3</text><text x="220" y="244">n=4</text>
+              <text x="220" y="237">n=5</text><text x="220" y="229">n=6</text>
+            </g>
+          </svg>
+          <figcaption><b>Figura 4.</b> Le iperboli \(xy=n\) per \(n=1,\dots,6\). I punti reticolari su ciascuna sono le
+            coppie ordinate di divisori: contarli equivale a sommare \(d(n)\).</figcaption>
+        </div>
+
+        <div class="figcard">
+          <!-- FIGURE 5: square + R1 + R2 -->
+          <svg viewBox="0 0 360 320" width="320" role="img" aria-label="Quadrato e regioni R1, R2 sotto l'iperbole">
+            <!-- origin (40,290) scale 26 ; sqrt(N)=3 -> corner (3,3) at (118,212) -->
+            <!-- R1: above square, under hyperbola, x in (0,3] -->
+            <path d="M 40 212 L 118 212 L 118 80
+                     C 118 80 150 120 235 188 L 235 188
+                     L 40 212 Z" fill="none"/>
+            <!-- shaded square [3]x[3] -->
+            <rect x="40" y="212" width="78" height="78" fill="#6e241a" opacity="0.78"/>
+            <g stroke="#fff" stroke-width="1" opacity="0.5">
+              <line x1="40" y1="225" x2="118" y2="225"/><line x1="40" y1="238" x2="118" y2="238"/>
+              <line x1="40" y1="251" x2="118" y2="251"/><line x1="40" y1="264" x2="118" y2="264"/>
+              <line x1="40" y1="277" x2="118" y2="277"/>
+              <line x1="53" y1="212" x2="53" y2="290"/><line x1="66" y1="212" x2="66" y2="290"/>
+              <line x1="79" y1="212" x2="79" y2="290"/><line x1="92" y1="212" x2="92" y2="290"/>
+              <line x1="105" y1="212" x2="105" y2="290"/>
+            </g>
+            <!-- hyperbola xy=9: x from 1..11, x_px=40+26x, y_px=290-26*(9/x) -->
+            <path d="M 66 56
+                     C 80 120 95 160 118 188
+                     C 150 224 200 252 286 268"
+                  fill="none" stroke="#8a2f22" stroke-width="2"/>
+            <!-- axes -->
+            <g stroke="#211c14" stroke-width="1.4">
+              <line x1="40" y1="48" x2="40" y2="296"/><line x1="36" y1="290" x2="320" y2="290"/>
+            </g>
+            <!-- corner point (sqrtN, sqrtN) -->
+            <circle cx="118" cy="212" r="3.6" fill="#211c14"/>
+            <text x="122" y="206" font-size="11" fill="#211c14" font-family="Spectral">(√N,√N)</text>
+            <text x="70" y="150" font-size="13" fill="#6e241a" font-family="Spectral" font-style="italic">R₁</text>
+            <text x="180" y="280" font-size="13" fill="#6e241a" font-family="Spectral" font-style="italic">R₂</text>
+            <text x="292" y="270" font-size="11" fill="#8a2f22" font-family="Spectral">xy=N</text>
+            <text x="46" y="56" font-size="12" fill="#211c14" font-family="Spectral">y</text>
+            <text x="312" y="287" font-size="12" fill="#211c14" font-family="Spectral">x</text>
+          </svg>
+          <figcaption><b>Figura 5.</b> Il quadrato scuro contiene \([\sqrt N\,]^2\) punti reticolari; le due regioni
+            congruenti \(R_1\) (sopra) e \(R_2\) (a destra) raccolgono i restanti. Per simmetria contengono lo stesso
+            numero di punti.</figcaption>
+        </div>
+      </div>
+    </figure>
+
+    <p class="flow"><b>Il trucco dell'iperbola.</b> Esaminiamo la Figura&nbsp;5. Il quadrato ombreggiato contiene
+      \([\sqrt N\,]^2\) punti reticolari (dove \([\,\cdot\,]\) è la parte intera). Due regioni congruenti — \(R_1\)
+      sopra il quadrato e \(R_2\) alla sua destra — contengono tutti gli altri punti. Per \(1\le n\le[\sqrt N]\) vi sono
+      \(\big([\tfrac{N}{n}]-[\sqrt N]\big)\) punti reticolari di \(R_1\) sulla retta verticale \(x=n\). Poiché, per
+      simmetria, il numero di punti in \(R_2\) eguaglia quello in \(R_1\), otteniamo</p>
+
+    <div class="eq">
+      <span class="eqno">(15&#8209;2&#8209;1)</span>
+      \[ \sum_{n=1}^{N} d(n)=2\!\!\sum_{n=1}^{[\sqrt N]}\!\!\Big(\Big[\tfrac{N}{n}\Big]-[\sqrt N]\Big)+[\sqrt N]^2. \]
+    </div>
+
+    <p class="flow lead">Introduciamo la <b>parte frazionaria</b> \(\{x\}=x-[x]\), con \(0\le\{x\}<1\). Sviluppando la
+      (15&#8209;2&#8209;1) e semplificando \(-2[\sqrt N]^2+[\sqrt N]^2=-[\sqrt N]^2\):</p>
+
+    <div class="eq">
+      \[ \begin{aligned}
+        \sum_{n=1}^{N} d(n)
+        &=2\sum_{n=1}^{[\sqrt N]}\Big[\tfrac{N}{n}\Big]-[\sqrt N]^2\\[2pt]
+        &=2\sum_{n=1}^{[\sqrt N]}\Big(\tfrac{N}{n}-\big\{\tfrac{N}{n}\big\}\Big)-\big(\sqrt N-\{\sqrt N\}\big)^2.
+      \end{aligned} \]
+    </div>
+
+    <p class="flow lead">Ogni \(\{N/n\}\in[0,1)\): i \([\sqrt N]\) termini di errore danno \(O(\sqrt N)\); analogamente
+      \(\big(\sqrt N-\{\sqrt N\}\big)^2=N+O(\sqrt N)\). Resta</p>
+
+    <div class="eq">
+      <span class="eqno">(15&#8209;2&#8209;2)</span>
+      \[ \sum_{n=1}^{N} d(n)=2N\sum_{n=1}^{[\sqrt N]}\frac{1}{n}-N+O(\sqrt N). \]
+    </div>
+
+    <p class="flow lead">Per concludere serve il <b>criterio integrale</b> del calcolo (Appendice D di Andrews): se
+      \(f(t)\) è positiva, decrescente e \(\lim_{t\to\infty}f(t)=0\), esiste una costante \(k\) tale che, per ogni
+      \(M>1\),</p>
+
+    <div class="eq">
+      <span class="eqno">(15&#8209;2&#8209;3)</span>
+      \[ \int_{1}^{M} f(t)\,dt=\sum_{n=1}^{M} f(n)+k+O\big(f(M)\big). \]
+    </div>
+
+    <p class="flow lead">Applichiamolo a \(f(t)=\tfrac1t\) con \(M=\sqrt N\). Poiché
+      \(\int_{1}^{\sqrt N}\tfrac{dt}{t}=\log\sqrt N=\tfrac12\log N\), troviamo</p>
+
+    <div class="eq">
+      <span class="eqno">(15&#8209;2&#8209;4)</span>
+      \[ \sum_{n=1}^{[\sqrt N]}\frac{1}{n}=\tfrac12\log N-c_0+O\!\Big(\tfrac{1}{\sqrt N}\Big), \]
+    </div>
+
+    <p class="flow lead">dove \(c_0=-k\) è una costante. Sostituendo la (15&#8209;2&#8209;4) nella (15&#8209;2&#8209;2):</p>
+
+    <div class="eq">
+      \[ \begin{aligned}
+        \sum_{n=1}^{N} d(n)
+        &=2N\Big(\tfrac12\log N-c_0+O\!\big(\tfrac{1}{\sqrt N}\big)\Big)-N+O(\sqrt N)\\[2pt]
+        &=N\log N-(2c_0+1)N+O(\sqrt N).
+      \end{aligned} \]
+    </div>
+
+    <p class="flow lead">Scegliendo \(c=-(2c_0+1)\) si ottiene esattamente la tesi del Teorema&nbsp;15&#8209;2.
+      <span class="qed">∎</span></p>
+
+    <div class="hist">
+      <div class="htag">Approfondimento · Chi è la costante \(c\)?</div>
+      <p>La costante \(c_0\) introdotta dal criterio integrale è la <b>costante di Eulero&#8211;Mascheroni</b>
+        \(\gamma=0.5772\ldots\): infatti \(\sum_{n\le M}\tfrac1n=\log M+\gamma+O(\tfrac1M)\). Confrontando con la
+        (15&#8209;2&#8209;4) si trova \(c_0=-\gamma\), e quindi la costante del Teorema&nbsp;15&#8209;2 è
+        \(c=2\gamma-1\approx 0.1544\). È il celebre risultato di <b>Dirichlet</b> (1849):
+        \(\sum_{n\le x} d(n)=x\log x+(2\gamma-1)x+\Delta(x)\), con \(\Delta(x)=O(\sqrt x)\).</p>
+    </div>
+
+    <p class="flow lead">Come per la (15&#8209;1&#8209;4), il termine d'errore \(O(\sqrt N)\) del Teorema&nbsp;15&#8209;2
+      può essere sostituito da \(O(N^{1/3})\) ma non da \(O(N^{1/4})\). I due problemi, quello del cerchio e quello dei
+      divisori, sono così profondamente «gemelli» da condividere lo stesso esponente migliore conosciuto.</p>
+
+    <div class="hist">
+      <div class="htag">Nota storica · Peter Gustav Lejeune Dirichlet</div>
+      <p><b>Dirichlet</b> (1805&#8211;1859), successore di Gauss a Gottinga, ideò questo «metodo dell'iperbole» nel 1849.
+        L'esponente fu poi abbassato a \(1/3\) da <b>G. Voronoi</b> (1904) e via via raffinato — Hua, Chen,
+        Iwaniec&#8211;Mozzochi — fino al record di <b>Huxley</b> \(\tfrac{131}{416}\approx0.3149\) (2003). La congettura,
+        ancora aperta, è che l'esponente corretto sia \(1/4+\varepsilon\): un problema sospeso da oltre un secolo e
+        mezzo, gemello del problema del cerchio di Gauss.</p>
+    </div>
+
+    <div class="exer">
+      <span class="label">Esercizio · §15&#8209;2</span>
+      <p style="margin:.3em 0;">Sia \(d_3(n)\) il numero di terne ordinate di interi il cui prodotto è \(n\). Dimostrare
+        che \(\displaystyle\sum_{n=1}^{N} d_3(n)=N\log^2 N+O(N\log N)\).
+        <i>(Traccia: contare i punti reticolari a coordinate positive su o sotto la superficie \(xyz=N\).)</i></p>
+    </div>
+
+    <p class="flow lead"><b>Soluzione (traccia).</b> Si itera il metodo dell'iperbole in tre dimensioni. La somma
+      \(\sum_{n\le N} d_3(n)\) conta i punti reticolari \((x,y,z)\) con coordinate positive e \(xyz\le N\), cioè quelli
+      sotto la superficie \(xyz=N\). Fissato \(z=k\), restano da contare i punti con \(xy\le N/k\): per il
+      Teorema&nbsp;15&#8209;2 sono circa \(\tfrac{N}{k}\log\tfrac{N}{k}\). Sommando su \(k\le N\) e usando di nuovo
+      \(\sum_{k\le N}\tfrac1k\sim\log N\) si genera il fattore logaritmico aggiuntivo, da cui il termine dominante
+      \(N\log^2 N\). In generale \(\sum_{n\le N} d_r(n)\) ha termine principale dell'ordine di \(\tfrac{N\log^{r-1}N}{(r-1)!}\).</p>
+
+    <h3 class="sub">Sintesi dei due teoremi</h3>
+    <p class="flow lead">Entrambe le dimostrazioni seguono lo stesso schema in quattro mosse: <b>(i)</b> riconoscere una
+      somma aritmetica come conteggio di punti reticolari sotto una curva; <b>(ii)</b> approssimare quel conteggio con
+      un'<i>area</i>; <b>(iii)</b> stimare l'errore geometrico con la notazione \(O\); <b>(iv)</b> estrarre il valore
+      medio. Il cerchio dà la costante \(\pi\); l'iperbole, più «aperta», introduce il logaritmo. È l'essenza della
+      geometria dei numeri elementare: <i>l'aritmetica letta come misura del piano</i>.</p>
+
+    <!-- ================= REFERENCES ================= -->
+    <div class="endmatter">
+      <h2>Riferimenti bibliografici</h2>
+      <ol class="refs">
+        <li>G. E. <b>Andrews</b>, <i>Number Theory</i>, W. B. Saunders Company, Philadelphia (1971). [Riferimento
+          principale — Parte IV, Cap. 15.]</li>
+        <li>E. <b>Landau</b>, <i>Vorlesungen über Zahlentheorie</i>, Hirzel, Leipzig (1927); rist. Chelsea (1947).
+          Tratta in maggior profondità i teoremi del Cap. 15.</li>
+        <li>G. H. <b>Hardy</b> &amp; E. M. <b>Wright</b>, <i>An Introduction to the Theory of Numbers</i>, 4ª ed.,
+          Oxford University Press (1960).</li>
+        <li>H. <b>Minkowski</b>, <i>Geometrie der Zahlen</i>, Teubner, Leipzig (1896). Atto di nascita della geometria
+          dei numeri.</li>
+        <li>P. G. L. <b>Dirichlet</b>, «Über die Bestimmung der mittleren Werthe in der Zahlentheorie», <i>Abh. Königl.
+          Preuss. Akad. Wiss.</i> (1849), 69&#8211;83. Metodo dell'iperbole.</li>
+        <li>W. <b>Sierpiński</b>, «O pewnem zagadnieniu z rachunku funkcyj asymptotycznych», <i>Prace Mat.-Fiz.</i>
+          <b>17</b> (1906), 77&#8211;118. Esponente \(1/3\).</li>
+        <li>G. <b>Voronoï</b>, «Sur un problème du calcul des fonctions asymptotiques», <i>J. Reine Angew. Math.</i>
+          <b>126</b> (1903), 241&#8211;282.</li>
+        <li>G. H. <b>Hardy</b>, «On the expression of a number as the sum of two squares», <i>Quart. J. Math.</i>
+          <b>46</b> (1915), 263&#8211;283. Limite inferiore \(\theta\ge 1/4\).</li>
+        <li>M. N. <b>Huxley</b>, «Exponential sums and lattice points III», <i>Proc. London Math. Soc.</i> <b>87</b>
+          (2003), 591&#8211;609. Record \(\theta=\tfrac{131}{416}\).</li>
+        <li>L. K. <b>Hua</b>, <i>Introduction to Number Theory</i>, Springer-Verlag (1982). Sintesi moderna sui punti
+          reticolari.</li>
+        <li>R. K. <b>Guy</b>, <i>Unsolved Problems in Number Theory</i>, 3ª ed., Springer (2004). Problema F1.</li>
+      </ol>
+    </div>
+
+    <div class="colophon">
+      <div class="rule">✦ ✦ ✦</div>
+      <p>«Studio sulla Teoria dei Numeri» — Alberto Oliva · <span style="font-style:normal">eng.aoliva@gmail.com</span><br>
+        Esposizione e ricostruzione delle dimostrazioni del Capitolo 15 di G. E. Andrews, <i>Number Theory</i> (1971).
+        Figure ridisegnate dall'autore. Composto in Fraunces &amp; Spectral; formule rese con MathJax.</p>
+    </div>
+
+  </div><!-- /.body -->
+</main>
+</body>
+</html>

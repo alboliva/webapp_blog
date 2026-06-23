@@ -191,35 +191,50 @@ def inject_fs_button(html: str) -> str:
         return html.replace("</body>", FS_BUTTON + "</body>", 1)
     return html + FS_BUTTON
 
-def _copy_component(text: str) -> str:
-    """Mini componente che copia 'text' negli appunti appena viene renderizzato
-    (con fallback execCommand) e mostra una conferma verde."""
-    t = json.dumps(text)
+def _share_button_component(url: str) -> str:
+    """Pulsante 'Condividi' renderizzato dentro il componente HTML: il click è
+    un gesto utente dentro l'iframe, quindi la copia negli appunti funziona
+    anche con l'app pubblicata online. Fallback: execCommand e poi prompt()."""
+    u = json.dumps(url)
     return f"""
-    <div style="font-family:system-ui,sans-serif;font-size:0.82rem;font-weight:600;color:#16a34a;padding:2px 0;">
-      <span id="copymsg">Copia in corso…</span>
-    </div>
+    <style>
+      html, body {{ margin:0; padding:0; }}
+      .shbtn {{
+        width:100%; height:40px; cursor:pointer; box-sizing:border-box;
+        background:#ffffff; color:#31333F;
+        border:1px solid rgba(49,51,63,0.20); border-radius:0.5rem;
+        font-family:"Source Sans Pro", system-ui, sans-serif;
+        font-size:0.95rem; font-weight:400;
+        display:flex; align-items:center; justify-content:center; gap:6px;
+        transition:border-color .15s, color .15s;
+      }}
+      .shbtn:hover {{ border-color:#FF4B4B; color:#FF4B4B; }}
+      .shbtn.ok {{ border-color:#16a34a; color:#16a34a; }}
+    </style>
+    <button class="shbtn" id="shbtn">🔗 Condividi articolo</button>
     <script>
     (function(){{
-      const t = {t};
-      const msg = document.getElementById('copymsg');
-      function ok(){{ if(msg) msg.textContent = '✓ Link copiato negli appunti'; }}
-      function ko(){{ if(msg) msg.textContent = '⚠ Copia automatica non riuscita: usa l\\'icona 📋 nel box sotto'; if(msg) msg.style.color = '#b45309'; }}
-      function fallback(){{
+      const url = {u};
+      const btn = document.getElementById('shbtn');
+      function flash(txt){{
+        const old = btn.innerHTML;
+        btn.innerHTML = txt; btn.classList.add('ok');
+        setTimeout(function(){{ btn.innerHTML = old; btn.classList.remove('ok'); }}, 1800);
+      }}
+      function legacy(){{
         try {{
           const ta = document.createElement('textarea');
-          ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          ta.value = url; ta.style.position='fixed'; ta.style.opacity='0';
           document.body.appendChild(ta); ta.focus(); ta.select();
-          const done = document.execCommand('copy');
-          document.body.removeChild(ta);
-          done ? ok() : ko();
-        }} catch(e) {{ ko(); }}
+          const ok = document.execCommand('copy'); document.body.removeChild(ta);
+          if (ok) flash('✓ Copiato!'); else window.prompt('Copia il link (Cmd/Ctrl+C):', url);
+        }} catch(e) {{ window.prompt('Copia il link (Cmd/Ctrl+C):', url); }}
       }}
-      try {{
+      btn.addEventListener('click', function(){{
         if (navigator.clipboard && navigator.clipboard.writeText) {{
-          navigator.clipboard.writeText(t).then(ok).catch(fallback);
-        }} else {{ fallback(); }}
-      }} catch(e) {{ fallback(); }}
+          navigator.clipboard.writeText(url).then(function(){{ flash('✓ Copiato!'); }}).catch(legacy);
+        }} else {{ legacy(); }}
+      }});
     }})();
     </script>
     """
@@ -574,19 +589,13 @@ def main():
         st.rerun()
     ci += 1
 
-    # 4) Condividi → copia subito il link negli appunti + avviso (toast)
-    if action_cols[ci].button("🔗 Condividi articolo", key="app_share", use_container_width=True):
-        aid = _article_id(doc["full_path"])
-        base = _base_url()
-        ss["share_url"] = f"{base}/?article={quote(aid)}" if base else f"?article={quote(aid)}"
-        ss["_do_copy"] = True
-        st.toast("📋 Link copiato negli appunti!", icon="✅")
-
-    # Pannello copia (compare subito dopo il click, sparisce all'interazione dopo)
-    if ss.get("_do_copy") and ss.get("share_url"):
-        st.components.v1.html(_copy_component(ss["share_url"]), height=40)
-        st.code(ss["share_url"], language=None)
-        ss["_do_copy"] = False
+    # 4) Condividi → pulsante (dentro il componente) che copia il link al click.
+    #    Funziona anche con l'app online, dove la copia automatica sarebbe bloccata.
+    aid = _article_id(doc["full_path"])
+    base = _base_url()
+    share_url = f"{base}/?article={quote(aid)}" if base else f"?article={quote(aid)}"
+    with action_cols[ci]:
+        st.components.v1.html(_share_button_component(share_url), height=44)
 
     # ── Visualizza Articolo ────────────────────────────────────────────────
     try:

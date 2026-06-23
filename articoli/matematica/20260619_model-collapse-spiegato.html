@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Maledizione della Ricorsione — Capire il Model Collapse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] }, chtml: { scale: 0.96 } };
+</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#FAFBFC;
+  --panel:#FFFFFF;
+  --ink:#182430;
+  --ink-soft:#4A5C6E;
+  --line:#DCE3E9;
+  --line-strong:#B9C5CF;
+  --origin:#0E8A78;     /* generazione 0 — dati reali */
+  --mid:#A8902F;
+  --collapse:#C0392B;   /* generazioni tarde — collasso */
+  --origin-soft:#E2F2EF;
+  --collapse-soft:#F8E9E6;
+  --code-bg:#F0F3F6;
+  --radius:10px;
+  --maxw:920px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Source Serif 4", Georgia, serif;
+  font-size:18px;
+  line-height:1.65;
+}
+h1,h2,h3,h4{font-family:"Space Grotesk",system-ui,sans-serif;line-height:1.18;letter-spacing:-0.01em}
+.mono{font-family:"IBM Plex Mono",monospace}
+a{color:#0B6E8F;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:var(--collapse)}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+
+/* ---- ribbon delle generazioni: firma visiva ricorrente ---- */
+.gen-ribbon{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:0 0 14px}
+.gen-ribbon span{flex:1}
+
+/* ---- hero ---- */
+header.hero{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px}
+.hero h1{font-size:clamp(34px,5.4vw,58px);font-weight:700;max-width:18ch}
+.hero h1 em{font-style:normal;color:var(--collapse)}
+.hero .sub{font-size:20px;color:var(--ink-soft);max-width:62ch;margin:18px 0 8px}
+.paper-card{
+  margin-top:30px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:8px 28px;font-size:15.5px;
+}
+.paper-card div b{font-family:"Space Grotesk",sans-serif;font-size:12.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);display:block;margin-bottom:2px}
+.hero-fig{margin-top:34px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 10px}
+.hero-fig .label{display:flex;justify-content:space-between;align-items:baseline;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-soft);padding:0 6px 6px}
+#heroGenLabel{font-size:15px;font-weight:500}
+
+/* ---- indice / percorso ---- */
+nav.toc{padding:34px 0;border-bottom:1px solid var(--line)}
+nav.toc ol{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;counter-reset:step}
+nav.toc a{
+  display:block;text-decoration:none;color:var(--ink);background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;font-family:"Space Grotesk",sans-serif;font-size:15px;
+}
+nav.toc a:hover{border-color:var(--origin)}
+nav.toc a .lvl{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-soft);display:block;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+
+/* ---- sezioni ---- */
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+.sec-head{margin-bottom:26px}
+.sec-head .lvl{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--origin);margin-bottom:8px}
+.sec-head .lvl.hot{color:var(--collapse)}
+section h2{font-size:clamp(26px,3.4vw,36px);max-width:24ch}
+section h3{font-size:21px;margin:34px 0 12px}
+section p{max-width:72ch;margin-bottom:16px}
+section ul,section ol{max-width:70ch;margin:0 0 16px 24px}
+section li{margin-bottom:8px}
+.lead{font-size:20px;color:var(--ink-soft)}
+strong{font-weight:600}
+
+/* ---- figure / pannelli ---- */
+figure.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:26px 0}
+figure.panel figcaption{font-size:14.5px;color:var(--ink-soft);margin-top:12px;line-height:1.5;font-family:"Space Grotesk",sans-serif}
+figure.panel figcaption b{color:var(--ink)}
+svg{display:block;max-width:100%;height:auto}
+svg text{font-family:"IBM Plex Mono",monospace}
+
+/* ---- box concetto / nota ---- */
+.keybox{background:var(--origin-soft);border-left:4px solid var(--origin);border-radius:0 var(--radius) var(--radius) 0;padding:16px 20px;margin:24px 0;max-width:76ch}
+.keybox.warn{background:var(--collapse-soft);border-left-color:var(--collapse)}
+.keybox .kb-t{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.keybox p{margin-bottom:6px}
+.keybox p:last-child{margin-bottom:0}
+
+/* ---- cards errori ---- */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:16px;margin:26px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.card .tag{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:10px}
+.tag.primary{background:var(--collapse-soft);color:var(--collapse)}
+.tag.secondary{background:var(--origin-soft);color:var(--origin)}
+.tag.minor{background:var(--code-bg);color:var(--ink-soft)}
+.card h4{font-size:17px;margin-bottom:8px}
+.card p{font-size:15.5px;margin-bottom:8px;color:var(--ink-soft)}
+.card p:last-child{margin-bottom:0}
+
+/* ---- timeline early/late ---- */
+.stage-flow{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch;margin:26px 0}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.stage h4{font-size:16px;margin-bottom:6px}
+.stage.early{border-top:4px solid var(--mid)}
+.stage.late{border-top:4px solid var(--collapse)}
+.stage p{font-size:15px;color:var(--ink-soft);margin:0}
+.stage-arrow{align-self:center;font-size:26px;color:var(--ink-soft)}
+
+/* ---- esempio testo generazioni ---- */
+.gen-quotes{display:grid;gap:12px;margin:26px 0}
+.gq{background:var(--panel);border:1px solid var(--line);border-left-width:5px;border-radius:var(--radius);padding:14px 16px;font-size:15.5px}
+.gq .g{font-family:"IBM Plex Mono",monospace;font-size:12px;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:4px}
+.gq p{margin:0;color:var(--ink-soft)}
+
+/* ---- formule ---- */
+.eq{background:var(--code-bg);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin:20px 0;overflow-x:auto}
+.eq .eq-note{font-size:14px;color:var(--ink-soft);font-family:"Space Grotesk",sans-serif;margin-top:8px}
+
+/* ---- simulatore ---- */
+.sim{background:var(--panel);border:1px solid var(--line-strong);border-radius:var(--radius);padding:20px;margin:26px 0}
+.sim-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px;font-family:"Space Grotesk",sans-serif;font-size:14.5px}
+.sim-controls label{color:var(--ink-soft)}
+.sim-controls select,.sim-controls button{
+  font-family:"Space Grotesk",sans-serif;font-size:14.5px;padding:7px 12px;border-radius:7px;border:1px solid var(--line-strong);background:var(--paper);color:var(--ink);cursor:pointer;
+}
+.sim-controls button.go{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sim-controls button:hover{border-color:var(--origin)}
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sim-grid .cell{border:1px solid var(--line);border-radius:8px;padding:10px}
+.sim-grid .cell h5{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;font-weight:500}
+canvas{width:100%;height:auto;display:block}
+.sim-read{font-family:"IBM Plex Mono",monospace;font-size:13.5px;color:var(--ink-soft);margin-top:12px}
+.sim-read b{color:var(--ink)}
+
+/* ---- tabella ---- */
+table{border-collapse:collapse;width:100%;margin:22px 0;font-size:15.5px;background:var(--panel)}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{font-family:"Space Grotesk",sans-serif;font-size:13.5px;text-transform:uppercase;letter-spacing:.06em;background:var(--code-bg)}
+
+/* ---- glossario ---- */
+dl.gloss{display:grid;grid-template-columns:max-content 1fr;gap:10px 22px;max-width:80ch}
+dl.gloss dt{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:15.5px}
+dl.gloss dd{color:var(--ink-soft);font-size:15.5px}
+
+/* ---- bibliografia ---- */
+ol.refs{margin-left:22px}
+ol.refs li{margin-bottom:12px;font-size:15.5px}
+ol.refs .mono{font-size:13px;color:var(--ink-soft)}
+
+footer{padding:40px 0 60px;color:var(--ink-soft);font-size:14.5px}
+
+@media (max-width:760px){
+  .paper-card{grid-template-columns:1fr}
+  .stage-flow{grid-template-columns:1fr}
+  .stage-arrow{transform:rotate(90deg);justify-self:center}
+  .sim-grid{grid-template-columns:1fr}
+  dl.gloss{grid-template-columns:1fr}
+  dl.gloss dd{margin-bottom:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<!-- ============================ HERO ============================ -->
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Spiegazione guidata · arXiv:2305.17493</p>
+    <h1>La maledizione della ricorsione: quando l'IA impara da sé stessa, <em>dimentica la realtà</em></h1>
+    <p class="sub">Un percorso passo-passo — dalle basi fino alle formule — per capire il <strong>model collapse</strong>: il fenomeno per cui i modelli generativi addestrati sui dati prodotti da altri modelli perdono progressivamente le "code" della realtà, fino a convergere su una caricatura povera e ripetitiva di essa.</p>
+
+    <div class="paper-card">
+      <div><b>Titolo originale</b>The Curse of Recursion: Training on Generated Data Makes Models Forget</div>
+      <div><b>Autori</b>I. Shumailov, Z. Shumaylov, Y. Zhao, Y. Gal, N. Papernot, R. Anderson</div>
+      <div><b>Istituzioni</b>Oxford, Cambridge, Imperial College, Toronto/Vector, Edinburgh</div>
+      <div><b>Pubblicazione</b>arXiv, maggio 2023 (v3: aprile 2024) · versione rivista su <i>Nature</i> 631, luglio 2024</div>
+      <div><b>Contributo chiave</b>Definisce e dimostra il <i>model collapse</i> in GMM, VAE e LLM, con teoria e esperimenti</div>
+      <div><b>Link</b><a href="https://arxiv.org/abs/2305.17493">arxiv.org/abs/2305.17493</a></div>
+    </div>
+
+    <div class="hero-fig">
+      <div class="gen-ribbon" aria-hidden="true"></div>
+      <div class="label"><span>Una distribuzione ri-appresa e ri-campionata, generazione dopo generazione</span><span id="heroGenLabel">Generazione 0</span></div>
+      <svg id="heroSvg" viewBox="0 0 860 240" role="img" aria-label="Animazione: una distribuzione bimodale perde le code e collassa in un picco"></svg>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ INDICE ============================ -->
+<nav class="toc">
+  <div class="wrap">
+    <ol>
+      <li><a href="#basi"><span class="lvl">Livello 1 · Le basi</span>Cosa fa davvero un modello generativo</a></li>
+      <li><a href="#fenomeno"><span class="lvl">Livello 2 · Il fenomeno</span>Che cos'è il model collapse</a></li>
+      <li><a href="#cause"><span class="lvl">Livello 2 · Le cause</span>I tre errori che si accumulano</a></li>
+      <li><a href="#teoria"><span class="lvl">Livello 3 · La teoria</span>La matematica del collasso</a></li>
+      <li><a href="#sim"><span class="lvl">Interattivo</span>Simula il collasso nel browser</a></li>
+      <li><a href="#esperimenti"><span class="lvl">Livello 4 · Gli esperimenti</span>GMM, VAE e modelli linguistici</a></li>
+      <li><a href="#implicazioni"><span class="lvl">Livello 5 · Le implicazioni</span>Perché riguarda il futuro del web</a></li>
+      <li><a href="#dopo"><span class="lvl">Contesto</span>Critiche e studi successivi</a></li>
+    </ol>
+  </div>
+</nav>
+
+<!-- ============================ LIVELLO 1: BASI ============================ -->
+<section id="basi">
+  <div class="wrap">
+    <div class="sec-head"><p class="lvl">Livello 1 · Le basi</p><h2>Prima di tutto: cosa fa davvero un modello generativo?</h2></div>
+
+    <p class="lead">Per capire il paper serve un'unica idea fondamentale: un modello generativo non "sa cose" — <strong>approssima una distribuzione di probabilità</strong>.</p>
+
+    <p>Quando un grande modello linguistico (LLM) come GPT viene addestrato su miliardi di frasi scritte da esseri umani, ciò che impara è una stima di <em>quanto è probabile</em> ogni possibile continuazione di un testo. Lo stesso vale per un generatore di immagini con i pixel, o per un modello statistico con i numeri. In simboli: esiste una distribuzione "vera" \(p_0\) (il modo in cui gli umani producono dati) e il modello impara un'approssimazione \(p_\theta \approx p_0\), da cui poi <em>campiona</em> per generare contenuti nuovi.</p>
+
+    <h3>Il concetto cruciale: le code della distribuzione</h3>
+    <p>In ogni distribuzione reale c'è un "centro" (gli eventi frequenti: frasi comuni, volti tipici, fatti noti) e ci sono le <strong>code</strong> (<em>tails</em>): gli eventi rari ma reali — dialetti, malattie rare, stili inusuali, opinioni minoritarie, casi limite. Le code contengono poca massa di probabilità ma moltissima <em>informazione</em>: sono ciò che rende il mondo vario.</p>
+
+    <figure class="panel">
+      <svg viewBox="0 0 860 260" role="img" aria-label="Istogramma con centro e code evidenziate">
+        <g id="tailsFig"></g>
+      </svg>
+      <figcaption><b>Centro vs code.</b> La maggior parte dei campioni cade nella zona centrale (verde); gli eventi rari vivono nelle code (rosso). Se ad ogni "fotografia" della distribuzione si scattano solo <i>M</i> campioni, gli eventi con probabilità inferiore a circa \(1/M\) in media non vengono mai osservati — ed è da qui che inizia tutto.</figcaption>
+    </figure>
+
+    <div class="keybox">
+      <p class="kb-t">Idea chiave n. 1</p>
+      <p>Campionare da una distribuzione è come fotografarla con una macchina a bassa risoluzione: il centro viene benissimo, le code si perdono. Se poi si ri-apprende la distribuzione <em>dalla fotografia</em> invece che dall'originale, la perdita diventa permanente.</p>
+    </div>
+
+    <h3>Il ciclo che il paper studia</h3>
+    <p>Oggi gli LLM scrivono una frazione crescente del testo presente online. I modelli futuri verranno addestrati su scraping del web — quindi, inevitabilmente, <strong>anche sull'output dei modelli precedenti</strong>. Il paper formalizza questo ciclo, che chiama <em>learning with generational data</em>:</p>
+
+    <figure class="panel">
+      <svg viewBox="0 0 860 330" role="img" aria-label="Diagramma del ciclo di feedback: dati umani, modello 0, dati generati, modello 1, e così via">
+        <defs>
+          <marker id="arrw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4A5C6E"/></marker>
+        </defs>
+        <!-- Dati umani -->
+        <rect x="20" y="40" width="180" height="74" rx="10" fill="#E2F2EF" stroke="#0E8A78"/>
+        <text x="110" y="72" text-anchor="middle" font-size="15" fill="#182430" font-weight="bold">Dati umani</text>
+        <text x="110" y="94" text-anchor="middle" font-size="12.5" fill="#4A5C6E">distribuzione vera p₀</text>
+        <!-- Modello 0 -->
+        <rect x="270" y="40" width="160" height="74" rx="10" fill="#FFFFFF" stroke="#B9C5CF"/>
+        <text x="350" y="72" text-anchor="middle" font-size="15" font-weight="bold" fill="#182430">Modello 0</text>
+        <text x="350" y="94" text-anchor="middle" font-size="12.5" fill="#4A5C6E">addestrato su p₀</text>
+        <!-- Dati generati -->
+        <rect x="500" y="40" width="180" height="74" rx="10" fill="#FBF3E2" stroke="#A8902F"/>
+        <text x="590" y="72" text-anchor="middle" font-size="15" font-weight="bold" fill="#182430">Dati sintetici</text>
+        <text x="590" y="94" text-anchor="middle" font-size="12.5" fill="#4A5C6E">campionati dal modello</text>
+        <!-- Modello 1 -->
+        <rect x="270" y="200" width="160" height="74" rx="10" fill="#FFFFFF" stroke="#B9C5CF"/>
+        <text x="350" y="232" text-anchor="middle" font-size="15" font-weight="bold" fill="#182430">Modello 1</text>
+        <text x="350" y="254" text-anchor="middle" font-size="12.5" fill="#4A5C6E">addestrato sul mix</text>
+        <!-- Mix -->
+        <rect x="500" y="200" width="290" height="74" rx="10" fill="#F8E9E6" stroke="#C0392B"/>
+        <text x="645" y="226" text-anchor="middle" font-size="14" font-weight="bold" fill="#182430">Nuovo dataset (mix)</text>
+        <text x="645" y="246" text-anchor="middle" font-size="12.5" fill="#4A5C6E">α·sintetici + β·gen. precedente + γ·originali</text>
+        <text x="645" y="263" text-anchor="middle" font-size="12.5" fill="#4A5C6E">nel web reale: α cresce nel tempo</text>
+        <!-- frecce -->
+        <line x1="200" y1="77" x2="266" y2="77" stroke="#4A5C6E" stroke-width="2" marker-end="url(#arrw)"/>
+        <line x1="430" y1="77" x2="496" y2="77" stroke="#4A5C6E" stroke-width="2" marker-end="url(#arrw)"/>
+        <path d="M 645 114 L 645 196" stroke="#4A5C6E" stroke-width="2" fill="none" marker-end="url(#arrw)"/>
+        <line x1="496" y1="237" x2="434" y2="237" stroke="#4A5C6E" stroke-width="2" marker-end="url(#arrw)"/>
+        <path d="M 350 196 C 350 150, 350 150, 350 118" stroke="#C0392B" stroke-width="2.5" stroke-dasharray="6 4" fill="none" marker-end="url(#arrw)"/>
+        <text x="240" y="160" font-size="12.5" fill="#C0392B">il ciclo riparte: il Modello 1</text>
+        <text x="240" y="176" font-size="12.5" fill="#C0392B">genera i dati per il Modello 2…</text>
+      </svg>
+      <figcaption><b>Il meccanismo di feedback</b> (ridisegno della Fig. 2 del paper). Ad ogni generazione \(i\) il nuovo dataset è una miscela \(p_{i+1} = \alpha_i\, p_{\theta_{i+1}} + \beta_i\, p_i + \gamma_i\, p_0\). Nei modelli teorici del paper si studia il caso peggiore \(\alpha_i{=}1\) (solo dati sintetici); negli esperimenti anche miscele realistiche.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============================ LIVELLO 2: FENOMENO ============================ -->
+<section id="fenomeno">
+  <div class="wrap">
+    <div class="sec-head"><p class="lvl hot">Livello 2 · Il fenomeno</p><h2>Che cos'è il model collapse</h2></div>
+
+    <p class="lead">Definizione 3.1 del paper, riformulata: il <strong>model collapse</strong> è un processo degenerativo che colpisce <em>generazioni successive</em> di modelli generativi, in cui i dati generati inquinano il training set della generazione seguente, che finisce per <em>fraintendere la realtà</em>.</p>
+
+    <p>Il nome richiama il <em>mode collapse</em> delle GAN (quando un generatore produce sempre le stesse poche uscite). Gli autori distinguono due fasi:</p>
+
+    <div class="stage-flow">
+      <div class="stage early">
+        <h4>Collasso precoce (early)</h4>
+        <p>Il modello comincia a perdere informazione sulle <b>code</b>: gli eventi rari spariscono per primi. In superficie il modello sembra ancora funzionare — anzi, le metriche medie possono perfino migliorare leggermente.</p>
+      </div>
+      <div class="stage-arrow">→</div>
+      <div class="stage late">
+        <h4>Collasso tardivo (late)</h4>
+        <p>I diversi <b>modi</b> della distribuzione originale si fondono e confondono; il modello converge a una distribuzione a <b>varianza minima</b> che assomiglia pochissimo all'originale.</p>
+      </div>
+    </div>
+
+    <div class="keybox warn">
+      <p class="kb-t">Da non confondere</p>
+      <p><strong>Non è catastrophic forgetting</strong> (un singolo modello che dimentica compiti vecchi imparando i nuovi): qui ogni modello è nuovo, e non "dimentica" — piuttosto <em>eredita e amplifica</em> le distorsioni dei genitori, rinforzando le proprie convinzioni.</p>
+      <p><strong>Non è (solo) data poisoning</strong>: nessun attaccante inserisce dati malevoli. L'inquinamento è involontario e su scala enorme, perché automatizzato.</p>
+    </div>
+
+    <h3>Come appare in pratica: l'esperimento sul testo</h3>
+    <p>L'esempio più citato del paper: un modello OPT-125m riceve un prompt sull'architettura delle chiese inglesi del Trecento. Ad ogni generazione, il modello viene riaddestrato sul testo prodotto dalla generazione precedente. Ecco la deriva dell'output, parafrasata dall'esempio del paper:</p>
+
+    <div class="gen-quotes" id="genQuotes">
+      <div class="gq"><span class="g">Generazione 0</span><p>Risposta plausibile ma già con errori fattuali: parla di architettura "Revival" e cita edifici e date in modo confuso, pur restando in tema.</p></div>
+      <div class="gq"><span class="g">Generazione 1</span><p>Compaiono riferimenti palesemente errati (basiliche a Roma e "a Buenos Aires", papi fuori epoca): i fatti rari e precisi cominciano a sfumare.</p></div>
+      <div class="gq"><span class="g">Generazione 7</span><p>Il tema è quasi perso: il testo divaga in dichiarazioni generiche da intervista, scollegate dall'architettura.</p></div>
+      <div class="gq"><span class="g">Generazione 9</span><p>Collasso conclamato: il testo degenera in un elenco ripetitivo e assurdo di lepri americane (<i>jackrabbits</i>) di vari colori di coda — nulla a che fare col prompt.</p></div>
+    </div>
+    <p style="font-size:15px;color:var(--ink-soft)">I colori dei riquadri seguono la "scala delle generazioni" usata in tutta la pagina: verde = vicino ai dati reali, rosso = collasso.</p>
+  </div>
+</section>
+
+<!-- ============================ LIVELLO 2: CAUSE ============================ -->
+<section id="cause">
+  <div class="wrap">
+    <div class="sec-head"><p class="lvl hot">Livello 2 · Le cause</p><h2>I tre errori che, sommandosi, producono il collasso</h2></div>
+
+    <p>Il paper individua una causa <strong>primaria</strong>, una <strong>secondaria</strong> e una marginale. La distinzione è importante: senza la prima, il processo si fermerebbe alla prima generazione.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="tag primary">Primaria</span>
+        <h4>Errore di approssimazione statistica</h4>
+        <p>Nasce perché i campioni sono <b>finiti</b>. Ogni ri-campionamento ha probabilità non nulla di perdere informazione: gli eventi con probabilità \(q \le 1/M\) in media producono <b>meno di un campione</b> e svaniscono.</p>
+        <p>Sparirebbe solo con infiniti campioni. È l'errore che <b>si accumula ad ogni generazione</b>.</p>
+      </div>
+      <div class="card">
+        <span class="tag secondary">Secondaria</span>
+        <h4>Errore di approssimazione funzionale</h4>
+        <p>Il modello (es. una rete neurale) non è abbastanza espressivo — o lo è troppo fuori dal supporto dei dati. Esempio del paper: approssimare una <b>miscela di due gaussiane</b> con <b>una sola gaussiana</b>: l'errore è inevitabile anche con informazione perfetta.</p>
+        <p>Da solo agisce <b>una volta sola</b>; combinato con l'errore statistico, lo amplifica a cascata.</p>
+      </div>
+      <div class="card">
+        <span class="tag minor">Marginale</span>
+        <h4>Errore computazionale</h4>
+        <p>La precisione finita dei numeri in virgola mobile introduce piccole distorsioni, non uniformi sull'asse dei valori. Effetto piccolo e mitigabile con hardware più preciso — ma rende lo spazio degli stati <b>discreto</b>, dettaglio che tornerà utile nella teoria.</p>
+      </div>
+    </div>
+
+    <figure class="panel">
+      <svg viewBox="0 0 860 270" role="img" aria-label="Tre istogrammi: due distribuzioni diverse che, ricampionate, appaiono identiche perché le code vengono tagliate">
+        <g id="cutoffFig"></g>
+      </svg>
+      <figcaption><b>Perché l'errore statistico è il motore del collasso</b> (ridisegno concettuale della Fig. 3). Due distribuzioni diverse — una con code "grasse" (sinistra), una bimodale standard (centro) — una volta ricampionate con \(M\) campioni finiti diventano <b>indistinguibili</b> (destra): tutto ciò che sta sotto la soglia \(\log M\) viene tagliato. Informazione persa = informazione irrecuperabile per le generazioni successive.</figcaption>
+    </figure>
+
+    <div class="keybox">
+      <p class="kb-t">Idea chiave n. 2</p>
+      <p>Più potenza espressiva è un'arma a doppio taglio: può compensare il rumore statistico, ma può anche <em>amplificarlo</em>, assegnando probabilità a regioni mai viste che verranno poi campionate "con frequenza arbitraria". L'overfitting della densità peggiora il quadro.</p>
+    </div>
+  </div>
+</section>
+<!-- ============================ LIVELLO 3: TEORIA ============================ -->
+<section id="teoria">
+  <div class="wrap">
+    <div class="sec-head"><p class="lvl">Livello 3 · La teoria</p><h2>La matematica del collasso, un passo alla volta</h2></div>
+
+    <p class="lead">Il paper costruisce due "modelli giocattolo" risolvibili a mano. Sono semplici, ma catturano l'essenza del fenomeno — e producono un risultato sorprendentemente netto.</p>
+
+    <h3>3a · Il setup formale</h3>
+    <p>Alla generazione \(i\) abbiamo un dataset \(D_i\) di \(M_i\) variabili i.i.d. \(X^i_j\) con distribuzione \(p_i\) (con \(p_0\) la distribuzione vera). Due passi si alternano:</p>
+    <ol>
+      <li><strong>Approssimazione funzionale</strong>: stimiamo \(p_i\) con un modello, \(F_\theta : p_i \mapsto p_{\theta_{i+1}}\);</li>
+      <li><strong>Campionamento</strong>: il dataset successivo viene estratto dalla miscela</li>
+    </ol>
+    <div class="eq">
+      $$ p_{i+1} \;=\; \alpha_i\, p_{\theta_{i+1}} \;+\; \beta_i\, p_i \;+\; \gamma_i\, p_0, \qquad \alpha_i+\beta_i+\gamma_i = 1 $$
+      <p class="eq-note">α = quota di dati generati dal nuovo modello · β = dati della generazione precedente · γ = dati originali umani. La teoria analizza il caso α=1; gli esperimenti numerici esplorano anche le miscele.</p>
+    </div>
+
+    <h3>3b · Caso 1 — Distribuzione discreta, approssimazione perfetta: il collasso è <em>certo</em></h3>
+    <p>Supponiamo che il modello sia perfetto: \(F(p)=p\), nessun errore funzionale. Resta solo l'errore di campionamento. Per uno stato con probabilità \(q\):</p>
+    <ul>
+      <li>se \(q \le 1/M\), il numero atteso di campioni di quello stato è \(Mq \le 1\): in pratica <strong>l'informazione si perde</strong>;</li>
+      <li>in generale, la probabilità di non estrarre mai quello stato a una data generazione è positiva — e una volta perso, lo stato non torna più.</li>
+    </ul>
+    <p>L'osservazione elegante: la sequenza \(X^i \to F_\theta \to p_{i+1} \to X^{i+1}\) è una <strong>catena di Markov</strong> (il futuro dipende solo dal presente). E questa catena ha <strong>stati assorbenti</strong>: se a una generazione tutti i campioni hanno lo stesso valore, la distribuzione stimata è una <em>delta di Dirac</em>, e da lì non si esce più. Un teorema classico garantisce che una catena con stati assorbenti raggiungibili viene assorbita <strong>con probabilità 1</strong>.</p>
+
+    <figure class="panel">
+      <svg viewBox="0 0 860 250" role="img" aria-label="Catena di Markov con stati transitori che convergono a uno stato assorbente delta">
+        <defs><marker id="arrw2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4A5C6E"/></marker></defs>
+        <!-- stati transitori -->
+        <circle cx="120" cy="125" r="46" fill="#E2F2EF" stroke="#0E8A78" stroke-width="2"/>
+        <text x="120" y="120" text-anchor="middle" font-size="13.5" fill="#182430">p ricca</text>
+        <text x="120" y="138" text-anchor="middle" font-size="11.5" fill="#4A5C6E">molti stati</text>
+        <circle cx="330" cy="125" r="46" fill="#F4F0DC" stroke="#A8902F" stroke-width="2"/>
+        <text x="330" y="120" text-anchor="middle" font-size="13.5" fill="#182430">p impoverita</text>
+        <text x="330" y="138" text-anchor="middle" font-size="11.5" fill="#4A5C6E">code perse</text>
+        <circle cx="540" cy="125" r="46" fill="#F8E9E6" stroke="#C0392B" stroke-width="2"/>
+        <text x="540" y="120" text-anchor="middle" font-size="13.5" fill="#182430">pochi stati</text>
+        <text x="540" y="138" text-anchor="middle" font-size="11.5" fill="#4A5C6E">quasi-delta</text>
+        <!-- assorbente -->
+        <circle cx="750" cy="125" r="50" fill="#C0392B" stroke="#8E2A1F" stroke-width="3"/>
+        <circle cx="750" cy="125" r="58" fill="none" stroke="#C0392B" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <text x="750" y="118" text-anchor="middle" font-size="13.5" fill="#fff" font-weight="bold">δ(x − x*)</text>
+        <text x="750" y="136" text-anchor="middle" font-size="11.5" fill="#FFD9D2">stato assorbente</text>
+        <!-- frecce avanti -->
+        <line x1="166" y1="125" x2="280" y2="125" stroke="#4A5C6E" stroke-width="2" marker-end="url(#arrw2)"/>
+        <line x1="376" y1="125" x2="490" y2="125" stroke="#4A5C6E" stroke-width="2" marker-end="url(#arrw2)"/>
+        <line x1="586" y1="125" x2="694" y2="125" stroke="#4A5C6E" stroke-width="2" marker-end="url(#arrw2)"/>
+        <!-- self loops -->
+        <path d="M 96 84 C 70 30, 170 30, 144 84" fill="none" stroke="#4A5C6E" stroke-width="1.5" marker-end="url(#arrw2)"/>
+        <path d="M 306 84 C 280 30, 380 30, 354 84" fill="none" stroke="#4A5C6E" stroke-width="1.5" marker-end="url(#arrw2)"/>
+        <path d="M 726 80 C 700 22, 800 22, 774 80" fill="none" stroke="#8E2A1F" stroke-width="2" marker-end="url(#arrw2)"/>
+        <text x="750" y="36" text-anchor="middle" font-size="11.5" fill="#8E2A1F">prob. 1 (non si esce)</text>
+        <text x="430" y="225" text-anchor="middle" font-size="12.5" fill="#4A5C6E">Le transizioni possono oscillare, ma esiste almeno uno stato assorbente ⇒ la catena vi finisce con probabilità 1</text>
+      </svg>
+      <figcaption><b>Il collasso come assorbimento di una catena di Markov.</b> Nel limite \(k\to\infty\), \(T^k\) annulla le probabilità di restare in stati transitori (App. A.1 del paper): gli unici stati assorbenti sono le delta. Lo stato finale \(x^*\) è casuale (più probabile dove la distribuzione originale aveva più massa), ma <b>il collasso in sé è inevitabile</b>.</figcaption>
+    </figure>
+
+    <h3>3c · Caso 2 — Gaussiana 1D: il collasso come passeggiata aleatoria</h3>
+    <p>Ora introduciamo anche l'approssimazione funzionale più semplice possibile: ad ogni generazione stimiamo media e varianza campionarie (stimatori non distorti) e fittiamo una nuova gaussiana:</p>
+    <div class="eq">
+      $$ \mu_{i+1}=\frac{1}{M_i}\sum_j X^i_j\,,\qquad \sigma^2_{i+1}=\frac{1}{M_i-1}\sum_j \big(X^i_j-\mu_{i+1}\big)^2\,,\qquad X^{i+1}_j \sim \mathcal{N}\big(\mu_{i+1},\,\sigma^2_{i+1}\big) $$
+      <p class="eq-note">Eq. (1)–(2) del paper. Già dopo la prima generazione la vera distribuzione di \(X^1_j\) non è più gaussiana (è una varianza-gamma): l'approssimazione introduce distorsione anche nel caso più innocuo.</p>
+    </div>
+    <p>Espandendo al secondo ordine in \(1/M_i\) (accurato già per \(M \gtrsim 100\)), con campioni costanti \(M_i = M\) si ottiene il risultato centrale:</p>
+    <div class="eq">
+      $$ \mathbb{E}\big(X^n_j\big) = \mu\,,\qquad \operatorname{Var}\big(X^n_j\big) \;=\; \sigma^2\Big(1+\frac{n}{M}\Big) $$
+      <p class="eq-note">In media il processo è "corretto", ma la varianza <b>cresce linearmente con il numero di generazioni</b> n — esattamente come una passeggiata aleatoria (random walk). I parametri del modello vagano sempre più lontano dal punto di partenza.</p>
+    </div>
+
+    <h3>3d · Quanto ci si allontana? La distanza di Wasserstein</h3>
+    <p>Per misurare "quanto è sbagliata" la generazione \(n{+}1\) rispetto all'originale, il paper usa la distanza di Wasserstein-2 tra gaussiane, \(R^{n+1}_{W_2} = \|\mu_{n+1}-\mu\|^2 + \|\sigma_{n+1}-\sigma\|^2\), e ne calcola il valore atteso (il <em>rischio</em>):</p>
+    <div class="eq">
+      $$ \mathbb{E}\big[R^{n+1}_{W_2}\big] \;=\; \frac{3}{2}\,\sigma^2\left(\frac{1}{M_0}+\frac{1}{M_1}+\dots+\frac{1}{M_n}\right) + \mathcal{O}(2) $$
+      <p class="eq-note">Eq. (4). Ogni generazione aggiunge un termine \(\propto 1/M_i\): l'errore <b>si accumula e non si media via</b>.</p>
+    </div>
+    <p>La conseguenza pratica è la più importante del paper:</p>
+    <div class="keybox warn">
+      <p class="kb-t">Idea chiave n. 3 — il costo della ricorsione</p>
+      <p>Con sample size costante (\(M_i = M\)) il rischio <strong>diverge</strong>: \(\mathbb{E}[R] \approx \tfrac{3\sigma^2}{2}\cdot\tfrac{n}{M} \to \infty\). Per tenerlo limitato, \(M_i\) deve crescere <strong>superlinearmente</strong> (es. quadraticamente) nel tempo: servono sempre più dati a ogni generazione solo per <em>non peggiorare</em>. E persino così l'errore atteso resta non nullo — si azzera solo con campioni infiniti.</p>
+    </div>
+
+    <h3>3e · Generalizzazione: il limite inferiore vale per modelli "qualsiasi"</h3>
+    <p>E se il modello fosse più furbo della semplice media campionaria? La Sezione 4.3 considera uno stimatore generico \(\mu_{i+1} = \frac{1}{M_i}\sum_j X^i_j + \varepsilon_{i+1}\), dove \(\varepsilon\) è il contributo extra del modello, sotto tre ipotesi deboli (media corretta; \(\varepsilon\) funzione dei soli dati; rumore scorrelato dalla media campionaria). Sfruttando il fatto che le gaussiane danno un limite inferiore universale alla \(W_2\) (Gelbrich, 1990), si ottiene:</p>
+    <div class="eq">
+      $$ \mathbb{E}\big[R^{n+1}_{W_2}\big] \;\ge\; \operatorname{Tr}\Sigma\left(\frac{1}{M_0}+\dots+\frac{1}{M_n}\right) \;+\; \sum_{i=1}^{n+1}\mathbb{E}\,\|\varepsilon_i\|^2 $$
+      <p class="eq-note">Eq. (15). Anche per approssimatori generici il rischio è <b>limitato dal basso</b> dalla stessa somma armonica: il campionamento superlineare resta necessario, e ogni rumore extra del modello peggiora il limite.</p>
+    </div>
+
+    <p>In sintesi, la sezione teorica dice: <em>imparando da dati generazionali con campioni finiti, in media si recupera la distribuzione originale, ma la varianza del processo è non nulla; generazione dopo generazione la distanza dall'originale cresce — e può divergere — perché gli errori si compongono nel tempo.</em></p>
+  </div>
+</section>
+
+<!-- ============================ SIMULATORE ============================ -->
+<section id="sim">
+  <div class="wrap">
+    <div class="sec-head"><p class="lvl hot">Interattivo</p><h2>Prova tu: simula il collasso di una gaussiana</h2></div>
+    <p>Questa è la replica nel browser dell'esperimento della Sezione 4.2 (Fig. 4 del paper): partiamo da \(\mathcal{N}(0,1)\); ad ogni generazione estraiamo \(M\) campioni dalla gaussiana <em>stimata</em>, ricalcoliamo \(\mu\) e \(\sigma\), e ripetiamo. Osserva come, con \(M\) piccolo, i parametri derivano come in una passeggiata aleatoria — e a volte \(\sigma\) crolla verso zero (la "delta").</p>
+
+    <div class="sim">
+      <div class="sim-controls">
+        <label for="simM">Campioni per generazione M:</label>
+        <select id="simM">
+          <option value="100" selected>100</option>
+          <option value="500">500</option>
+          <option value="1000">1 000</option>
+          <option value="10000">10 000</option>
+          <option value="100000">100 000</option>
+        </select>
+        <label for="simGen">Generazioni:</label>
+        <select id="simGen">
+          <option value="200">200</option>
+          <option value="1000" selected>1 000</option>
+          <option value="3000">3 000</option>
+        </select>
+        <button class="go" id="simRun">▶ Esegui simulazione</button>
+        <button id="simReset">Azzera</button>
+      </div>
+      <div class="sim-grid">
+        <div class="cell">
+          <h5>Densità stimata: generazione 0 (verde) → finale (rosso)</h5>
+          <canvas id="cDens" width="640" height="320"></canvas>
+        </div>
+        <div class="cell">
+          <h5>Deriva dei parametri: |μₙ − μ| e σₙ per generazione (asse x log)</h5>
+          <canvas id="cDrift" width="640" height="320"></canvas>
+        </div>
+      </div>
+      <p class="sim-read" id="simRead">Premi «Esegui simulazione». Suggerimento: confronta M = 100 con M = 100 000 — la teoria prevede deriva ∝ n/M.</p>
+    </div>
+
+    <div class="keybox">
+      <p class="kb-t">Cosa osservare</p>
+      <p>1) Con M piccolo la curva rossa si sposta e si restringe rapidamente; 2) ripetendo la stessa simulazione il risultato cambia (è un processo stocastico: la <em>direzione</em> della deriva è casuale, la deriva in sé no); 3) aumentare M rallenta il collasso ma non lo elimina — coerentemente con \(\operatorname{Var}\propto n/M\).</p>
+    </div>
+  </div>
+</section>
+<!-- ============================ LIVELLO 4: ESPERIMENTI ============================ -->
+<section id="esperimenti">
+  <div class="wrap">
+    <div class="sec-head"><p class="lvl">Livello 4 · Gli esperimenti</p><h2>La verifica empirica: GMM, VAE e modelli linguistici</h2></div>
+
+    <p class="lead">La teoria usa modelli giocattolo; gli esperimenti mostrano che il fenomeno è <strong>universale</strong> tra famiglie di modelli molto diverse.</p>
+
+    <h3>4a · Gaussian Mixture Models (da zero)</h3>
+    <p>Compito: separare due gaussiane artificiali. Il GMM iniziale le fitta quasi perfettamente; poi viene ricampionato (1 000 campioni) e ri-fittato in ciclo. <strong>Già alla generazione 50</strong> la percezione della distribuzione è completamente cambiata; alla <strong>generazione 2 000</strong> resta un punto con varianza minima. La distanza L2 dall'originale cresce di ordini di grandezza (Fig. 13 del paper).</p>
+
+    <figure class="panel">
+      <svg viewBox="0 0 860 230" role="img" aria-label="Sequenza schematica: due nuclei ben separati che si fondono e si riducono a un punto attraverso le generazioni">
+        <g id="gmmFig"></g>
+      </svg>
+      <figcaption><b>Schema qualitativo della Fig. 7 del paper.</b> Iterazioni 0 → 50 → 200 → 2000: i due gruppi (verde/blu) prima si deformano, poi si fondono, infine collassano in un punto. Ogni pannello rappresenta i campioni generati dal GMM a quella generazione.</figcaption>
+    </figure>
+
+    <h3>4b · Variational Autoencoders (immagini di cifre)</h3>
+    <p>Un VAE addestrato su cifre manoscritte genera immagini; queste addestrano il VAE successivo, e così via. Alla <strong>generazione 20</strong> le immagini sono un impasto unimodale di tutte le cifre: i modi (le dieci cifre) si sono fusi. Dettaglio rivelatore: l'encoder <em>originale</em>, guardando i dati dei discendenti, li mappa sempre più vicino alla media dello spazio latente — le code della distribuzione latente svaniscono generazione dopo generazione (Fig. 8), esattamente come nella gaussiana 1D della teoria.</p>
+
+    <h3>4c · LLM: il caso realistico del fine-tuning</h3>
+    <p>Riaddestrare un LLM da zero ad ogni generazione costerebbe troppo (gli autori notano anche il costo ambientale), quindi il paper testa lo scenario più comune: <strong>fine-tuning</strong> di OPT-125m su wikitext2, dove ogni ciclo parte dal modello pre-addestrato e i dati provengono dal modello fine-tunato precedente (generazione con beam search a 5 vie, blocchi da 64 token, dataset artificiale di pari dimensione dell'originale).</p>
+
+    <figure class="panel">
+      <svg viewBox="0 0 860 330" role="img" aria-label="Grafico a linee: perplexity per generazione, con e senza conservazione del 10% dei dati originali">
+        <g id="pplFig"></g>
+      </svg>
+      <figcaption><b>Andamento qualitativo della perplexity sul test set reale</b> (ridisegno schematico della Fig. 10; valori indicativi, non estratti punto a punto). Baseline reale ≈ 34 di perplexity (da 115 zero-shot). <span style="color:#C0392B">Rosso: nessun dato originale conservato</span> — degrado marcato e crescente. <span style="color:#0E8A78">Verde: 10% di dati originali reiniettati ad ogni generazione</span> — degrado molto più contenuto. Perplexity più bassa = modello migliore.</figcaption>
+    </figure>
+
+    <p>Due risultati fini ma importanti:</p>
+    <ul>
+      <li><strong>La distribuzione si "stringe" e insieme sviluppa code spurie.</strong> Valutando con il modello originale le sequenze prodotte dalle generazioni successive (Fig. 11), si vede una doppia patologia: le generazioni tarde producono <em>più</em> sequenze ad altissima probabilità (ripiegamento sul centro) e <em>contemporaneamente</em> una lunga coda di sequenze che il modello originale non produrrebbe mai — errori inventati dagli "antenati" e amplificati dai discendenti.</li>
+      <li><strong>Non è colpa delle ripetizioni.</strong> Per escludere che il degrado dipenda dal noto problema del testo ripetitivo, gli autori ripetono tutto con una penalità anti-ripetizione di 2.0: la perplexity peggiora ancora (circa raddoppia) e il collasso resta — se non peggio.</li>
+    </ul>
+
+    <figure class="panel">
+      <svg viewBox="0 0 860 300" role="img" aria-label="Istogrammi sovrapposti di perplexity per generazione: il picco si sposta verso sinistra e compare una lunga coda a destra">
+        <g id="histFig"></g>
+      </svg>
+      <figcaption><b>La doppia patologia</b> (schema concettuale della Fig. 11). Per ogni generazione, istogramma della perplexity delle sequenze generate, valutata dal modello "0" addestrato su dati reali. Dalla generazione 0 (verde) alla 9 (rosso): il picco si concentra su sequenze iper-probabili <i>e</i> cresce la coda destra di sequenze impossibili: il modello insieme <b>si impoverisce</b> e <b>allucina</b>.</figcaption>
+    </figure>
+
+    <div class="keybox">
+      <p class="kb-t">Risultato sintetico degli esperimenti</p>
+      <p>Il collasso emerge in <strong>tutte</strong> le famiglie testate. Nel fine-tuning di LLM se ne osservano i <em>primi segni</em> (il pre-training àncora il modello); conservare anche solo il <strong>10% di dati umani originali</strong> ad ogni ciclo attenua nettamente — ma non azzera — il degrado.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ LIVELLO 5: IMPLICAZIONI ============================ -->
+<section id="implicazioni">
+  <div class="wrap">
+    <div class="sec-head"><p class="lvl hot">Livello 5 · Le implicazioni</p><h2>Perché tutto questo riguarda il futuro del web</h2></div>
+
+    <h3>Equità: chi vive nelle code paga per primo</h3>
+    <p>Gli eventi a bassa probabilità sono spesso quelli che riguardano <strong>gruppi marginalizzati</strong>: lingue minoritarie, condizioni rare, esperienze atipiche. Il collasso precoce — la perdita delle code — significa che i modelli futuri rappresenteranno sempre peggio proprio queste realtà, ben prima che il degrado sia visibile nelle metriche medie. Le code sono inoltre essenziali per comprendere i sistemi complessi: il paper richiama i "cigni neri" di Taleb — gli eventi rari ma decisivi.</p>
+
+    <h3>Un avvelenamento su scala mai vista</h3>
+    <p>Il web ha già conosciuto inquinamento dei dati "umano": click farm, content farm, troll farm, che costrinsero Google e DuckDuckGo a rivedere i propri algoritmi. La differenza con gli LLM è la <strong>scala dell'automazione</strong>: l'inquinamento non richiede più manodopera.</p>
+
+    <h3>Il vantaggio del primo arrivato</h3>
+    <p>Il paper parla di <em>first mover advantage</em>: chi ha addestrato modelli su un Internet ancora prevalentemente umano (pre-2023) possiede qualcosa che potrebbe diventare irripetibile. Ne discendono tre conseguenze concrete:</p>
+    <ul>
+      <li><strong>I dati umani genuini diventano un asset strategico</strong>, crescente di valore man mano che il web si riempie di contenuto sintetico — incluse le interazioni reali degli utenti con i sistemi.</li>
+      <li><strong>La provenienza dei contenuti diventa un problema infrastrutturale</strong>: oggi non sappiamo tracciare su larga scala cosa è stato generato da un LLM. Una via possibile è il coordinamento di comunità tra chi crea e distribuisce modelli.</li>
+      <li><strong>Senza soluzioni</strong>, addestrare nuovi modelli potrebbe richiedere accesso a crawl del web <em>antecedenti</em> all'adozione di massa degli LLM, o a dati umani raccolti direttamente.</li>
+    </ul>
+
+    <figure class="panel">
+      <svg viewBox="0 0 860 250" role="img" aria-label="Infografica: composizione del web nel tempo, quota umana che si riduce e quota sintetica che cresce">
+        <g id="webFig"></g>
+      </svg>
+      <figcaption><b>Lo scenario che motiva il paper</b> (infografica concettuale, non dati misurati): se la quota di testo sintetico online cresce, lo scraping "ingenuo" del web campiona sempre più output di modelli — e il ciclo della Fig. 2 si chiude da solo. Antidoti: conservare dati umani, tracciarne la provenienza, curare le fonti.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============================ CONTESTO E STUDI SUCCESSIVI ============================ -->
+<section id="dopo">
+  <div class="wrap">
+    <div class="sec-head"><p class="lvl">Contesto</p><h2>Cosa è successo dopo: dibattito e studi successivi</h2></div>
+    <p>Il paper (poi pubblicato in versione rivista su <em>Nature</em> nel luglio 2024, con grande eco mediatica) ha aperto un filone di ricerca attivo. Alcuni riferimenti utili per proseguire — con le rispettive sfumature:</p>
+    <table>
+      <thead><tr><th>Studio</th><th>Messaggio principale</th><th>Rapporto con questo paper</th></tr></thead>
+      <tbody>
+        <tr><td>Alemohammad et al., <i>Self-Consuming Generative Models Go MAD</i> (ICLR 2024)</td><td>Cicli "autofagi" nei modelli di immagini: senza dati freschi, qualità o diversità degradano (MADness).</td><td>Conferma indipendente sul dominio visivo.</td></tr>
+        <tr><td>Dohmatob et al., <i>A Tale of Tails</i> (2024)</td><td>Il collasso si può leggere come alterazione delle leggi di scala: i dati sintetici troncano le code e rompono lo scaling.</td><td>Estende la teoria delle code al regime degli LLM moderni.</td></tr>
+        <tr><td>Gerstgrasser et al., <i>Is Model Collapse Inevitable?</i> (2024)</td><td>Se i dati si <b>accumulano</b> (reali + sintetici di tutte le generazioni) invece di <b>sostituirsi</b>, l'errore può restare limitato.</td><td>Precisazione importante: il caso peggiore del paper assume sostituzione; l'accumulo è uno scenario più ottimista (coerente con le Fig. 5–6 del paper stesso, dove le miscele attenuano la deriva).</td></tr>
+        <tr><td>Bertrand et al., <i>On the Stability of Iterative Retraining…</i> (2024)</td><td>Con una quota sufficiente di dati reali ad ogni ciclo, il riaddestramento iterativo può essere stabile.</td><td>Quantifica il ruolo del parametro γ (dati originali) della miscela.</td></tr>
+        <tr><td>Pratiche industriali sui dati sintetici (distillazione, self-instruct, dati sintetici curati)</td><td>Dati sintetici <b>selezionati, filtrati e verificati</b> possono migliorare i modelli.</td><td>Non contraddice il paper: il collasso riguarda il ri-addestramento <i>indiscriminato</i> su output non curati, non l'uso mirato di dati sintetici di qualità.</td></tr>
+      </tbody>
+    </table>
+    <div class="keybox">
+      <p class="kb-t">Come leggere il quadro complessivo</p>
+      <p>Il consenso emerso: il collasso è reale e matematicamente fondato nel caso di <em>sostituzione</em> dei dati con output non curati; è mitigabile con <strong>accumulo dei dati, quota stabile di dati umani, curation e tracciamento della provenienza</strong>. Il valore durevole del paper è aver dimostrato che la salute dell'ecosistema dei dati non è garantita: va mantenuta attivamente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ GLOSSARIO ============================ -->
+<section id="glossario">
+  <div class="wrap">
+    <div class="sec-head"><p class="lvl">Strumenti</p><h2>Glossario essenziale</h2></div>
+    <dl class="gloss">
+      <dt>Distribuzione p(x)</dt><dd>Funzione che assegna a ogni possibile dato la sua probabilità. I modelli generativi la approssimano e ne campionano.</dd>
+      <dt>Code (tails)</dt><dd>Regioni a bassa probabilità della distribuzione: eventi rari ma reali. Primi a sparire nel collasso.</dd>
+      <dt>i.i.d.</dt><dd>Campioni indipendenti e identicamente distribuiti: l'assunzione standard sui dati di training.</dd>
+      <dt>Delta di Dirac δ</dt><dd>"Distribuzione" concentrata in un solo punto: varianza zero. Stato finale del collasso tardivo.</dd>
+      <dt>Catena di Markov</dt><dd>Processo in cui il futuro dipende solo dallo stato presente. Uno stato è <i>assorbente</i> se, una volta raggiunto, non si lascia più.</dd>
+      <dt>Distanza di Wasserstein</dt><dd>Misura di quanto due distribuzioni differiscono, intuitivamente il "costo minimo per trasportare" la massa dall'una all'altra.</dd>
+      <dt>GMM</dt><dd>Gaussian Mixture Model: modello che descrive i dati come miscela di più gaussiane.</dd>
+      <dt>VAE</dt><dd>Variational Autoencoder: rete che comprime i dati in uno spazio latente e li ricostruisce; campionando il latente genera dati nuovi.</dd>
+      <dt>Fine-tuning</dt><dd>Riaddestramento leggero di un modello pre-addestrato su nuovi dati: lo scenario LLM realistico testato dal paper.</dd>
+      <dt>Perplexity</dt><dd>Misura di quanto un modello linguistico è "sorpreso" da un testo: più bassa = modello migliore su quel testo.</dd>
+      <dt>Beam search</dt><dd>Strategia di generazione che mantiene le k continuazioni più probabili: usata (a 5 vie) per produrre i dataset sintetici del paper.</dd>
+      <dt>Mode collapse (GAN)</dt><dd>Patologia delle GAN da cui il fenomeno prende il nome: il generatore produce poche uscite ripetitive.</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- ============================ BIBLIOGRAFIA ============================ -->
+<section id="riferimenti">
+  <div class="wrap">
+    <div class="sec-head"><p class="lvl">Strumenti</p><h2>Riferimenti</h2></div>
+    <h3>Fonte primaria</h3>
+    <ol class="refs">
+      <li>Shumailov, Shumaylov, Zhao, Gal, Papernot, Anderson — <i>The Curse of Recursion: Training on Generated Data Makes Models Forget</i> · <a href="https://arxiv.org/abs/2305.17493">arXiv:2305.17493</a> <span class="mono">(v3, apr 2024)</span></li>
+      <li>Versione rivista: <i>AI models collapse when trained on recursively generated data</i>, Nature 631, 2024 · <a href="https://www.nature.com/articles/s41586-024-07566-y">nature.com/articles/s41586-024-07566-y</a></li>
+    </ol>
+    <h3>Citati nel paper (selezione ragionata)</h3>
+    <ol class="refs">
+      <li>Kirkpatrick et al. — <i>Overcoming catastrophic forgetting in neural networks</i>, PNAS 2017 <span class="mono">— il fenomeno "cugino" nel continual learning</span></li>
+      <li>Carlini et al. — <i>Poisoning web-scale training datasets is practical</i>, 2023 · <a href="https://arxiv.org/abs/2302.10149">arXiv:2302.10149</a> <span class="mono">— l'altro volto dell'inquinamento dei dati</span></li>
+      <li>Gelbrich — <i>On a formula for the L2 Wasserstein metric…</i>, Math. Nachr. 1990 <span class="mono">— il limite inferiore gaussiano usato in Sez. 4.3</span></li>
+      <li>Taleb — <i>Black swans and the domains of statistics</i>, Am. Stat. 2007 <span class="mono">— perché gli eventi rari contano</span></li>
+      <li>Zhang et al. — <i>OPT: Open Pre-trained Transformer Language Models</i>, 2022 · <a href="https://arxiv.org/abs/2205.01068">arXiv:2205.01068</a> <span class="mono">— il modello usato negli esperimenti LLM</span></li>
+      <li>Kingma, Welling — <i>Auto-Encoding Variational Bayes</i> · <a href="https://arxiv.org/abs/1312.6114">arXiv:1312.6114</a> <span class="mono">— il VAE degli esperimenti</span></li>
+    </ol>
+    <h3>Per approfondire (lavori successivi)</h3>
+    <ol class="refs">
+      <li>Alemohammad et al. — <i>Self-Consuming Generative Models Go MAD</i> · <a href="https://arxiv.org/abs/2307.01850">arXiv:2307.01850</a></li>
+      <li>Dohmatob et al. — <i>A Tale of Tails: Model Collapse as a Change of Scaling Laws</i> · <a href="https://arxiv.org/abs/2402.07043">arXiv:2402.07043</a></li>
+      <li>Gerstgrasser et al. — <i>Is Model Collapse Inevitable? Breaking the Curse of Recursion by Accumulating Real and Synthetic Data</i> · <a href="https://arxiv.org/abs/2404.01413">arXiv:2404.01413</a></li>
+      <li>Bertrand et al. — <i>On the Stability of Iterative Retraining of Generative Models on their own Data</i> · <a href="https://arxiv.org/abs/2310.00429">arXiv:2310.00429</a></li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="gen-ribbon" aria-hidden="true"></div>
+    <p>Pagina didattica autonoma basata su arXiv:2305.17493. Le figure sono <b>ridisegni concettuali</b> delle figure del paper (così indicati nelle didascalie), non riproduzioni; i grafici quantitativi sono schematici e qualitativi salvo dove indicato. Le formule riportano le equazioni (1)–(15) del paper. Richiede connessione internet per font e rendering LaTeX (MathJax); i contenuti restano leggibili anche offline.</p>
+  </div>
+</footer>
+<script>
+(function(){
+"use strict";
+const NS="http://www.w3.org/2000/svg";
+/* ---------- scala colori generazioni: teal -> ambra -> rosso ---------- */
+function lerp(a,b,t){return a+(b-a)*t}
+function hex(c){return "#"+c.map(v=>Math.round(v).toString(16).padStart(2,"0")).join("")}
+const STOPS=[[14,138,120],[126,153,72],[168,144,47],[197,113,42],[192,57,43]];
+function genColor(t){ // t in [0,1]
+  t=Math.min(1,Math.max(0,t));
+  const seg=t*(STOPS.length-1), i=Math.min(STOPS.length-2,Math.floor(seg)), f=seg-i;
+  return hex([0,1,2].map(k=>lerp(STOPS[i][k],STOPS[i+1][k],f)));
+}
+/* ribbon firma */
+document.querySelectorAll(".gen-ribbon").forEach(r=>{
+  for(let i=0;i<10;i++){const s=document.createElement("span");s.style.background=genColor(i/9);r.appendChild(s);}
+});
+/* bordi dei riquadri-citazione per generazione */
+const gq=document.querySelectorAll("#genQuotes .gq"), gqT=[0,1/9,7/9,1];
+gq.forEach((el,i)=>{el.style.borderLeftColor=genColor(gqT[i]); el.querySelector(".g").style.color=genColor(gqT[i]);});
+
+/* ---------- utilità SVG ---------- */
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+function txt(parent,x,y,s,size,fill,anchor){const t=el("text",{x,y,"font-size":size||12,fill:fill||"#4A5C6E","text-anchor":anchor||"middle"},parent);t.textContent=s;return t}
+function gauss(x,mu,s){return Math.exp(-0.5*((x-mu)/s)**2)/(s*Math.sqrt(2*Math.PI))}
+
+/* ---------- HERO: distribuzione bimodale che collassa ---------- */
+(function(){
+  const svg=document.getElementById("heroSvg"), label=document.getElementById("heroGenLabel");
+  const W=860,H=240,base=H-26;
+  el("line",{x1:20,y1:base,x2:W-20,y2:base,stroke:"#B9C5CF","stroke-width":1.5},svg);
+  const path=el("path",{fill:"none","stroke-width":3},svg);
+  const fillPath=el("path",{stroke:"none",opacity:.18},svg);
+  svg.insertBefore(fillPath,path);
+  const N=240;
+  function draw(t){ // t: 0..1 progresso del collasso
+    // due modi che si avvicinano, code che si tagliano, varianza che cala, poi spike
+    const sep=lerp(2.6,0.05,Math.min(1,t*1.25));
+    const sig=lerp(0.85,0.07,t*t);
+    const tailCut=lerp(0,0.96,Math.min(1,t*1.6)); // soglia di taglio code
+    let pts=[],maxv=0;
+    for(let i=0;i<=N;i++){
+      const x=-6+12*i/N;
+      let v=0.5*gauss(x,-sep,sig)+0.5*gauss(x,sep,sig*lerp(1,0.9,t));
+      pts.push(v); if(v>maxv)maxv=v;
+    }
+    const thr=tailCut*0.06; // taglio assoluto crescente
+    let d="",f="M 20 "+base;
+    for(let i=0;i<=N;i++){
+      let v=pts[i]; if(v<thr)v=0;
+      const x=20+(W-40)*i/N, y=base-(v/Math.max(maxv,1e-9))*(H-60);
+      d+=(i===0?"M":"L")+x+" "+y+" "; f+=" L "+x+" "+y;
+    }
+    f+=" L "+(W-20)+" "+base+" Z";
+    const c=genColor(t);
+    path.setAttribute("d",d); path.setAttribute("stroke",c);
+    fillPath.setAttribute("d",f); fillPath.setAttribute("fill",c);
+  }
+  let gen=0,paused=false,last=0;
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function tick(ts){
+    if(!paused && ts-last>150){
+      last=ts;
+      draw(gen/9); label.textContent="Generazione "+gen; label.style.color=genColor(gen/9);
+      if(gen>=9){paused=true; setTimeout(()=>{gen=0;paused=false;},2000);}
+      else gen++;
+    }
+    requestAnimationFrame(tick);
+  }
+  if(reduce){draw(1);label.textContent="Generazione 9";label.style.color=genColor(1);}
+  else requestAnimationFrame(tick);
+})();
+
+/* ---------- FIG: centro vs code ---------- */
+(function(){
+  const g=document.getElementById("tailsFig"); if(!g)return;
+  const W=860,H=260,base=H-44,x0=40,x1=W-40;
+  el("line",{x1:x0,y1:base,x2:x1,y2:base,stroke:"#B9C5CF","stroke-width":1.5},g);
+  const bins=46;
+  for(let i=0;i<bins;i++){
+    const z=-4.2+8.4*(i+0.5)/bins;
+    const v=gauss(z,0,1)+0.012; // piccola coda artificiale per visibilità
+    const h=v/0.42*(H-100);
+    const bw=(x1-x0)/bins-2;
+    const x=x0+(x1-x0)*i/bins+1;
+    const tail=Math.abs(z)>2.1;
+    el("rect",{x:x,y:base-h,width:bw,height:h,rx:2,fill:tail?"#C0392B":"#0E8A78",opacity:tail?0.85:0.8},g);
+  }
+  txt(g,(x0+x1)/2,base+26,"eventi frequenti — il «centro»",13,"#0E8A78");
+  txt(g,x0+60,base+26,"code: eventi rari",13,"#C0392B");
+  txt(g,x1-60,base+26,"code: eventi rari",13,"#C0392B");
+  el("line",{x1:x0,y1:62,x2:x1,y2:62,stroke:"#C0392B","stroke-dasharray":"5 5","stroke-width":1.2,opacity:.0},g);
+})();
+
+/* ---------- FIG: taglio delle code (Fig.3) ---------- */
+(function(){
+  const g=document.getElementById("cutoffFig"); if(!g)return;
+  const W=860,H=270,base=H-50,pw=250,gap=40,x0=30;
+  function panel(px,title,fat,cut){
+    el("line",{x1:px,y1:base,x2:px+pw,y2:base,stroke:"#B9C5CF","stroke-width":1.2},g);
+    const bins=30;
+    let cutY=null;
+    for(let i=0;i<bins;i++){
+      const z=-5+10*(i+0.5)/bins;
+      let v=0.5*gauss(z,-2.2,1)+0.5*gauss(z,2.2,1);
+      if(fat)v=0.42*gauss(z,-2.2,1.05)+0.42*gauss(z,2.2,1.05)+0.05*gauss(z,0,3.6);
+      let lv=Math.log(1+v*2500); // scala log come nel paper
+      const thrLv=Math.log(1+0.012*2500);
+      let col= "#0E8A78", op=0.8;
+      if(cut && lv<thrLv){lv=0;}
+      else if(lv<thrLv){col="#C0392B";op=0.85;}
+      const h=lv/Math.log(1+0.21*2500)*(H-110);
+      el("rect",{x:px+(pw)*i/bins+1,y:base-h,width:pw/bins-2,height:Math.max(h,0),rx:1.5,fill:col,opacity:op},g);
+    }
+    if(cut){
+      const thrH=Math.log(1+0.012*2500)/Math.log(1+0.21*2500)*(H-110);
+      el("line",{x1:px-4,y1:base-thrH,x2:px+pw+4,y2:base-thrH,stroke:"#C0392B","stroke-width":1.4,"stroke-dasharray":"5 4"},g);
+      txt(g,px+pw/2,base-thrH-8,"soglia log M",11.5,"#C0392B");
+    }
+    txt(g,px+pw/2,base+24,title,13,"#182430");
+  }
+  panel(x0,"Distribuzione 1 — code grasse",true,false);
+  panel(x0+pw+gap,"Distribuzione 2 — bimodale",false,false);
+  panel(x0+2*(pw+gap),"Entrambe, ricampionate: identiche",false,true);
+  txt(g,x0+pw+gap/2,120,"→",26,"#4A5C6E");
+  txt(g,x0+2*pw+gap+gap/2,120,"→",26,"#4A5C6E");
+})();
+
+/* ---------- FIG: GMM nel tempo ---------- */
+(function(){
+  const g=document.getElementById("gmmFig"); if(!g)return;
+  const panels=[{t:"iter. 0",s1:[ -45,0],s2:[45,0],sp:34,n:90},
+                {t:"iter. 50",s1:[-28,8],s2:[30,-6],sp:26,n:90},
+                {t:"iter. 200",s1:[-8,4],s2:[10,-2],sp:16,n:90},
+                {t:"iter. 2000",s1:[0,0],s2:[1,0],sp:3,n:90}];
+  const pw=190,ph=160,gap=22,x0=30,y0=24;
+  // PRNG deterministico
+  let seed=42; function rnd(){seed=(seed*1103515245+12345)%2147483648;return seed/2147483648}
+  function nrm(){let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+  panels.forEach((p,k)=>{
+    const px=x0+k*(pw+gap),cy=y0+ph/2,cx=px+pw/2;
+    el("rect",{x:px,y:y0,width:pw,height:ph,rx:8,fill:"#FFFFFF",stroke:"#DCE3E9"},g);
+    const frac=k/3;
+    for(let i=0;i<p.n;i++){
+      const which=i%2, c=which? "#2B6CB0":"#0E8A78";
+      const ctr=which?p.s2:p.s1;
+      const x=cx+ctr[0]+nrm()*p.sp*0.5, y=cy+ctr[1]+nrm()*p.sp*0.5;
+      if(x>px+6&&x<px+pw-6&&y>y0+6&&y<y0+ph-6)
+        el("circle",{cx:x,cy:y,r:2.4,fill:k===3?"#C0392B":c,opacity:.75},g);
+    }
+    txt(g,cx,y0+ph+24,p.t,13,genColor(frac));
+    if(k<3)txt(g,px+pw+gap/2,cy,"→",22,"#4A5C6E");
+  });
+})();
+
+/* ---------- FIG: perplexity per generazione (schematico) ---------- */
+(function(){
+  const g=document.getElementById("pplFig"); if(!g)return;
+  const W=860,H=330,L=70,R=30,T=26,B=56;
+  const x0=L,x1=W-R,y0=H-B,y1=T;
+  // assi
+  el("line",{x1:x0,y1:y0,x2:x1,y2:y0,stroke:"#B9C5CF","stroke-width":1.4},g);
+  el("line",{x1:x0,y1:y0,x2:x0,y2:y1,stroke:"#B9C5CF","stroke-width":1.4},g);
+  const yMin=30,yMax=60;
+  function X(i){return x0+(x1-x0)*i/9}
+  function Y(v){return y0-(y0-y1)*(v-yMin)/(yMax-yMin)}
+  for(let v=30;v<=60;v+=10){
+    el("line",{x1:x0,y1:Y(v),x2:x1,y2:Y(v),stroke:"#EDF1F4"},g);
+    txt(g,x0-12,Y(v)+4,v,12,"#4A5C6E","end");
+  }
+  const labels=["reale",1,2,3,4,5,6,7,8,9];
+  labels.forEach((s,i)=>txt(g,X(i),y0+20,s,12,"#4A5C6E"));
+  txt(g,(x0+x1)/2,H-10,"generazione del dataset di addestramento",13,"#4A5C6E");
+  txt(g,18,(y0+y1)/2,"perplexity",13,"#4A5C6E").setAttribute("transform","rotate(-90 18 "+((y0+y1)/2)+")");
+  // serie schematiche (valori indicativi dalla Fig.10)
+  const noData=[34,38,41,43,45,47,49,51,53,55];
+  const keep10=[32,33,34,34.6,35.2,35.8,36.3,36.8,37.3,38];
+  function series(arr,color,band){
+    let d="";
+    arr.forEach((v,i)=>{d+=(i?"L":"M")+X(i)+" "+Y(v)+" "});
+    if(band){
+      let f="M "+X(0)+" "+Y(arr[0]+band);
+      arr.forEach((v,i)=>f+=" L "+X(i)+" "+Y(v+band));
+      for(let i=arr.length-1;i>=0;i--)f+=" L "+X(i)+" "+Y(arr[i]-band);
+      el("path",{d:f+" Z",fill:color,opacity:.12,stroke:"none"},g);
+    }
+    el("path",{d:d,fill:"none",stroke:color,"stroke-width":3},g);
+    arr.forEach((v,i)=>el("circle",{cx:X(i),cy:Y(v),r:4,fill:color},g));
+  }
+  series(noData,"#C0392B",2.5);
+  series(keep10,"#0E8A78",1.2);
+  txt(g,X(8),Y(noData[8])-14,"0% dati originali",12.5,"#C0392B");
+  txt(g,X(8),Y(keep10[8])+20,"10% dati originali conservati",12.5,"#0E8A78");
+  el("line",{x1:x0,y1:Y(34),x2:x1,y2:Y(34),stroke:"#182430","stroke-dasharray":"3 5","stroke-width":1},g);
+  txt(g,x0+90,Y(34)-8,"baseline su dati reali ≈ 34",11.5,"#182430");
+})();
+
+/* ---------- FIG: istogrammi perplexity per generazione (Fig.11 concettuale) ---------- */
+(function(){
+  const g=document.getElementById("histFig"); if(!g)return;
+  const W=860,H=300,L=60,R=26,T=24,B=52,x0=L,x1=W-R,y0=H-B,y1=T;
+  el("line",{x1:x0,y1:y0,x2:x1,y2:y0,stroke:"#B9C5CF","stroke-width":1.4},g);
+  txt(g,(x0+x1)/2,H-12,"perplexity delle sequenze generate (scala log) — valutata dal modello originale",13,"#4A5C6E");
+  txt(g,x0+40,y0+20,"← più «sicure»",12,"#4A5C6E");
+  txt(g,x1-90,y0+20,"mai prodotte dall'originale →",12,"#C0392B");
+  const gens=[0,1,3,5,9];
+  gens.forEach((gen,k)=>{
+    const t=gen/9, c=genColor(t);
+    const mu=lerp(0.42,0.22,t);          // il picco si sposta a sinistra
+    const s=lerp(0.16,0.08,t);           // e si stringe
+    const tailA=lerp(0.0,0.16,t);        // coda destra crescente
+    let d="",N=200;
+    for(let i=0;i<=N;i++){
+      const u=i/N;
+      let v=gauss(u,mu,s)*0.9 + tailA*gauss(u,0.78,0.13);
+      const x=x0+(x1-x0)*u, y=y0-Math.min(v/5.2,1)*(y0-y1);
+      d+=(i?"L":"M")+x+" "+y+" ";
+    }
+    el("path",{d:d,fill:"none",stroke:c,"stroke-width":2.6,opacity:.95},g);
+    txt(g,x1-30,y1+16+k*17,"gen "+gen,12.5,c,"end");
+    el("line",{x1:x1-78,y1:y1+12+k*17,x2:x1-58,y2:y1+12+k*17,stroke:c,"stroke-width":3},g);
+  });
+})();
+
+/* ---------- FIG: composizione del web (concettuale) ---------- */
+(function(){
+  const g=document.getElementById("webFig"); if(!g)return;
+  const W=860,H=250,L=70,R=30,T=26,B=54,x0=L,x1=W-R,y0=H-B,y1=T;
+  el("line",{x1:x0,y1:y0,x2:x1,y2:y0,stroke:"#B9C5CF","stroke-width":1.4},g);
+  const years=["pre-2020","2022","2024","2026","futuro…"];
+  years.forEach((s,i)=>txt(g,x0+(x1-x0)*i/4,y0+22,s,12.5,"#4A5C6E"));
+  // area umana decrescente
+  const hu=[0.99,0.95,0.8,0.62,0.45];
+  let top="M "+x0+" "+y0, N=4;
+  for(let i=0;i<=N;i++){const x=x0+(x1-x0)*i/N, y=y0-(y0-y1)*hu[i]; top+=" L "+x+" "+y}
+  el("path",{d:"M "+x0+" "+y0+" "+top.slice(1)+" L "+x1+" "+y0+" Z",fill:"#0E8A78",opacity:.25},g);
+  el("path",{d:top.replace(/^M [^L]+/,"M "+x0+" "+(y0-(y0-y1)*hu[0])),fill:"none",stroke:"#0E8A78","stroke-width":2.5},g);
+  // area sintetica = complemento
+  let topS="";
+  for(let i=0;i<=N;i++){const x=x0+(x1-x0)*i/N, y=y0-(y0-y1)*1.0; topS+=(i?" L ":"M ")+x+" "+y}
+  let bot="";
+  for(let i=N;i>=0;i--){const x=x0+(x1-x0)*i/N, y=y0-(y0-y1)*hu[i]; bot+=" L "+x+" "+y}
+  el("path",{d:topS+bot+" Z",fill:"#C0392B",opacity:.22},g);
+  txt(g,x0+90,y0-30,"contenuto umano",13,"#0E8A78");
+  txt(g,x1-110,y1+26,"contenuto sintetico",13,"#C0392B");
+  txt(g,(x0+x1)/2,y1-6,"Quota (schematica) dei contenuti online — non dati misurati",12,"#4A5C6E");
+})();
+
+/* ---------- SIMULATORE ---------- */
+(function(){
+  const cD=document.getElementById("cDens"), cT=document.getElementById("cDrift");
+  if(!cD)return;
+  const dx=cD.getContext("2d"), tx=cT.getContext("2d");
+  const read=document.getElementById("simRead");
+  let running=false;
+  function nrm(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+  function clear(ctx,c){ctx.fillStyle="#FFFFFF";ctx.fillRect(0,0,c.width,c.height)}
+  function axesD(){
+    clear(dx,cD);
+    dx.strokeStyle="#DCE3E9";dx.beginPath();dx.moveTo(30,290);dx.lineTo(620,290);dx.stroke();
+    dx.fillStyle="#4A5C6E";dx.font="11px IBM Plex Mono, monospace";
+    [-4,-2,0,2,4].forEach(v=>{const X=30+(v+5)/10*590;dx.fillText(v,X-4,306);});
+  }
+  function densPath(mu,s,color,width){
+    dx.strokeStyle=color;dx.lineWidth=width;dx.beginPath();
+    for(let i=0;i<=300;i++){
+      const x=-5+10*i/300, v=gauss(x,mu,Math.max(s,0.02));
+      const X=30+(x+5)/10*590, Y=290-Math.min(v/1.4,1)*255;
+      i?dx.lineTo(X,Y):dx.moveTo(X,Y);
+    }
+    dx.stroke();
+  }
+  function axesT(maxGen){
+    clear(tx,cT);
+    tx.strokeStyle="#DCE3E9";tx.beginPath();tx.moveTo(40,290);tx.lineTo(620,290);tx.moveTo(40,290);tx.lineTo(40,20);tx.stroke();
+    tx.fillStyle="#4A5C6E";tx.font="11px IBM Plex Mono, monospace";
+    // tick log: 1,10,100,...
+    for(let p=0;Math.pow(10,p)<=maxGen;p++){
+      const X=40+580*(p/Math.log10(maxGen||10));
+      tx.fillText("10^"+p,X-10,306);
+      tx.strokeStyle="#F0F3F6";tx.beginPath();tx.moveTo(X,290);tx.lineTo(X,20);tx.stroke();
+    }
+    [0,0.5,1,1.5].forEach(v=>{const Y=290-v/1.6*265;tx.fillText(v.toFixed(1),8,Y+4);});
+    tx.fillStyle="#C0392B";tx.fillText("|μₙ − 0|",530,30);
+    tx.fillStyle="#0E8A78";tx.fillText("σₙ",530,46);
+  }
+  function run(){
+    if(running)return; running=true;
+    const M=+document.getElementById("simM").value;
+    const G=+document.getElementById("simGen").value;
+    let mu=0,s=1; const mus=[0],sds=[1];
+    axesD(); densPath(0,1,"#0E8A78",2.5);
+    axesT(G);
+    let gen=0;
+    const X=g=>40+580*(Math.log10(Math.max(g,1))/Math.log10(G));
+    const Ymu=v=>290-Math.min(Math.abs(v)/1.6,1)*265;
+    const Ysd=v=>290-Math.min(v/1.6,1)*265;
+    function step(){
+      const perFrame=Math.max(1,Math.floor(G/180));
+      for(let k=0;k<perFrame&&gen<G;k++){
+        // campiona M valori da N(mu,s), ristima
+        let sum=0,sum2=0;
+        for(let j=0;j<M;j++){const x=mu+s*nrm();sum+=x;sum2+=x*x}
+        const m=sum/M, varr=(sum2-M*m*m)/(M-1);
+        mu=m; s=Math.sqrt(Math.max(varr,1e-8));
+        gen++;
+        // traccia
+        const t=gen/G;
+        tx.fillStyle="#C0392B";tx.fillRect(X(gen),Ymu(mu),1.8,1.8);
+        tx.fillStyle="#0E8A78";tx.fillRect(X(gen),Ysd(s),1.8,1.8);
+        if(gen%Math.max(1,Math.floor(G/8))===0){densPath(mu,s,genColor(t),1.2)}
+      }
+      read.innerHTML="Generazione <b>"+gen+"</b> / "+G+" · M = "+M.toLocaleString("it-IT")+
+        " · μ = <b>"+mu.toFixed(4)+"</b> · σ = <b>"+s.toFixed(4)+"</b>"+
+        (s<0.15?" — <b style='color:#C0392B'>varianza quasi collassata</b>":"");
+      if(gen<G){requestAnimationFrame(step)}
+      else{
+        densPath(mu,s,"#C0392B",3); running=false;
+        read.innerHTML+=" · <b>fine</b> — riesegui per vedere una traiettoria diversa (è una passeggiata aleatoria).";
+      }
+    }
+    requestAnimationFrame(step);
+  }
+  document.getElementById("simRun").addEventListener("click",run);
+  document.getElementById("simReset").addEventListener("click",()=>{
+    if(running)return;
+    axesD();densPath(0,1,"#0E8A78",2.5);axesT(+document.getElementById("simGen").value);
+    read.textContent="Pronto. Premi «Esegui simulazione».";
+  });
+  axesD(); densPath(0,1,"#0E8A78",2.5); axesT(1000);
+})();
+})();
+</script>
+</body>
+</html>

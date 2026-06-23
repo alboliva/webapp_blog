@@ -1,7 +1,8 @@
 import streamlit as st
-import os, re
+import os, re, json
 from datetime import datetime, date
 import calendar
+from urllib.parse import quote, unquote
 
 st.set_page_config(
     page_title="Reporter",
@@ -52,6 +53,26 @@ div[data-testid="stHorizontalBlock"] .stButton > button {
     letter-spacing: 0.08em !important;
     text-transform: uppercase !important;
     line-height: 1 !important;
+}
+
+/* ── Pulsanti azione (Schermo intero, Condividi): riempiono la colonna ── */
+/* Selettore più specifico della regola "pillola" qui sopra, così vince lui. */
+div[data-testid="stHorizontalBlock"] [class*="st-key-app_fs"] .stButton > button,
+div[data-testid="stHorizontalBlock"] [class*="st-key-app_fs"] button,
+div[data-testid="stHorizontalBlock"] [class*="st-key-app_share"] .stButton > button,
+div[data-testid="stHorizontalBlock"] [class*="st-key-app_share"] button {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    line-height: 1.2 !important;
+    padding: 0 12px !important;
+    white-space: nowrap !important;
 }
 
 /* ── Pulsantoni navigazione globale ── */
@@ -109,6 +130,18 @@ div[data-testid="stHorizontalBlock"] .stButton > button {
 </style>
 """
 
+# Pulsante "schermo intero" (Fullscreen API) iniettato dentro l'articolo.
+# Prova il fullscreen reale del browser; se il contesto non lo permette,
+# avvisa l'utente (la modalità schermo intero di Streamlit è comunque attiva).
+FS_BUTTON = """
+<div style="position:fixed;top:12px;right:18px;z-index:99999;">
+  <button onclick="(function(){var e=document.documentElement;if(!document.fullscreenElement){if(e.requestFullscreen){e.requestFullscreen().catch(function(){alert('Schermo intero del browser non disponibile in questo riquadro: premi F11 per la modalita a tutto schermo.');});}else{alert('Premi F11 per la modalita a tutto schermo.');}}else{document.exitFullscreen();}})()"
+    style="font-family:system-ui,sans-serif;font-size:0.78rem;font-weight:700;padding:8px 14px;border:none;border-radius:10px;background:#0f172a;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);">
+    ⛶ Schermo intero
+  </button>
+</div>
+"""
+
 # ─────────────────────────────────────────────────────────────────────────────
 # HELPER FUNCTIONS
 # ─────────────────────────────────────────────────────────────────────────────
@@ -133,6 +166,63 @@ def _human_title(fname: str) -> str:
     base = re.sub(r"^\d{8}_?", "", base)
     base = re.sub(r"[_\-]+", " ", base).strip()
     return base.title() if base else fname
+
+def _article_id(full_path: str) -> str:
+    """ID stabile e leggibile dell'articolo: percorso relativo a articoli/."""
+    rel = os.path.relpath(full_path, ARTICOLI_DIR)
+    return rel.replace(os.sep, "/")
+
+def _base_url() -> str:
+    """Prova a ricostruire l'URL base del sito dagli header (se disponibili)."""
+    try:
+        h = st.context.headers
+        host = h.get("Host") or h.get("host")
+        proto = h.get("X-Forwarded-Proto") or h.get("x-forwarded-proto")
+        if host:
+            if not proto:
+                proto = "http" if host.split(":")[0] in ("localhost", "127.0.0.1") else "https"
+            return f"{proto}://{host}"
+    except Exception:
+        pass
+    return ""
+
+def inject_fs_button(html: str) -> str:
+    if "</body>" in html:
+        return html.replace("</body>", FS_BUTTON + "</body>", 1)
+    return html + FS_BUTTON
+
+def _copy_component(text: str) -> str:
+    """Mini componente che copia 'text' negli appunti appena viene renderizzato
+    (con fallback execCommand) e mostra una conferma verde."""
+    t = json.dumps(text)
+    return f"""
+    <div style="font-family:system-ui,sans-serif;font-size:0.82rem;font-weight:600;color:#16a34a;padding:2px 0;">
+      <span id="copymsg">Copia in corso…</span>
+    </div>
+    <script>
+    (function(){{
+      const t = {t};
+      const msg = document.getElementById('copymsg');
+      function ok(){{ if(msg) msg.textContent = '✓ Link copiato negli appunti'; }}
+      function ko(){{ if(msg) msg.textContent = '⚠ Copia automatica non riuscita: usa l\\'icona 📋 nel box sotto'; if(msg) msg.style.color = '#b45309'; }}
+      function fallback(){{
+        try {{
+          const ta = document.createElement('textarea');
+          ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.focus(); ta.select();
+          const done = document.execCommand('copy');
+          document.body.removeChild(ta);
+          done ? ok() : ko();
+        }} catch(e) {{ ko(); }}
+      }}
+      try {{
+        if (navigator.clipboard && navigator.clipboard.writeText) {{
+          navigator.clipboard.writeText(t).then(ok).catch(fallback);
+        }} else {{ fallback(); }}
+      }} catch(e) {{ fallback(); }}
+    }})();
+    </script>
+    """
 
 @st.cache_data(show_spinner=False)
 def _extract_text(html_path: str) -> str:
@@ -205,6 +295,43 @@ def inject_viewer_css(html: str) -> str:
     return html.replace(tag, overrides + "\n" + tag, 1)
 
 
+def render_fullscreen(doc: dict):
+    """Modalità schermo intero: nasconde sidebar/header e mostra l'articolo
+    a tutta larghezza. Pulsante per uscire + pulsante fullscreen reale dentro
+    l'articolo."""
+    st.markdown("""
+    <style>
+    [data-testid="stSidebar"],
+    [data-testid="stSidebarCollapsedControl"],
+    header { display: none !important; }
+    .block-container { padding: 0.6rem 1.2rem 0 1.2rem !important; max-width: 100% !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    top1, top2 = st.columns([6, 1])
+    with top1:
+        st.markdown(
+            f"""<div style="font-family:'Fraunces',serif;font-size:1.05rem;color:#0f172a;">
+                <b>{doc['title']}</b>
+                <span style="color:#64748b;font-size:0.8rem;"> &nbsp;·&nbsp; {doc['category']} &nbsp;·&nbsp; {doc['date_label']}</span>
+            </div>""",
+            unsafe_allow_html=True
+        )
+    with top2:
+        if st.button("✕ Esci", key="fs_exit", use_container_width=True):
+            st.session_state.fs_mode = False
+            st.rerun()
+
+    try:
+        with open(doc["full_path"], "r", encoding="utf-8") as f:
+            html = f.read()
+        html = inject_viewer_css(html)
+        html = inject_fs_button(html)
+        st.components.v1.html(html, height=1500, scrolling=True)
+    except Exception as e:
+        st.error(f"Errore durante il caricamento: {e}")
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # MAIN APP
 # ─────────────────────────────────────────────────────────────────────────────
@@ -233,8 +360,6 @@ def main():
     ss = st.session_state
 
     # ── Gestione redirect da pagina articoli (pulsante APRI) ──────────────
-    # Se articoli.py ha impostato open_article_path, troviamo l'indice globale
-    # corrispondente e lo usiamo come punto di partenza, poi puliamo la chiave.
     if "open_article_path" in ss and ss["open_article_path"]:
         target_path = ss.pop("open_article_path")
         found_idx = next(
@@ -243,6 +368,22 @@ def main():
         )
         if found_idx is not None:
             ss.global_idx = found_idx
+        ss["_deep_done"] = True  # la navigazione esplicita ha la priorità
+
+    # ── Deep link: ?article=<categoria>/<file>.html ───────────────────────
+    # Apre direttamente l'articolo condiviso (una sola volta per sessione,
+    # così l'utente può poi navigare liberamente).
+    if "article" in st.query_params and not ss.get("_deep_done"):
+        aid = unquote(st.query_params["article"]).replace("/", os.sep)
+        target_full = os.path.normpath(os.path.join(ARTICOLI_DIR, aid))
+        found_idx = next(
+            (i for i, d in enumerate(all_docs_sorted)
+             if os.path.normpath(d["full_path"]) == target_full),
+            None
+        )
+        if found_idx is not None:
+            ss.global_idx = found_idx
+        ss["_deep_done"] = True
 
     # global_idx: indice nella lista globale cronologica (0 = più recente)
     if "global_idx" not in ss:
@@ -253,9 +394,12 @@ def main():
 
     # L'articolo corrente è sempre determinato dall'indice globale
     doc = all_docs_sorted[ss.global_idx]
-
-    # La categoria attiva segue automaticamente l'articolo corrente
     cat = doc["category"]
+
+    # ── MODALITÀ SCHERMO INTERO ────────────────────────────────────────────
+    if ss.get("fs_mode"):
+        render_fullscreen(doc)
+        return
 
     # ── Sidebar: Filtri ────────────────────────────────────────────────────
     with st.sidebar:
@@ -387,12 +531,17 @@ def main():
 
     st.divider()
 
-    # ── Download Buttons ───────────────────────────────────────────────────
-    col_dl1, col_dl2 = st.columns(2)
+    # ── Azioni: Scarica HTML · (PDF) · Schermo intero · Condividi ──────────
+    # Tutti i pulsanti su un'unica riga. La colonna PDF compare solo se esiste.
+    has_pdf = bool(doc["pdf_path"])
+    action_cols = st.columns(4 if has_pdf else 3)
+    ci = 0
+
+    # 1) Scarica HTML
     try:
         with open(doc["full_path"], "rb") as f:
             html_bytes = f.read()
-        col_dl1.download_button(
+        action_cols[ci].download_button(
             label=f"⬇️ Scarica HTML ({doc['size_html']})",
             data=html_bytes,
             file_name=doc["fname"],
@@ -401,12 +550,14 @@ def main():
         )
     except:
         pass
+    ci += 1
 
-    if doc["pdf_path"]:
+    # 2) Scarica PDF (solo se presente)
+    if has_pdf:
         try:
             with open(doc["pdf_path"], "rb") as f:
                 pdf_bytes = f.read()
-            col_dl2.download_button(
+            action_cols[ci].download_button(
                 label=f"⬇️ Scarica PDF ({doc['size_pdf']})",
                 data=pdf_bytes,
                 file_name=re.sub(r"\.html$", ".pdf", doc["fname"], flags=re.I),
@@ -415,6 +566,27 @@ def main():
             )
         except:
             pass
+        ci += 1
+
+    # 3) Schermo intero
+    if action_cols[ci].button("⛶ Schermo intero", key="app_fs", use_container_width=True):
+        ss.fs_mode = True
+        st.rerun()
+    ci += 1
+
+    # 4) Condividi → copia subito il link negli appunti + avviso (toast)
+    if action_cols[ci].button("🔗 Condividi articolo", key="app_share", use_container_width=True):
+        aid = _article_id(doc["full_path"])
+        base = _base_url()
+        ss["share_url"] = f"{base}/?article={quote(aid)}" if base else f"?article={quote(aid)}"
+        ss["_do_copy"] = True
+        st.toast("📋 Link copiato negli appunti!", icon="✅")
+
+    # Pannello copia (compare subito dopo il click, sparisce all'interazione dopo)
+    if ss.get("_do_copy") and ss.get("share_url"):
+        st.components.v1.html(_copy_component(ss["share_url"]), height=40)
+        st.code(ss["share_url"], language=None)
+        ss["_do_copy"] = False
 
     # ── Visualizza Articolo ────────────────────────────────────────────────
     try:

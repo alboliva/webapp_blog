@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Decomposizione di Benders — appunti guidati</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] },
+  chtml: { scale: 0.94 },
+  startup: {
+    ready(){
+      MathJax.startup.defaultReady();
+      MathJax.startup.promise.then(()=>{ document.body.classList.add('mj-ready'); });
+    }
+  }
+};
+</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#FAFBFC;
+  --panel:#FFFFFF;
+  --ink:#182430;
+  --ink-soft:#4A5C6E;
+  --line:#DCE3E9;
+  --line-strong:#B9C5CF;
+  --bend:#0E8A78;
+  --bend-soft:#E2F2EF;
+  --dro:#0E8A78;
+  --dro-soft:#E2F2EF;
+  --warn:#C0392B;
+  --warn-soft:#F8E9E6;
+  --gold:#A8902F;
+  --gold-soft:#F4F0DC;
+  --code-bg:#F0F3F6;
+  --radius:10px;
+  --maxw:1280px;
+  --sidebar:236px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:"Source Serif 4", Georgia, serif;font-size:17.5px;line-height:1.65}
+body:not(.mj-ready) .mj-wait{opacity:.001}
+body.mj-ready .mj-wait{opacity:1;transition:opacity .25s ease}
+h1,h2,h3,h4{font-family:"Space Grotesk",system-ui,sans-serif;line-height:1.2;letter-spacing:-0.01em}
+.mono{font-family:"IBM Plex Mono",monospace}
+a{color:#0B6E8F;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:var(--warn)}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+.ribbon{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:0 0 14px}
+.ribbon span{flex:1}
+.ribbon .b{background:var(--bend)}
+.ribbon .g{background:var(--gold)}
+.ribbon .d{background:var(--dro)}
+
+header.hero{padding:56px 0 34px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px}
+.hero h1{font-size:clamp(28px,4.2vw,46px);font-weight:700;max-width:24ch}
+.hero h1 em{font-style:normal;color:var(--bend)}
+.hero .sub{font-size:18.5px;color:var(--ink-soft);max-width:78ch;margin:16px 0 8px}
+.hero .companion{font-size:15.5px;color:var(--ink-soft);max-width:78ch;margin-top:14px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.info-card{margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px 24px;font-size:14.5px}
+.info-card div b{font-family:"Space Grotesk",sans-serif;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);display:block;margin-bottom:2px}
+
+.page{max-width:var(--maxw);margin:0 auto;padding:0 22px;display:flex;align-items:flex-start;gap:44px}
+.main{flex:1;min-width:0}
+aside.side{width:var(--sidebar);flex:0 0 var(--sidebar);position:sticky;top:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:16px 16px 18px;max-height:calc(100vh - 44px);overflow-y:auto}
+aside.side .side-t{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px}
+aside.side ol{list-style:none;margin:0}
+aside.side li{margin-bottom:2px}
+aside.side a{display:block;text-decoration:none;color:var(--ink);font-family:"Space Grotesk",sans-serif;font-size:13.5px;padding:7px 8px;border-radius:7px;line-height:1.3;border-left:2px solid transparent}
+aside.side a:hover{background:var(--code-bg);border-left-color:var(--bend)}
+aside.side a .grp{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-soft);letter-spacing:.06em;text-transform:uppercase}
+aside.side .divider{height:1px;background:var(--line);margin:10px 0}
+aside.side .companion-link{display:block;margin-top:12px;padding:10px 10px;border:1px dashed var(--line-strong);border-radius:8px;font-size:12.5px;color:var(--ink-soft)}
+aside.side .companion-link a{font-weight:700}
+@media (max-width:980px){.page{display:block}aside.side{position:static;width:100%;max-height:none;margin-bottom:28px}}
+
+section{padding:44px 0;border-bottom:1px solid var(--line)}
+.sec-head{margin-bottom:22px}
+.sec-head .lvl{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--bend);margin-bottom:8px}
+.sec-head .lvl.dro{color:var(--dro)}
+.sec-head .lvl.hot{color:var(--warn)}
+section h2{font-size:clamp(23px,2.6vw,30px);max-width:30ch}
+section h3{font-size:19.5px;margin:24px 0 10px}
+.lead{font-size:18.5px;color:var(--ink-soft);max-width:82ch;margin-bottom:18px}
+strong{font-weight:600}
+p{margin-bottom:13px}
+ul,ol{margin:0 0 13px 22px}
+li{margin-bottom:6px}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:start;margin-bottom:6px}
+.row2 .col p:last-child,.row2 .col ul:last-child,.row2 .col ol:last-child{margin-bottom:0}
+@media (max-width:760px){.row2{display:block}}
+
+figure.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:22px 0}
+figure.panel figcaption{font-size:13.5px;color:var(--ink-soft);margin-top:10px;line-height:1.55;font-family:"Space Grotesk",sans-serif}
+figure.panel figcaption b{color:var(--ink)}
+svg{display:block;max-width:100%;height:auto}
+svg text{font-family:"IBM Plex Mono",monospace}
+
+.keybox{background:var(--bend-soft);border-left:4px solid var(--bend);border-radius:0 var(--radius) var(--radius) 0;padding:15px 18px;margin:20px 0}
+.keybox.warn{background:var(--warn-soft);border-left-color:var(--warn)}
+.keybox.dro{background:var(--dro-soft);border-left-color:var(--dro)}
+.keybox .kb-t{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.keybox p{margin-bottom:6px}
+.keybox p:last-child{margin-bottom:0}
+
+.exq{background:var(--gold-soft);border:1px dashed var(--gold);border-radius:var(--radius);padding:16px 18px;margin:20px 0}
+.exq .kb-t{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#7a6620;margin-bottom:6px}
+.exq p:last-child{margin-bottom:0}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:22px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.card .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:9px}
+.tag.bend{background:var(--bend-soft);color:var(--bend)}
+.tag.dro{background:var(--dro-soft);color:var(--dro)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.card h4{font-size:15.5px;margin-bottom:7px}
+.card p{font-size:14.5px;margin-bottom:7px;color:var(--ink-soft)}
+.card p:last-child{margin-bottom:0}
+
+.stage-flow{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin:22px 0}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.stage h4{font-size:15px;margin-bottom:6px}
+.stage.master{border-top:4px solid var(--bend)}
+.stage.sub{border-top:4px solid var(--gold)}
+.stage p{font-size:14.5px;color:var(--ink-soft);margin:0}
+.stage-arrow{align-self:center;font-size:24px;color:var(--ink-soft)}
+@media (max-width:640px){.stage-flow{grid-template-columns:1fr}.stage-arrow{transform:rotate(90deg);justify-self:center}}
+
+.eq{background:var(--code-bg);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin:18px 0;overflow-x:auto;text-align:center}
+.eq .eq-note{font-size:13.5px;color:var(--ink-soft);font-family:"Space Grotesk",sans-serif;margin-top:8px;text-align:left}
+
+table{border-collapse:collapse;width:100%;margin:20px 0;font-size:14.5px;background:var(--panel)}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{font-family:"Space Grotesk",sans-serif;font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;background:var(--code-bg)}
+
+.ex-item{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px}
+.ex-item .ex-num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.ex-item h4{font-size:16.5px;margin-bottom:8px}
+.ex-item details{margin-top:12px;border-top:1px dashed var(--line-strong);padding-top:10px}
+.ex-item summary{cursor:pointer;font-family:"Space Grotesk",sans-serif;font-size:13.5px;font-weight:700;color:var(--bend)}
+.ex-item details p{margin-top:8px;color:var(--ink-soft);font-size:15px}
+.ex-item details p:last-child{margin-bottom:0}
+
+dl.gloss{display:grid;grid-template-columns:max-content 1fr;gap:9px 20px}
+dl.gloss dt{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:14.5px;white-space:nowrap}
+dl.gloss dd{color:var(--ink-soft);font-size:14.5px}
+
+ol.refs{margin-left:22px}
+ol.refs li{margin-bottom:11px;font-size:15px}
+ol.refs .cite-meta{font-size:13px;color:var(--ink-soft);display:block;margin-top:2px}
+
+footer{padding:36px 0 56px;color:var(--ink-soft);font-size:14px}
+
+@media (max-width:760px){.info-card{grid-template-columns:1fr 1fr}dl.gloss{grid-template-columns:1fr}dl.gloss dd{margin-bottom:8px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Appunti guidati · Ricerca Operativa avanzata · per Ingegneria</p>
+    <h1>Separare per decidere: la <em>Decomposizione di Benders</em></h1>
+    <p class="sub">Come risolvere in modo efficiente un problema di ottimizzazione troppo grande per essere affrontato in un colpo solo, sfruttando una struttura che ricorre in moltissime decisioni industriali: poche scelte strategiche, difficili da cambiare, seguite da moltissime decisioni operative conseguenti.</p>
+    <p class="companion">Questo documento è il primo di due testi indipendenti. Il secondo, dedicato alla <a href="distributionally-robust-optimization.html">Distributionally Robust Optimization</a>, affronta il tema complementare: come decidere bene quando la distribuzione di probabilità del futuro non è nota con certezza, ma solo stimata da un campione di dati.</p>
+    <div class="info-card">
+      <div><b>Argomento</b>Decomposizione di Benders · Programmazione stocastica a due stadi</div>
+      <div><b>Prerequisiti</b>Programmazione lineare, dualità LP</div>
+      <div><b>Livello</b>Introduttivo–intermedio</div>
+      <div><b>Applicazioni</b>Produzione, logistica, scheduling, investimenti</div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <main class="main">
+
+  <section id="motivazione">
+    <div class="sec-head"><p class="lvl">0 · Perché</p><h2>Il problema che nasce sempre, in qualsiasi organizzazione</h2></div>
+    <p class="lead">Immagina di dover progettare la rete logistica di un'azienda che vende prodotti in tutta Italia. Devi rispondere a due tipi di domande molto diverse tra loro.</p>
+    <div class="row2">
+      <div class="col">
+        <p>Il primo tipo di domanda è <strong>strutturale</strong>: quanti magazzini apro, e dove? Quante linee produttive costruisco? Che capacità dare a ciascun impianto? Sono decisioni "pesanti", costose da cambiare una volta prese, che valgono per i prossimi anni.</p>
+        <p>Il secondo tipo di domanda è <strong>operativa</strong>: una volta che i magazzini esistono, quanto spedisco da ciascuno a ciascun cliente, ogni settimana? Sono decisioni "leggere", che si aggiustano in continuazione in base alla domanda reale.</p>
+      </div>
+      <div class="col">
+        <p>Il punto delicato è che queste due famiglie di decisioni sono <em>numerosissime, se prese insieme</em>: poche decine di variabili strutturali possono generare milioni di variabili operative (una per ogni coppia magazzino–cliente, per ogni periodo, per ogni prodotto). Risolvere tutto in un unico grande problema può diventare computazionalmente proibitivo.</p>
+        <p>La Decomposizione di Benders nasce esattamente per affrontare questa difficoltà: separare in modo intelligente le decisioni strutturali da quelle operative, senza perdere l'ottimalità della soluzione complessiva.</p>
+      </div>
+    </div>
+    <div class="keybox">
+      <p class="kb-t">La domanda a cui risponde questo documento</p>
+      <p>Come risolvo in modo efficiente un problema enorme che ha la struttura "poche decisioni strategiche, tantissime decisioni operative conseguenti"? La risposta, come vedremo, è non risolverlo mai tutto insieme, ma far dialogare due problemi più piccoli finché non si trovano d'accordo.</p>
+    </div>
+  </section>
+
+  <section id="idea">
+    <div class="sec-head"><p class="lvl">1 · L'idea</p><h2>Separare le decisioni strategiche da quelle operative</h2></div>
+    <p class="lead">La Decomposizione di Benders (Jacques F. Benders, 1962) è un metodo per risolvere problemi di ottimizzazione lineare, anche a variabili miste (alcune intere), che hanno esattamente la struttura appena descritta.</p>
+    <p>Il problema completo si scrive così:</p>
+    <div class="eq mj-wait">
+      $$ \min_{x,y} \; c^T x + q^T y $$
+      <p class="eq-note">soggetto a \(Ax \ge b\), \(\;Wy \ge h-Tx\), \(\;x \in X,\; y\ge 0\)</p>
+    </div>
+    <div class="row2">
+      <div class="col">
+        <p>Qui \(x\) rappresenta le decisioni strategiche (spesso variabili binarie: apro/non apro un magazzino) e \(y\) le decisioni operative conseguenti (quantità continue: quanto spedire). Il vincolo \(Wy \ge h-Tx\) è quello che <strong>lega</strong> le due famiglie: la fattibilità delle scelte operative dipende da quali scelte strategiche sono state fatte a monte.</p>
+        <h3>L'osservazione che rende tutto possibile</h3>
+        <p>Fissiamo per un istante \(x=\bar{x}\), cioè immaginiamo di aver già deciso quali magazzini aprire. A quel punto il problema che resta, in \(y\), è quasi sempre un problema di programmazione lineare "facile":</p>
+      </div>
+      <div class="col">
+        <div class="eq mj-wait" style="margin-top:0">
+          $$ Q(\bar{x})=\min_y q^T y $$
+          <p class="eq-note">soggetto a \(Wy \ge h-T\bar{x}\), \(\;y\ge 0\)</p>
+        </div>
+        <p>Chiamiamo \(Q(\bar{x})\) il <strong>costo operativo minimo</strong> dato \(\bar{x}\): è una funzione che, per ogni scelta strategica, ci dice quanto costerà gestire al meglio le operazioni conseguenti.</p>
+      </div>
+    </div>
+    <p>Prendendo il duale di questo sottoproblema — un passaggio standard di programmazione lineare — otteniamo una forma alternativa altrettanto importante:</p>
+    <div class="eq mj-wait">
+      $$ Q(\bar{x})=\max_{\pi} \pi^T(h-T\bar{x}) $$
+      <p class="eq-note">soggetto a \(W^T\pi \le q\), \(\;\pi\ge0\). Il vettore \(\pi\) sono i <b>prezzi ombra</b> (variabili duali) associati ai vincoli operativi: intuitivamente, quanto varrebbe un'unità in più di capacità in quel magazzino, dati i costi di trasporto e la domanda dei clienti.</p>
+    </div>
+    <div class="keybox">
+      <p class="kb-t">Perché la forma duale è la chiave</p>
+      <p>Per ogni \(\bar x\), \(Q(\bar x)\) è il massimo di espressioni <em>lineari</em> in \(x\), una per ciascuna soluzione duale possibile. Il massimo di funzioni lineari è una funzione <strong>convessa e lineare a tratti</strong> (lo vedremo con un disegno più avanti). Questo fatto, apparentemente tecnico, è ciò che permette a Benders di funzionare: possiamo approssimare \(Q(x)\) dal basso con pochi "pezzi" lineari, invece di conoscerla ovunque.</p>
+    </div>
+    <div class="row2">
+      <div class="col">
+        <h3>Master problem</h3>
+        <p>Introduciamo una variabile ausiliaria \(\theta\), che rappresenta una <strong>stima</strong> (per difetto) del costo operativo futuro. Il problema principale — il <strong>master problem</strong> — diventa:</p>
+        <div class="eq mj-wait">
+          $$ \min_{x,\theta}\; c^T x+\theta $$
+          <p class="eq-note">s.t. \(Ax\ge b\),  \(\theta \ge \pi_k^T(h-Tx)\;\; \forall k\)</p>
+        </div>
+      </div>
+      <div class="col">
+        <p>Ogni vincolo \(\theta \ge \pi_k^T(h-Tx)\) è un <strong>Benders optimality cut</strong>: un "taglio" che dice al master "attenzione, se scegli \(x\) così, il costo operativo sarà almeno questo".</p>
+        <p>La cosa elegante è che <strong>non serve generare tutti i tagli in anticipo</strong> (potrebbero essere esponenzialmente tanti). Li aggiungiamo uno alla volta, solo quando servono, dialogando tra master e sottoproblema — è l'argomento della prossima sezione.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="algoritmo">
+    <div class="sec-head"><p class="lvl">2 · L'algoritmo</p><h2>Come si svolge, passo dopo passo</h2></div>
+    <p class="lead">Pensala come una conversazione a due voci tra chi decide la strategia (il master) e chi verifica sul campo cosa quella strategia comporta (il sottoproblema).</p>
+    <div class="stage-flow">
+      <div class="stage master">
+        <h4>1. Il master propone</h4>
+        <p>Risolve una versione semplificata (senza conoscere ancora bene \(Q(x)\)) e propone una soluzione strategica \(x^{(1)}\), con una stima \(\theta^{(1)}\) del costo operativo — inizialmente troppo ottimistica.</p>
+      </div>
+      <div class="stage-arrow">→</div>
+      <div class="stage sub">
+        <h4>2. Il sottoproblema verifica</h4>
+        <p>Dato \(x^{(1)}\), risolve il problema operativo, calcola il vero costo \(Q(x^{(1)})\) e restituisce i prezzi ombra \(\pi^{(1)}\) — cioè spiega "perché" quella strategia costa quanto costa.</p>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="col">
+        <p>Se \(\theta^{(1)} < Q(x^{(1)})\) (la stima era troppo ottimista), aggiungiamo un nuovo taglio al master:</p>
+        <div class="eq mj-wait">$$ \theta \ge {\pi^{(1)}}^T(h-Tx) $$</div>
+        <p>Risolviamo di nuovo il master arricchito di questo vincolo. Otteniamo una nuova proposta \(x^{(2)}\), tipicamente diversa e migliore, perché il master ora "sa" qualcosa in più su \(Q(x)\) vicino a \(x^{(1)}\). Ripetiamo.</p>
+        <h3>Quando ci si ferma</h3>
+        <p>L'algoritmo termina quando la stima del master \(\theta\) e il vero costo operativo \(Q(x)\) coincidono (entro una tolleranza numerica): a quel punto il master non può più sottostimare il futuro, e la soluzione corrente è ottima per il problema completo.</p>
+      </div>
+      <div class="col">
+        <div class="cards">
+          <div class="card">
+            <span class="tag bend">Master</span>
+            <h4>Decide la struttura</h4>
+            <p>Poche variabili (magari centinaia), spesso intere. Cresce solo per l'aggiunta progressiva dei tagli, non per il numero di clienti o periodi.</p>
+          </div>
+          <div class="card">
+            <span class="tag bend">Sottoproblema</span>
+            <h4>Verifica le operazioni</h4>
+            <p>Anche milioni di variabili continue, ma resta un problema lineare "facile" da risolvere, e spesso si scompone ulteriormente per scenario o area geografica.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="keybox">
+      <p class="kb-t">Un'analogia utile</p>
+      <p>È lo stesso schema di una negoziazione tra direzione e ufficio operativo: la direzione propone un piano di apertura filiali; l'ufficio logistico calcola quanto costerebbe davvero gestirle e risponde con un vincolo: "se aprite lì con quella capacità, il costo di trasporto minimo sarà almeno X". La direzione aggiorna il piano tenendo conto del vincolo, e il ciclo continua finché nessuno riesce più a smentirlo.</p>
+    </div>
+  </section>
+
+  <section id="esempio">
+    <div class="sec-head"><p class="lvl">3 · Esempio</p><h2>Un esempio completo: dove aprire i magazzini</h2></div>
+    <p class="lead">Il caso più naturale per illustrare Benders è il <em>facility location problem</em>, cioè la scelta di quali magazzini aprire per servire un insieme di clienti al minor costo.</p>
+    <div class="row2">
+      <div class="col">
+        <p>Definiamo la variabile strategica binaria \(x_i=1\) se apro il magazzino \(i\), \(x_i=0\) altrimenti. Il costo fisso di apertura è \(\sum_i f_i x_i\) (affitto, personale, impianti). Le variabili operative \(y_{ij}\) rappresentano la quantità spedita dal magazzino \(i\) al cliente \(j\).</p>
+        <p>Il problema completo è:</p>
+        <div class="eq mj-wait">
+          $$ \min \sum_i f_i x_i + \sum_i\sum_j c_{ij}y_{ij} $$
+          <p class="eq-note">s.t. \(\sum_i y_{ij}\ge d_j\) (ogni cliente va servito) e \(\sum_j y_{ij}\le C_i x_i\) (posso spedire solo da un magazzino aperto, ed entro la sua capacità)</p>
+        </div>
+      </div>
+      <div class="col">
+        <p>Il legame tra le due variabili è tutto nel termine \(C_i x_i\): se \(x_i=0\) la capacità disponibile crolla a zero, e i vincoli operativi escludono automaticamente quel magazzino dalle spedizioni.</p>
+        <div class="exq">
+          <p class="kb-t">Esempio numerico minimo, da seguire a mano</p>
+          <p>Due magazzini candidati, costi fissi \(f_1=100\), \(f_2=90\), capacità \(C_1=C_2=60\); un solo cliente con domanda \(d=50\); costo di trasporto \(c_1=2\), \(c_2=3\) per unità. Se apro solo W1: costo totale \(=100+2\cdot50=200\). Se apro solo W2: \(=90+3\cdot50=240\). Aprirli entrambi non serve, perché uno solo basta a coprire la domanda: il master, dialogando col sottoproblema, scoprirà che la soluzione migliore è "apri solo W1".</p>
+        </div>
+      </div>
+    </div>
+    <figure class="panel">
+      <svg viewBox="0 0 860 300" role="img" aria-label="Rete di distribuzione: tre magazzini candidati collegati a quattro clienti, con capacità e rotte di trasporto">
+        <text x="140" y="30" text-anchor="middle" font-size="13" fill="#4A5C6E">magazzini candidati (x)</text>
+        <text x="700" y="30" text-anchor="middle" font-size="13" fill="#4A5C6E">clienti (domanda d)</text>
+        <circle cx="140" cy="90" r="34" fill="#E2F2EF" stroke="#0E8A78" stroke-width="2"/>
+        <text x="140" y="86" text-anchor="middle" font-size="13" fill="#182430">W1</text>
+        <text x="140" y="102" text-anchor="middle" font-size="10.5" fill="#4A5C6E">C₁=500, x₁=1</text>
+        <circle cx="140" cy="180" r="34" fill="#E2F2EF" stroke="#0E8A78" stroke-width="2"/>
+        <text x="140" y="176" text-anchor="middle" font-size="13" fill="#182430">W2</text>
+        <text x="140" y="192" text-anchor="middle" font-size="10.5" fill="#4A5C6E">C₂=350, x₂=1</text>
+        <circle cx="140" cy="260" r="34" fill="#F8E9E6" stroke="#C0392B" stroke-width="2" stroke-dasharray="4 3"/>
+        <text x="140" y="256" text-anchor="middle" font-size="13" fill="#182430">W3</text>
+        <text x="140" y="272" text-anchor="middle" font-size="10.5" fill="#4A5C6E">x₃=0</text>
+        <g fill="#F4F0DC" stroke="#A8902F" stroke-width="1.6">
+          <circle cx="700" cy="60" r="24"/><circle cx="700" cy="122" r="24"/><circle cx="700" cy="184" r="24"/><circle cx="700" cy="246" r="24"/>
+        </g>
+        <text x="700" y="64" text-anchor="middle" font-size="12" fill="#182430">A</text>
+        <text x="700" y="126" text-anchor="middle" font-size="12" fill="#182430">B</text>
+        <text x="700" y="188" text-anchor="middle" font-size="12" fill="#182430">C</text>
+        <text x="700" y="250" text-anchor="middle" font-size="12" fill="#182430">D</text>
+        <g stroke="#0E8A78" stroke-width="1.4" opacity="0.75">
+          <line x1="172" y1="90" x2="678" y2="60"/>
+          <line x1="172" y1="90" x2="678" y2="122"/>
+          <line x1="172" y1="95" x2="678" y2="184"/>
+        </g>
+        <g stroke="#0E8A78" stroke-width="1.4" opacity="0.75">
+          <line x1="172" y1="180" x2="678" y2="122"/>
+          <line x1="172" y1="182" x2="678" y2="184"/>
+          <line x1="172" y1="188" x2="678" y2="246"/>
+        </g>
+        <g stroke="#C0392B" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.5">
+          <line x1="172" y1="260" x2="678" y2="246"/>
+        </g>
+        <text x="430" y="292" text-anchor="middle" font-size="12" fill="#4A5C6E">linea continua = rotta y_ij effettivamente usata · tratteggio rosso = rotta impossibile perché W3 è chiuso (x₃=0 ⇒ capacità nulla)</text>
+      </svg>
+      <figcaption><b>Il legame master–sottoproblema in un caso concreto.</b> Il master decide quali magazzini "accendere" (cerchi verdi). Una volta accesi, il sottoproblema — un problema di trasporto — decide come instradare le merci al minor costo verso i clienti, rispettando le capacità residue.</figcaption>
+    </figure>
+    <p>Questa struttura — "il master apre le strutture, il sottoproblema decide come usarle al meglio" — ricorre in moltissimi contesti industriali: reti logistiche, infrastrutture energetiche, scheduling di macchine e turni, reti di telecomunicazione, pianificazione di flotte di veicoli, decisioni di investimento seguite da decisioni operative.</p>
+  </section>
+
+  <section id="geometria">
+    <div class="sec-head"><p class="lvl">4 · Geometria</p><h2>L'interpretazione geometrica, e cosa fare se una scelta è impossibile</h2></div>
+    <p class="lead">Questa è, dal punto di vista concettuale, la parte più bella del metodo: Benders non è altro che un modo di <strong>disegnare progressivamente</strong> una funzione che all'inizio non conosciamo.</p>
+    <div class="row2">
+      <div class="col">
+        <p>Abbiamo detto che \(Q(x)=\max_k\{\pi_k^T(h-Tx)\}\) è il massimo di funzioni lineari in \(x\), quindi è convessa e lineare a tratti — un po' come il profilo di una collina fatto di segmenti dritti. Ogni Benders cut aggiunto durante l'algoritmo è esattamente uno di questi segmenti (un iperpiano di supporto).</p>
+        <p>All'inizio il master non ne conosce nessuno, quindi immagina che il costo operativo sia bassissimo ovunque (ottimismo iniziale). Ogni iterazione aggiunge un pezzo di informazione vera, e la stima \(\hat Q(x)\le Q(x)\) diventa via via più precisa, "da sotto".</p>
+      </div>
+      <div class="col">
+        <div class="exq">
+          <p class="kb-t">Prova a risolverlo mentalmente</p>
+          <p>Sia \(Q(x)=\max\{10-2x,\; 6-x,\; 2\}\) su \(x\in[0,10]\). Vuoi risolvere \(\min_x\, x+Q(x)\). Quale dei tre segmenti è attivo in ciascuna zona di \(x\)? Dove si trova il minimo? <em>Attenzione:</em> il minimo di \(x+Q(x)\) non coincide, in generale, con il punto in cui \(Q(x)\) da sola è minima. Trovi la soluzione ragionata nella sezione Esercizi, in fondo alla pagina.</p>
+        </div>
+      </div>
+    </div>
+    <figure class="panel">
+      <svg viewBox="0 0 700 260" role="img" aria-label="Grafico di tre rette il cui inviluppo superiore forma la funzione Q(x), lineare a tratti e convessa">
+        <line x1="50" y1="220" x2="650" y2="220" stroke="#B9C5CF" stroke-width="1.4"/>
+        <line x1="50" y1="220" x2="50" y2="20" stroke="#B9C5CF" stroke-width="1.4"/>
+        <text x="655" y="224" font-size="12" fill="#4A5C6E">x</text>
+        <text x="34" y="24" font-size="12" fill="#4A5C6E">Q(x)</text>
+        <text x="50" y="234" font-size="11" fill="#4A5C6E">0</text>
+        <text x="650" y="234" font-size="11" fill="#4A5C6E" text-anchor="end">10</text>
+        <line x1="50" y1="20" x2="650" y2="120" stroke="#A8902F" stroke-width="2" opacity="0.85"/>
+        <text x="560" y="70" font-size="11.5" fill="#A8902F">10 − 2x</text>
+        <line x1="50" y1="120" x2="650" y2="220" stroke="#0E8A78" stroke-width="2" opacity="0.85"/>
+        <text x="560" y="200" font-size="11.5" fill="#0E8A78">6 − x</text>
+        <line x1="50" y1="187" x2="650" y2="187" stroke="#2B6CB0" stroke-width="2" opacity="0.85"/>
+        <text x="560" y="180" font-size="11.5" fill="#2B6CB0">2</text>
+        <polyline points="50,20 170,86 650,120" fill="none" stroke="#C0392B" stroke-width="3.4"/>
+        <text x="300" y="52" font-size="12" fill="#C0392B">Q(x) = inviluppo superiore (il taglio "vincente" in ogni punto)</text>
+      </svg>
+      <figcaption><b>Q(x) come inviluppo superiore delle rette dei tagli.</b> La curva rossa in evidenza è la vera \(Q(x)=\max\{10-2x,\,6-x,\,2\}\) dell'esercizio qui sopra: in ogni punto vince la retta più alta. Il master di Benders conosce all'inizio solo alcune di queste rette e le scopre una alla volta, tagliando via man mano l'ottimismo iniziale.</figcaption>
+    </figure>
+    <div class="row2">
+      <div class="col">
+        <h3>Quando una scelta è semplicemente impossibile</h3>
+        <p>C'è un caso che gli optimality cut da soli non gestiscono: e se, per certi valori di \(x\), il sottoproblema non ha <em>nessuna</em> soluzione ammissibile? Esempio concreto: apriamo troppo pochi magazzini, con capacità complessiva insufficiente a coprire la domanda totale — non esiste alcuna spedizione \(y\) che soddisfi tutti i clienti.</p>
+        <p>In questo caso il sottoproblema, invece di un ottimo duale finito, restituisce un <strong>raggio estremo</strong> \(r\) della regione duale (una direzione lungo cui il problema duale è illimitato, segnale che il primale è infeasible).</p>
+      </div>
+      <div class="col">
+        <p>Da questo raggio si costruisce un <strong>Benders feasibility cut</strong>:</p>
+        <div class="eq mj-wait">
+          $$ r^T(h-Tx)\le 0 $$
+          <p class="eq-note">Questo vincolo non stima un costo: dice al master "questa configurazione di x, e tutte quelle che condividono lo stesso problema di capacità, non sono più accettabili".</p>
+        </div>
+      </div>
+    </div>
+    <div class="keybox warn">
+      <p class="kb-t">Ottimalità vs fattibilità: non confonderle</p>
+      <p>Un <strong>optimality cut</strong> risponde alla domanda "quanto costerà, come minimo, questa scelta?". Un <strong>feasibility cut</strong> risponde alla domanda, ben diversa, "questa scelta è anche solo realizzabile?". Il primo raffina una stima di costo; il secondo elimina soluzioni impossibili prima ancora di parlare di costi.</p>
+    </div>
+  </section>
+
+  <section id="scala">
+    <div class="sec-head"><p class="lvl">5 · Scala</p><h2>Perché conviene davvero: dimensione, parallelismo, e il legame con l'incertezza</h2></div>
+    <p class="lead">Il vantaggio pratico di Benders si vede quando i numeri diventano grandi sul serio.</p>
+    <div class="row2">
+      <div class="col">
+        <p>Immagina un problema con 500 variabili binarie strategiche, 2 milioni di variabili continue operative e 5 milioni di vincoli. Risolverlo tutto insieme, con un solutore generico, può essere estremamente lento o addirittura fuori portata.</p>
+        <p>Con Benders, il master resta piccolo (500 variabili più qualche centinaio di tagli), e il sottoproblema — pur avendo 2 milioni di variabili — è un problema lineare "puro", che i solutori LP risolvono con grande efficienza. In più, il sottoproblema si presta spesso a essere <strong>parallelizzato</strong>: se ci sono più scenari, più aree geografiche, o più periodi indipendenti, ciascun pezzo può essere risolto contemporaneamente su macchine diverse.</p>
+      </div>
+      <div class="col">
+        <h3>Il collegamento con l'incertezza</h3>
+        <p>Qui Benders incontra per la prima volta il tema dell'incertezza. Consideriamo:</p>
+        <div class="eq mj-wait">$$ \min_x c^Tx+\mathbb{E}[Q(x,\xi)] $$
+        <p class="eq-note">\(\xi\) è uno scenario futuro incerto (es. un livello di domanda)</p></div>
+        <p>Con scenari discreti \(\xi_1,\dots,\xi_S\), ciascuno con probabilità \(p_s\):</p>
+        <div class="eq mj-wait">$$ \min_x c^Tx+\sum_{s=1}^{S}p_sQ_s(x) $$</div>
+      </div>
+    </div>
+    <p>Ogni scenario genera un sottoproblema indipendente — con \(S\) anche nell'ordine delle migliaia, risolvibili in parallelo, ciascuno dei quali produce il proprio taglio di Benders. Questa variante ha un nome proprio nella letteratura: <strong>L-shaped method</strong> (Van Slyke e Wets, 1969), la forma classica di Benders per la programmazione stocastica a due stadi.</p>
+    <div class="row2">
+      <div class="col">
+        <h3>Il limite pratico: la convergenza lenta</h3>
+        <p>Benders "puro" ha un difetto: un singolo taglio può essere debole, e il master può proporre, iterazione dopo iterazione, soluzioni molto simili tra loro e poco migliorative.</p>
+      </div>
+      <div class="col">
+        <p>Per questo esistono varianti più sofisticate: <strong>multi-cut</strong> (un taglio per scenario invece di uno aggregato), <strong>Pareto-optimal cuts</strong> (si scelgono i tagli più informativi), <strong>trust-region</strong> e <strong>stabilized Benders</strong> (si limita quanto il master può allontanarsi dalla soluzione corrente), fino al <strong>logic-based Benders</strong>, usato quando il sottoproblema non è nemmeno lineare.</p>
+      </div>
+    </div>
+    <div class="keybox">
+      <p class="kb-t">Idea chiave da portarsi a casa</p>
+      <p>Benders funziona ogni volta che riconosci nel tuo problema lo schema "poche decisioni strutturali di cui non conosco ancora il costo esatto, tante decisioni conseguenti facili da valutare una volta fissata la struttura". Riconoscere questo schema è la parte più importante — la matematica del metodo, poi, è meccanica.</p>
+    </div>
+  </section>
+
+  <section id="verso-incertezza">
+    <div class="sec-head"><p class="lvl hot">6 · E dopo?</p><h2>Verso l'incertezza sulla distribuzione</h2></div>
+    <p class="lead">La sezione precedente ha già introdotto scenari \(\xi\) con probabilità \(p_s\) note. Ma nella pratica, da dove vengono queste probabilità?</p>
+    <div class="row2">
+      <div class="col">
+        <p>Nella maggior parte dei casi reali non conosciamo la vera distribuzione di probabilità della domanda futura: abbiamo solo un campione limitato di osservazioni storiche. Usare quel campione come se fosse la verità espone a un rischio concreto — l'<strong>optimizer's curse</strong> — per cui la soluzione "ottima sui dati" si comporta peggio del previsto quando i dati reali si discostano, anche di poco, dal campione osservato.</p>
+      </div>
+      <div class="col">
+        <p>Questo è precisamente il problema che affronta la <strong>Distributionally Robust Optimization (DRO)</strong>: come decidere bene quando la distribuzione di probabilità che uso nei miei calcoli è solo una stima imperfetta della realtà. È il tema del documento complementare a questo.</p>
+      </div>
+    </div>
+    <div class="keybox dro">
+      <p class="kb-t">Continua con il documento complementare</p>
+      <p><a href="distributionally-robust-optimization.html">Distributionally Robust Optimization — appunti guidati</a> riprende esattamente da qui: introduce l'ambiguity set, la distanza di Wasserstein, l'esempio del newsvendor prudente, e mostra infine dove Benders e DRO si incontrano nei problemi di grande scala.</p>
+    </div>
+  </section>
+
+  <section id="esercizi">
+    <div class="sec-head"><p class="lvl hot">Esercizi</p><h2>Mettiti alla prova</h2></div>
+    <p class="lead">Quattro esercizi, dal più meccanico al più concettuale. Prova a risolverli prima di aprire la traccia di soluzione.</p>
+
+    <div class="ex-item">
+      <p class="ex-num">Esercizio 1</p>
+      <h4>Scrivere master e sottoproblema</h4>
+      <p>Tre magazzini candidati con costi fissi \(f=(120,\,95,\,140)\) e capacità \(C=(80,\,60,\,90)\); due clienti con domande \(d=(70,\,50)\); matrice dei costi di trasporto \(c_{ij}\) a tua scelta (positiva). Scrivi esplicitamente il master problem (con \(\theta\) e senza tagli) e il sottoproblema per \(\bar x=(1,0,1)\).</p>
+      <details>
+        <summary>Mostra traccia di soluzione</summary>
+        <p>Master: \(\min \sum_i f_i x_i+\theta\) con \(x_i\in\{0,1\}\), nessun vincolo \(\theta\ge\dots\) ancora presente alla prima iterazione (o \(\theta\ge 0\) come sotto-stima banale). Sottoproblema per \(\bar x=(1,0,1)\): un problema di trasporto standard con solo W1 e W3 disponibili, capacità \(80\) e \(90\), che deve soddisfare \(d_1=70\) e \(d_2=50\) al minor costo di trasporto — il duale di questo problema fornisce i prezzi ombra da cui costruire il primo optimality cut.</p>
+      </details>
+    </div>
+
+    <div class="ex-item">
+      <p class="ex-num">Esercizio 2</p>
+      <h4>Dal duale al taglio</h4>
+      <p>Supponi che, risolvendo il sottoproblema per un certo \(\bar x\), tu ottenga i prezzi ombra \(\pi=(3,\,5)\) sui due vincoli di domanda, con \(h=(70,\,50)\) e \(T\) matrice identità (ogni unità di \(x_i\) libera capacità solo sul proprio magazzino). Scrivi esplicitamente l'optimality cut da aggiungere al master.</p>
+      <details>
+        <summary>Mostra traccia di soluzione</summary>
+        <p>Il cut ha la forma generale \(\theta \ge \pi^T(h-Tx)\): sostituendo numericamente \(\pi=(3,5)\) e \(h=(70,50)\) si ottiene \(\theta \ge 3(70-\dots)+5(50-\dots)\), dove i termini in \(x\) dipendono da come \(T\) collega le capacità dei magazzini ai due vincoli di domanda. Il punto pedagogico è che il cut è sempre lineare in \(x\), qualunque sia la complessità del sottoproblema da cui proviene.</p>
+      </details>
+    </div>
+
+    <div class="ex-item">
+      <p class="ex-num">Esercizio 3</p>
+      <h4>La funzione Q(x) lineare a tratti</h4>
+      <p>Riprendi \(Q(x)=\max\{10-2x,\;6-x,\;2\}\) su \(x\in[0,10]\) (Sezione 4) e risolvi \(\min_x\, x+Q(x)\).</p>
+      <details>
+        <summary>Mostra soluzione</summary>
+        <p>I tre segmenti si incrociano a \(x=2\) (tra \(10-2x\) e \(6-x\)) e a \(x=4\) (tra \(6-x\) e \(2\)). Per \(x\in[0,2]\), \(Q(x)=10-2x\) e la somma è \(x+10-2x=10-x\), decrescente. Per \(x\in[2,4]\), \(Q(x)=6-x\) e la somma è \(x+6-x=6\), costante. Per \(x\in[4,10]\), \(Q(x)=2\) e la somma è \(x+2\), crescente. Il minimo vale quindi \(6\), raggiunto per <em>tutto</em> l'intervallo \(x\in[2,4]\) — un tratto piatto, non un punto isolato — ben lontano dal punto \(x=4\) in cui \(Q(x)\) da sola tocca il suo minimo assoluto (\(Q=2\)): minimizzare \(Q(x)\) da sola avrebbe dato una risposta sbagliata per il problema completo.</p>
+      </details>
+    </div>
+
+    <div class="ex-item">
+      <p class="ex-num">Esercizio 4</p>
+      <h4>Riconoscere un caso infeasible</h4>
+      <p>Tre magazzini con capacità totale \(C_1+C_2+C_3=150\) e due clienti con domanda totale \(d_1+d_2=180\). Se il master propone \(\bar x=(1,1,0)\) con \(C_1+C_2=100\), il sottoproblema è ammissibile? Che tipo di taglio genera questa situazione?</p>
+      <details>
+        <summary>Mostra traccia di soluzione</summary>
+        <p>No: con \(C_1+C_2=100 < 180=d_1+d_2\), non esiste alcuna \(y\ge0\) che soddisfi entrambi i vincoli di domanda rispettando le capacità — il sottoproblema è infeasible. Si genera un <b>feasibility cut</b> (non un optimality cut), che esclude non solo \(\bar x=(1,1,0)\) ma ogni combinazione di magazzini aperti con capacità totale insufficiente a coprire \(180\): il taglio, in questo caso, equivale essenzialmente a imporre \(\sum_i C_i x_i \ge 180\).</p>
+      </details>
+    </div>
+  </section>
+
+  <section id="glossario">
+    <div class="sec-head"><p class="lvl">Strumenti</p><h2>Glossario essenziale</h2></div>
+    <dl class="gloss">
+      <dt>Master problem</dt><dd>Il sottoproblema che decide le variabili strategiche, arricchito progressivamente dai tagli di Benders.</dd>
+      <dt>Subproblem</dt><dd>Il problema, tipicamente un LP, che valuta il costo operativo ottimo una volta fissate le decisioni strategiche.</dd>
+      <dt>Prezzi ombra (variabili duali)</dt><dd>Il valore marginale di un'unità aggiuntiva di risorsa in un vincolo, usato per costruire i tagli di Benders.</dd>
+      <dt>Optimality cut</dt><dd>Vincolo che dice al master "il costo operativo sarà almeno questo", basato sulla soluzione duale del sottoproblema.</dd>
+      <dt>Feasibility cut</dt><dd>Vincolo che esclude una scelta strategica perché rende il sottoproblema privo di soluzioni ammissibili.</dd>
+      <dt>Raggio estremo</dt><dd>Direzione lungo cui il problema duale è illimitato: segnala che il sottoproblema primale è infeasible ed è alla base del feasibility cut.</dd>
+      <dt>L-shaped method</dt><dd>La versione di Benders usata in programmazione stocastica a due stadi, con un sottoproblema per scenario.</dd>
+      <dt>Recourse</dt><dd>La decisione operativa presa dopo aver osservato lo scenario incerto, in un problema a due stadi.</dd>
+      <dt>Multi-cut</dt><dd>Variante di Benders in cui si aggiunge un taglio separato per ciascuno scenario, invece di un unico taglio aggregato.</dd>
+    </dl>
+  </section>
+
+  <section id="riferimenti">
+    <div class="sec-head"><p class="lvl">Strumenti</p><h2>Riferimenti</h2></div>
+    <ol class="refs">
+      <li>J. F. Benders — <i>Partitioning procedures for solving mixed-variables programming problems</i>
+        <span class="cite-meta">Numerische Mathematik, 4(1), 238–252, 1962</span></li>
+      <li>R. M. Van Slyke, R. Wets — <i>L-Shaped Linear Programs with Application to Optimal Control and Stochastic Programming</i>
+        <span class="cite-meta">SIAM Journal on Applied Mathematics, 17(4), 638–663, 1969</span></li>
+      <li>G. B. Dantzig — <i>Linear Programming under Uncertainty</i>
+        <span class="cite-meta">Management Science, 1(3–4), 197–206, 1955 — origine della programmazione stocastica a due stadi</span></li>
+    </ol>
+    <p style="margin-top:16px;font-size:14.5px;color:var(--ink-soft)">Nota: queste citazioni sono riportate con i riferimenti bibliografici standard della letteratura di Ricerca Operativa; non tutte dispongono di una versione liberamente accessibile online.</p>
+  </section>
+
+  </main>
+
+  <aside class="side">
+    <p class="side-t">In questa pagina</p>
+    <ol>
+      <li><a href="#motivazione"><span class="grp">0 · Perché</span>Il problema che nasce sempre</a></li>
+      <li><a href="#idea"><span class="grp">1 · Idea</span>Struttura vs operazioni</a></li>
+      <li><a href="#algoritmo"><span class="grp">2 · Algoritmo</span>Passo dopo passo</a></li>
+      <li><a href="#esempio"><span class="grp">3 · Esempio</span>Dove aprire i magazzini</a></li>
+      <li><a href="#geometria"><span class="grp">4 · Geometria</span>Interpretazione e feasibility cut</a></li>
+      <li><a href="#scala"><span class="grp">5 · Scala</span>Dimensione e stocastica</a></li>
+      <li><a href="#verso-incertezza"><span class="grp">6 · E dopo?</span>Verso l'incertezza</a></li>
+      <li class="divider"></li>
+      <li><a href="#esercizi"><span class="grp">Esercizi</span>Mettiti alla prova</a></li>
+      <li><a href="#glossario"><span class="grp">Strumenti</span>Glossario</a></li>
+      <li><a href="#riferimenti"><span class="grp">Strumenti</span>Riferimenti</a></li>
+    </ol>
+    <div class="companion-link">Documento complementare:<br><a href="distributionally-robust-optimization.html">Distributionally Robust Optimization →</a></div>
+  </aside>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="ribbon"><span class="b"></span><span class="b"></span><span class="g"></span><span class="d"></span><span class="d"></span></div>
+    <p>Materiale didattico indipendente, pensato come approfondimento per un corso introduttivo di Ricerca Operativa per Ingegneria. Le formule seguono la formulazione classica di Benders (1962) e la letteratura DRO basata su Wasserstein (Mohajerin Esfahani &amp; Kuhn, 2018, e successivi). Gli esempi numerici sono illustrativi e semplificati a scopo didattico. Richiede connessione internet per il rendering delle formule (MathJax).</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distributionally Robust Optimization — appunti guidati</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] },
+  chtml: { scale: 0.94 },
+  startup: {
+    ready(){
+      MathJax.startup.defaultReady();
+      MathJax.startup.promise.then(()=>{ document.body.classList.add('mj-ready'); });
+    }
+  }
+};
+</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#FAFBFC;
+  --panel:#FFFFFF;
+  --ink:#182430;
+  --ink-soft:#4A5C6E;
+  --line:#DCE3E9;
+  --line-strong:#B9C5CF;
+  --bend:#2B6CB0;
+  --bend-soft:#E7EFF8;
+  --dro:#2B6CB0;
+  --dro-soft:#E7EFF8;
+  --warn:#C0392B;
+  --warn-soft:#F8E9E6;
+  --gold:#A8902F;
+  --gold-soft:#F4F0DC;
+  --code-bg:#F0F3F6;
+  --radius:10px;
+  --maxw:1280px;
+  --sidebar:236px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:"Source Serif 4", Georgia, serif;font-size:17.5px;line-height:1.65}
+body:not(.mj-ready) .mj-wait{opacity:.001}
+body.mj-ready .mj-wait{opacity:1;transition:opacity .25s ease}
+h1,h2,h3,h4{font-family:"Space Grotesk",system-ui,sans-serif;line-height:1.2;letter-spacing:-0.01em}
+.mono{font-family:"IBM Plex Mono",monospace}
+a{color:#0B6E8F;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:var(--warn)}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+.ribbon{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:0 0 14px}
+.ribbon span{flex:1}
+.ribbon .b{background:var(--gold)}
+.ribbon .g{background:var(--gold)}
+.ribbon .d{background:var(--dro)}
+
+header.hero{padding:56px 0 34px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px}
+.hero h1{font-size:clamp(28px,4.2vw,46px);font-weight:700;max-width:24ch}
+.hero h1 em{font-style:normal;color:var(--dro)}
+.hero .sub{font-size:18.5px;color:var(--ink-soft);max-width:78ch;margin:16px 0 8px}
+.hero .companion{font-size:15.5px;color:var(--ink-soft);max-width:78ch;margin-top:14px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.info-card{margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px 24px;font-size:14.5px}
+.info-card div b{font-family:"Space Grotesk",sans-serif;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);display:block;margin-bottom:2px}
+
+.page{max-width:var(--maxw);margin:0 auto;padding:0 22px;display:flex;align-items:flex-start;gap:44px}
+.main{flex:1;min-width:0}
+aside.side{width:var(--sidebar);flex:0 0 var(--sidebar);position:sticky;top:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:16px 16px 18px;max-height:calc(100vh - 44px);overflow-y:auto}
+aside.side .side-t{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px}
+aside.side ol{list-style:none;margin:0}
+aside.side li{margin-bottom:2px}
+aside.side a{display:block;text-decoration:none;color:var(--ink);font-family:"Space Grotesk",sans-serif;font-size:13.5px;padding:7px 8px;border-radius:7px;line-height:1.3;border-left:2px solid transparent}
+aside.side a:hover{background:var(--code-bg);border-left-color:var(--dro)}
+aside.side a .grp{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-soft);letter-spacing:.06em;text-transform:uppercase}
+aside.side .divider{height:1px;background:var(--line);margin:10px 0}
+aside.side .companion-link{display:block;margin-top:12px;padding:10px 10px;border:1px dashed var(--line-strong);border-radius:8px;font-size:12.5px;color:var(--ink-soft)}
+aside.side .companion-link a{font-weight:700}
+@media (max-width:980px){.page{display:block}aside.side{position:static;width:100%;max-height:none;margin-bottom:28px}}
+
+section{padding:44px 0;border-bottom:1px solid var(--line)}
+.sec-head{margin-bottom:22px}
+.sec-head .lvl{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dro);margin-bottom:8px}
+.sec-head .lvl.hot{color:var(--warn)}
+section h2{font-size:clamp(23px,2.6vw,30px);max-width:30ch}
+section h3{font-size:19.5px;margin:24px 0 10px}
+.lead{font-size:18.5px;color:var(--ink-soft);max-width:82ch;margin-bottom:18px}
+strong{font-weight:600}
+p{margin-bottom:13px}
+ul,ol{margin:0 0 13px 22px}
+li{margin-bottom:6px}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:start;margin-bottom:6px}
+.row2 .col p:last-child,.row2 .col ul:last-child,.row2 .col ol:last-child{margin-bottom:0}
+@media (max-width:760px){.row2{display:block}}
+
+figure.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:22px 0}
+figure.panel figcaption{font-size:13.5px;color:var(--ink-soft);margin-top:10px;line-height:1.55;font-family:"Space Grotesk",sans-serif}
+figure.panel figcaption b{color:var(--ink)}
+svg{display:block;max-width:100%;height:auto}
+svg text{font-family:"IBM Plex Mono",monospace}
+
+.keybox{background:var(--dro-soft);border-left:4px solid var(--dro);border-radius:0 var(--radius) var(--radius) 0;padding:15px 18px;margin:20px 0}
+.keybox.warn{background:var(--warn-soft);border-left-color:var(--warn)}
+.keybox .kb-t{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.keybox p{margin-bottom:6px}
+.keybox p:last-child{margin-bottom:0}
+
+.exq{background:var(--gold-soft);border:1px dashed var(--gold);border-radius:var(--radius);padding:16px 18px;margin:20px 0}
+.exq .kb-t{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#7a6620;margin-bottom:6px}
+.exq p:last-child{margin-bottom:0}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:22px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.card .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:9px}
+.tag.dro{background:var(--dro-soft);color:var(--dro)}
+.card h4{font-size:15.5px;margin-bottom:7px}
+.card p{font-size:14.5px;margin-bottom:7px;color:var(--ink-soft)}
+.card p:last-child{margin-bottom:0}
+
+.stage-flow{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin:22px 0}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.stage h4{font-size:15px;margin-bottom:6px}
+.stage.master{border-top:4px solid var(--gold)}
+.stage.sub{border-top:4px solid var(--dro)}
+.stage p{font-size:14.5px;color:var(--ink-soft);margin:0}
+.stage-arrow{align-self:center;font-size:24px;color:var(--ink-soft)}
+@media (max-width:640px){.stage-flow{grid-template-columns:1fr}.stage-arrow{transform:rotate(90deg);justify-self:center}}
+
+.eq{background:var(--code-bg);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin:18px 0;overflow-x:auto;text-align:center}
+.eq .eq-note{font-size:13.5px;color:var(--ink-soft);font-family:"Space Grotesk",sans-serif;margin-top:8px;text-align:left}
+
+table{border-collapse:collapse;width:100%;margin:20px 0;font-size:14.5px;background:var(--panel)}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{font-family:"Space Grotesk",sans-serif;font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;background:var(--code-bg)}
+
+.ex-item{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px}
+.ex-item .ex-num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.ex-item h4{font-size:16.5px;margin-bottom:8px}
+.ex-item details{margin-top:12px;border-top:1px dashed var(--line-strong);padding-top:10px}
+.ex-item summary{cursor:pointer;font-family:"Space Grotesk",sans-serif;font-size:13.5px;font-weight:700;color:var(--dro)}
+.ex-item details p{margin-top:8px;color:var(--ink-soft);font-size:15px}
+.ex-item details p:last-child{margin-bottom:0}
+
+dl.gloss{display:grid;grid-template-columns:max-content 1fr;gap:9px 20px}
+dl.gloss dt{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:14.5px;white-space:nowrap}
+dl.gloss dd{color:var(--ink-soft);font-size:14.5px}
+
+ol.refs{margin-left:22px}
+ol.refs li{margin-bottom:11px;font-size:15px}
+ol.refs .cite-meta{font-size:13px;color:var(--ink-soft);display:block;margin-top:2px}
+
+footer{padding:36px 0 56px;color:var(--ink-soft);font-size:14px}
+
+@media (max-width:760px){.info-card{grid-template-columns:1fr 1fr}dl.gloss{grid-template-columns:1fr}dl.gloss dd{margin-bottom:8px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Appunti guidati · Ricerca Operativa avanzata · per Ingegneria</p>
+    <h1>Dubitare per non sbagliare: <em>Distributionally Robust Optimization</em></h1>
+    <p class="sub">Come decidere bene quando non conosciamo con certezza il futuro — la domanda di un cliente, il rendimento di un investimento, i tempi di consegna — ma disponiamo solo di un campione limitato di osservazioni passate.</p>
+    <p class="companion">Questo documento è il secondo di due testi indipendenti. Il primo, dedicato alla <a href="benders-decomposition.html">Decomposizione di Benders</a>, affronta il tema complementare: come risolvere in modo efficiente problemi di ottimizzazione enormi e strutturati, separando decisioni strategiche e decisioni operative.</p>
+    <div class="info-card">
+      <div><b>Argomento</b>Distributionally Robust Optimization · Ambiguity set · Newsvendor robusto</div>
+      <div><b>Prerequisiti</b>Nozioni di probabilità, ottimizzazione di base</div>
+      <div><b>Livello</b>Introduttivo–intermedio</div>
+      <div><b>Applicazioni</b>Gestione scorte, finanza, reti energetiche</div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <main class="main">
+
+  <section id="motivazione">
+    <div class="sec-head"><p class="lvl">0 · Perché</p><h2>Decidere con dati limitati</h2></div>
+    <p class="lead">Ogni decisione presa oggi, con effetto su un futuro incerto, si appoggia — esplicitamente o no — a un'ipotesi su come si comporterà quel futuro.</p>
+    <div class="row2">
+      <div class="col">
+        <p>Immagina di dover decidere quanta merce ordinare per il prossimo mese, quanta riserva di potenza tenere in una rete elettrica, o quanto capitale allocare in un investimento. In tutti questi casi, la decisione ottima dipende da come si distribuisce la grandezza incerta in gioco: la domanda dei clienti, il fabbisogno energetico, il rendimento di mercato.</p>
+        <p>Il problema è che questa distribuzione, quasi sempre, <strong>non la conosciamo</strong>. Abbiamo solo un campione di osservazioni storiche — magari poche decine di punti — da cui dobbiamo in qualche modo dedurla.</p>
+      </div>
+      <div class="col">
+        <p>Trattare la distribuzione stimata dai dati come se fosse la verità assoluta è un errore sottile ma pericoloso: l'ottimizzazione "scopre" e sfrutta ogni piccola imperfezione della stima, producendo decisioni che sembrano ottime sul campione ma si comportano peggio del previsto nella realtà.</p>
+        <p>La Distributionally Robust Optimization (DRO) nasce per rispondere esattamente a questa difficoltà.</p>
+      </div>
+    </div>
+    <div class="keybox">
+      <p class="kb-t">La domanda a cui risponde questo documento</p>
+      <p>Come decido bene sapendo che la distribuzione di probabilità che uso nei miei calcoli è solo una stima imperfetta della realtà? La risposta, come vedremo, è ottimizzare non rispetto a un'unica distribuzione stimata, ma rispetto al caso peggiore tra tutte le distribuzioni ragionevolmente compatibili con i dati osservati.</p>
+    </div>
+  </section>
+
+  <section id="idea">
+    <div class="sec-head"><p class="lvl">1 · L'idea</p><h2>Quando i dati che hai non bastano a fidarsi ciecamente</h2></div>
+    <p class="lead">Formalizziamo l'intuizione della sezione precedente.</p>
+    <div class="row2">
+      <div class="col">
+        <p>Nella programmazione stocastica "classica" assumiamo di conoscere la vera distribuzione di probabilità \(\xi \sim P\) e risolviamo \(\min_x \mathbb{E}_P[f(x,\xi)]\). Ma nella pratica reale — ed è il punto di partenza della DRO — <strong>quasi mai conosciamo \(P\)</strong>. Abbiamo solo un campione di osservazioni passate \(\xi_1,\dots,\xi_N\), da cui costruiamo, nella migliore delle ipotesi, una distribuzione empirica \(\hat P_N\).</p>
+        <p>La domanda che pone la Distributionally Robust Optimization è semplice da enunciare e profonda nelle conseguenze: e se la vera distribuzione fosse leggermente diversa da quella osservata?</p>
+      </div>
+      <div class="col">
+        <div class="keybox">
+          <p class="kb-t">La formulazione della DRO</p>
+          <p>Invece di ottimizzare rispetto a un'unica distribuzione stimata, la DRO ottimizza rispetto al <strong>caso peggiore, tra tutte le distribuzioni ragionevolmente vicine a quella osservata</strong>:</p>
+          <div class="eq mj-wait" style="margin:10px 0 0">$$ \min_x \sup_{P\in\mathcal P} \mathbb{E}_P[f(x,\xi)] $$</div>
+          <p style="margin-top:8px">L'insieme \(\mathcal P\) si chiama <strong>ambiguity set</strong>: l'insieme delle distribuzioni di probabilità che consideriamo plausibili, dato ciò che abbiamo osservato.</p>
+        </div>
+      </div>
+    </div>
+    <h3>Non confondere DRO e Robust Optimization classica</h3>
+    <div class="row2">
+      <div class="col">
+        <p>La robust optimization "tradizionale" (Ben-Tal, El Ghaoui e Nemirovski, 2009; Bertsimas e Sim, 2004) considera:</p>
+        <div class="eq mj-wait">$$ \min_x \max_{\xi\in\mathcal U} f(x,\xi) $$</div>
+        <p>cioè cerca la soluzione migliore rispetto al <em>peggior valore possibile</em> del parametro incerto \(\xi\), scelto in un insieme di scenari \(\mathcal U\).</p>
+      </div>
+      <div class="col">
+        <p>La differenza con la DRO è profonda anche se le formule sembrano simili: la robust optimization si difende dal peggior <em>evento</em>, la DRO si difende dalla peggior <em>distribuzione di probabilità</em> compatibile con i dati. Vedi la tabella qui sotto per un confronto diretto.</p>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th></th><th>Robust Optimization</th><th>Distributionally Robust Optimization</th></tr></thead>
+      <tbody>
+        <tr><td>Domanda</td><td>Qual è il peggior <em>evento</em> possibile?</td><td>Qual è la peggior <em>distribuzione di probabilità</em> compatibile con ciò che so?</td></tr>
+        <tr><td>Cosa varia</td><td>Il singolo scenario \(\xi\)</td><td>L'intera legge di probabilità \(P\)</td></tr>
+        <tr><td>Conservatività</td><td>Spesso molto conservativa (protegge dallo scenario estremo)</td><td>Tipicamente meno conservativa: la media pesata sotto la peggior distribuzione è quasi sempre meno estrema del singolo peggior evento</td></tr>
+      </tbody>
+    </table>
+    <div class="keybox">
+      <p class="kb-t">Perché serve: l'optimizer's curse</p>
+      <p>Supponi di avere solo \(N=100\) osservazioni storiche della domanda. Costruisci un modello probabilistico su questi dati e ottimizzi. Il problema è che l'ottimizzatore è "furbo": se il modello stimato ha piccoli errori (inevitabili, con dati finiti), l'ottimizzatore troverà esattamente la soluzione che sfrutta quegli errori — sembrerà ottima sul campione, ma si comporterà male fuori campione. Questo fenomeno si chiama <strong>optimizer's curse</strong>. La DRO introduce, in un certo senso, un margine di sicurezza contro questo effetto.</p>
+    </div>
+  </section>
+
+  <section id="ambiguity-set">
+    <div class="sec-head"><p class="lvl">2 · Ambiguity set</p><h2>Come si costruisce l'insieme delle distribuzioni plausibili</h2></div>
+    <p class="lead">Esistono due famiglie principali di ambiguity set, con "filosofie" diverse: una basata sulla distanza tra distribuzioni, l'altra basata su statistiche riassuntive come media e varianza.</p>
+    <h3>2a · Ambiguity set basato sulla distanza di Wasserstein</h3>
+    <div class="row2">
+      <div class="col">
+        <p>Un modo elegante e oggi molto diffuso (Mohajerin Esfahani e Kuhn, 2018 — vedi riferimenti) è definire l'insieme delle distribuzioni "abbastanza vicine" a quella osservata:</p>
+        <div class="eq mj-wait">
+          $$ \mathcal P=\left\{P:\; W(P,\hat P_N)\le\varepsilon\right\} $$
+          <p class="eq-note">dove \(\hat P_N=\frac1N\sum_{i=1}^{N}\delta_{\xi_i}\) è la distribuzione empirica. \(W(\cdot,\cdot)\) è la distanza di Wasserstein: intuitivamente, il costo minimo di "trasporto" per trasformare una distribuzione nell'altra.</p>
+        </div>
+        <p>Il raggio \(\varepsilon\) controlla quanto siamo prudenti: con \(\varepsilon=0\) l'ambiguity set contiene solo la distribuzione empirica; con \(\varepsilon\to\infty\) diventiamo estremamente conservativi, vicini alla robust optimization classica.</p>
+      </div>
+      <div class="col">
+        <figure class="panel" style="margin-top:0">
+          <svg viewBox="0 0 460 340" role="img" aria-label="Diagramma: distribuzione empirica al centro di una palla di Wasserstein, con la distribuzione di caso peggiore sul bordo e la didascalia ben separata dal cerchio">
+            <text x="225" y="24" text-anchor="middle" font-size="12.5" fill="#2B6CB0">𝒫 = {P : W(P, P̂ₙ) ≤ ε}</text>
+            <circle cx="220" cy="150" r="100" fill="#E7EFF8" stroke="#2B6CB0" stroke-width="2" stroke-dasharray="6 4"/>
+            <circle cx="220" cy="150" r="7" fill="#182430"/>
+            <text x="220" y="176" text-anchor="middle" font-size="12" fill="#182430">P̂ₙ (empirica, dai dati)</text>
+            <circle cx="288" cy="90" r="6" fill="#C0392B"/>
+            <text x="305" y="82" font-size="12" fill="#C0392B" text-anchor="start">P* (caso</text>
+            <text x="305" y="97" font-size="12" fill="#C0392B" text-anchor="start">peggiore)</text>
+            <line x1="225" y1="145" x2="284" y2="94" stroke="#C0392B" stroke-width="1.6" stroke-dasharray="3 3"/>
+            <text x="270" y="112" font-size="11" fill="#C0392B">ε</text>
+            <circle cx="155" cy="200" r="4" fill="#4A5C6E" opacity="0.6"/>
+            <circle cx="188" cy="95" r="4" fill="#4A5C6E" opacity="0.6"/>
+            <circle cx="168" cy="150" r="4" fill="#4A5C6E" opacity="0.6"/>
+            <text x="225" y="304" text-anchor="middle" font-size="11.5" fill="#4A5C6E">i puntini grigi: altre distribuzioni plausibili nell'insieme</text>
+          </svg>
+          <figcaption><b>L'ambiguity set come "palla" attorno ai dati osservati.</b> La DRO non ottimizza rispetto al solo punto centrale \(\hat P_N\), ma rispetto al punto più sfavorevole \(P^\*\) dentro la palla di raggio \(\varepsilon\) — quello che massimizza il costo atteso.</figcaption>
+        </figure>
+      </div>
+    </div>
+    <h3>2b · Ambiguity set basato sui momenti</h3>
+    <div class="row2">
+      <div class="col">
+        <p>Un'alternativa, utile quando si conoscono solo alcune statistiche aggregate (Delage e Ye, 2010): dire "non conosco la distribuzione, ma conosco media e covarianza".</p>
+        <div class="eq mj-wait">$$ \mathcal P=\left\{P:\; \mathbb E_P[\xi]=\mu,\;\; \mathbb E_P[(\xi-\mu)(\xi-\mu)^T]=\Sigma\right\} $$</div>
+        <p>Questa formulazione porta spesso a problemi di ottimizzazione conica (semidefinita o second-order cone).</p>
+      </div>
+      <div class="col">
+        <h3 style="margin-top:0">2c · Il legame con la regolarizzazione</h3>
+        <p>Uno dei risultati più utili da ricordare: in molti casi, un problema DRO con ambiguity set di Wasserstein è <strong>matematicamente equivalente</strong> a un problema di minimizzazione del rischio empirico con una penalità aggiuntiva:</p>
+        <div class="eq mj-wait">$$ \min_x \frac1N\sum_i f(x,\xi_i) + \lambda\|x\| $$
+        <p class="eq-note">con \(\lambda\) legato a \(\varepsilon\)</p></div>
+      </div>
+    </div>
+    <p>In altre parole: proteggersi dall'incertezza sulla distribuzione produce, matematicamente, lo stesso effetto di penalizzare soluzioni troppo adattate ai dati — esattamente ciò che la regolarizzazione fa in statistica e machine learning. È uno dei ponti concettuali più eleganti tra Ricerca Operativa, Statistica e Machine Learning.</p>
+    <div class="keybox">
+      <p class="kb-t">Una garanzia statistica, non solo un'euristica</p>
+      <p>La scelta del raggio \(\varepsilon\) non è arbitraria: con risultati di concentrazione probabilistica si può costruire \(\varepsilon_N\) tale che la vera distribuzione \(P_{\text{vero}}\) appartenga all'ambiguity set con probabilità almeno \(1-\alpha\) (ad esempio 95%). Questo trasforma una scelta apparentemente euristica in una scelta statisticamente giustificabile.</p>
+    </div>
+  </section>
+
+  <section id="esempio">
+    <div class="sec-head"><p class="lvl">3 · Esempio</p><h2>Esempio guida: il magazziniere prudente (newsvendor problem)</h2></div>
+    <p class="lead">Il problema del <em>newsvendor</em> (edicolante), risalente a Scarf (1958), è l'esempio classico di decisione sotto incertezza — perfetto per vedere la DRO in azione, senza formalismi eccessivi.</p>
+    <div class="row2">
+      <div class="col">
+        <p>Devi decidere una quantità \(x\) di un prodotto deperibile (giornali, prodotti freschi, capi di una collezione stagionale) da ordinare <strong>prima</strong> di conoscere la domanda \(D\) del periodo. Il costo è:</p>
+        <div class="eq mj-wait">
+          $$ c(x,D)=h\,(x-D)^+ + p\,(D-x)^+ $$
+          <p class="eq-note">\(h\) = costo unitario di sovrastoccaggio; \(p\) = costo unitario di stockout; \((\cdot)^+\) indica "solo se positivo".</p>
+        </div>
+      </div>
+      <div class="col">
+        <p>Se conoscessimo esattamente la distribuzione \(P\) della domanda, la soluzione classica (formula del <em>critical ratio</em>) sceglierebbe \(x^*\) tale che:</p>
+        <div class="eq mj-wait">
+          $$ F_D(x^*)=\frac{p}{p+h} $$
+          <p class="eq-note">cioè ordinare fino al quantile della domanda corrispondente al rapporto tra costo di stockout e costo totale.</p>
+        </div>
+      </div>
+    </div>
+    <div class="exq">
+      <p class="kb-t">Esempio numerico</p>
+      <p>Un negozio vende un capo stagionale: costo di sovrastoccaggio \(h=8\) €/pezzo (sconto per liquidare il magazzino), costo di stockout \(p=24\) €/pezzo (margine perso più danno d'immagine). Il rapporto critico è \(p/(p+h)=24/32=0{,}75\): se conoscessimo perfettamente la distribuzione della domanda, ordineremmo fino al 75° percentile della domanda stimata.</p>
+    </div>
+    <div class="row2">
+      <div class="col">
+        <p>Il problema pratico: il negozio ha solo <strong>40 osservazioni</strong> storiche della domanda di prodotti simili — non abbastanza per stimare con sicurezza un intero 75° percentile, specialmente se la domanda ha forme insolite (picchi stagionali, effetti moda). La distribuzione stimata potrebbe sbagliare parecchio, proprio nella coda che ci interessa.</p>
+        <p>La DRO, in questo contesto, risolve:</p>
+        <div class="eq mj-wait">$$ \min_x \sup_{P:\,W(P,\hat P)\le\varepsilon} \mathbb E_P[c(x,D)] $$</div>
+      </div>
+      <div class="col">
+        <div class="keybox">
+          <p class="kb-t">Cosa cambia, in pratica, nella decisione</p>
+          <p>La soluzione DRO tenderà a scegliere una quantità <strong>leggermente più prudente</strong> rispetto alla soluzione basata solo sui dati storici — non necessariamente la massima cautela possibile, ma quanto basta per proteggersi da un errore di stima, specialmente pesante quando il campione è piccolo (i 40 punti dell'esempio) o quando le conseguenze di un errore (qui, il costo di stockout \(p\)) sono molto più gravi degli sconti di svendita.</p>
+        </div>
+      </div>
+    </div>
+    <p>Vale la pena confrontare tre approcci fianco a fianco: decisione "ingenua" con la sola distribuzione empirica, robust optimization classica (worst-case scenario secco), e DRO (worst-case tra distribuzioni plausibili). La DRO, nella maggior parte dei casi pratici, produce decisioni meno sprecone della robust optimization e più solide della decisione ingenua.</p>
+  </section>
+
+  <section id="vincoli">
+    <div class="sec-head"><p class="lvl">4 · Vincoli</p><h2>Vincoli probabilistici: quando anche i vincoli sono incerti</h2></div>
+    <p class="lead">Fino a qui abbiamo reso robusto l'<em>obiettivo</em> (il costo atteso). A volte, però, è un <em>vincolo</em> a dover valere quasi sempre, non in media.</p>
+    <div class="row2">
+      <div class="col">
+        <p>Supponiamo di voler imporre che un vincolo operativo sia rispettato con altissima probabilità:</p>
+        <div class="eq mj-wait">
+          $$ P\big(a(\xi)^Tx\le b\big)\ge 0{,}99 $$
+          <p class="eq-note">Questa è una <b>chance constraint</b> (vincolo probabilistico): ad esempio, "la probabilità che la capacità della rete elettrica sia sufficiente deve essere almeno il 99%".</p>
+        </div>
+      </div>
+      <div class="col">
+        <p>Se anche qui \(P\) è incerta, la versione robusta rispetto alla distribuzione diventa:</p>
+        <div class="eq mj-wait">
+          $$ \inf_{P\in\mathcal P} P\big(a(\xi)^Tx\le b\big)\ge 0{,}99 $$
+          <p class="eq-note">Una <b>distributionally robust chance constraint</b>: la probabilità di rispettare il vincolo deve essere almeno il 99%, anche nella peggiore delle distribuzioni plausibili.</p>
+        </div>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <span class="tag dro">Reti energetiche</span>
+        <h4>Riserva di potenza</h4>
+        <p>Garantire che la rete regga anche in scenari di domanda/produzione rinnovabile incerti, senza sovradimensionare inutilmente gli impianti.</p>
+      </div>
+      <div class="card">
+        <span class="tag dro">Finanza</span>
+        <h4>Rischio di portafoglio</h4>
+        <p>Vincoli sul rischio che restano validi anche se la distribuzione dei rendimenti stimata dai dati storici non è perfettamente accurata.</p>
+      </div>
+      <div class="card">
+        <span class="tag dro">Supply chain</span>
+        <h4>Livelli di servizio</h4>
+        <p>Garantire un tasso minimo di soddisfazione degli ordini, robusto rispetto a stime imperfette della domanda.</p>
+      </div>
+    </div>
+    <p>Il filo conduttore, in tutti questi casi applicativi, è lo stesso: quando la conseguenza di violare un vincolo è grave (blackout, perdita finanziaria, rottura di uno stock critico), non basta che il vincolo sia rispettato "in media" secondo il modello stimato — deve reggere anche se il modello ha sottostimato leggermente la variabilità reale.</p>
+  </section>
+
+  <section id="legame">
+    <div class="sec-head"><p class="lvl hot">5 · Sintesi</p><h2>Il legame con la decomposizione</h2></div>
+    <p class="lead">La DRO e la Decomposizione di Benders rispondono a domande diverse — una epistemica, l'altra computazionale — ma nei problemi reali finiscono spesso per lavorare insieme, nello stesso modello.</p>
+    <div class="ribbon"><span class="d"></span><span class="d"></span><span class="g"></span><span class="d"></span><span class="d"></span></div>
+    <div class="row2">
+      <div class="col">
+        <p>Considera il problema che riunisce entrambi gli ingredienti:</p>
+        <div class="eq mj-wait">$$ \min_x c^Tx+\sup_{P\in\mathcal P}\mathbb E_P[Q(x,\xi)] $$</div>
+        <p>Qui convivono contemporaneamente: decisioni strategiche (\(x\)), recourse operativo (\(Q(x,\xi)\), il costo operativo ottimo di un problema come quelli visti nel documento sulla Decomposizione di Benders), scenari (\(\xi\)) e distribuzioni incerte (\(\mathcal P\)). La decomposizione può produrre un master problem in \(x\) (esattamente come in Benders) e una famiglia di sottoproblemi associati non più solo agli scenari, ma alle <strong>distribuzioni avverse</strong> individuate dal problema di massimizzazione interno alla DRO.</p>
+      </div>
+      <div class="col">
+        <p>In pratica, molti problemi DRO di grandi dimensioni — troppo grandi per essere risolti in un unico blocco — vengono affrontati con varianti di Benders, cutting planes, o metodi di generazione di colonne e vincoli (<em>column-and-constraint generation</em>), che condividono con Benders la stessa filosofia: costruire progressivamente un'approssimazione del problema difficile, invece di risolverlo tutto in anticipo.</p>
+        <div class="stage-flow" style="margin-top:16px">
+          <div class="stage master"><h4>Benders risponde a</h4><p>Come separo un problema enorme e strutturato in pezzi risolvibili?</p></div>
+          <div class="stage-arrow">+</div>
+          <div class="stage sub"><h4>DRO risponde a</h4><p>Come ottimizzo se non mi fido completamente della distribuzione stimata?</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="keybox">
+      <p class="kb-t">Per approfondire la parte computazionale</p>
+      <p>Se non hai ancora letto il documento su come si risolvono problemi di ottimizzazione enormi e strutturati, puoi trovarlo qui: <a href="benders-decomposition.html">Decomposizione di Benders — appunti guidati</a>. Riprende esattamente il concetto di recourse \(Q(x,\xi)\) usato in questa sezione, con esempi numerici passo passo.</p>
+    </div>
+  </section>
+
+  <section id="esercizi">
+    <div class="sec-head"><p class="lvl hot">Esercizi</p><h2>Mettiti alla prova</h2></div>
+    <p class="lead">Due esercizi, dal più diretto al più integrativo. Prova a risolverli prima di aprire la traccia di soluzione.</p>
+
+    <div class="ex-item">
+      <p class="ex-num">Esercizio 1</p>
+      <h4>Newsvendor: dalla formula classica al ragionamento DRO</h4>
+      <p>Un negozio ha \(h=15\) €/pezzo e \(p=45\) €/pezzo, con \(N=25\) osservazioni storiche della domanda. Calcola il rapporto critico \(p/(p+h)\) e spiega, a parole, in che direzione la DRO sposterebbe la quantità ordinata rispetto alla soluzione basata sul solo quantile empirico, e perché il campione piccolo (\(N=25\)) rende questo aggiustamento più importante che con \(N=2\,000\).</p>
+      <details>
+        <summary>Mostra traccia di soluzione</summary>
+        <p>Il rapporto critico è \(45/60=0{,}75\): servirebbe il 75° percentile della domanda. Con soli 25 punti, il 75° percentile empirico è una stima molto rumorosa (dipende in pratica da una o due osservazioni nella coda del campione). La DRO sposterebbe la quantità ordinata verso un valore leggermente più cauto rispetto al quantile empirico grezzo, perché protegge dal rischio che il vero 75° percentile sia più alto di quanto suggeriscano i pochi dati osservati — un margine che, con \(N=2\,000\), sarebbe quasi superfluo perché il quantile empirico sarebbe già una stima affidabile.</p>
+      </details>
+    </div>
+
+    <div class="ex-item">
+      <p class="ex-num">Esercizio 2 · Integrativo</p>
+      <h4>Unire decomposizione e incertezza distributiva</h4>
+      <p>Hai due decisioni di capacità \(x_1,x_2\) e una domanda futura \(D\). Devi scegliere oggi le capacità per minimizzare \(5x_1+7x_2+\mathbb E[Q(x,D)]\), ma disponi solo di 50 osservazioni storiche di \(D\). Come modelleresti insieme decomposizione e incertezza distributiva? (Suggerimento: rileggi la Sezione 5 di questo documento e la Sezione 2 del documento sulla Decomposizione di Benders.)</p>
+      <details>
+        <summary>Mostra traccia di soluzione</summary>
+        <p>Una risposta concettualmente corretta contiene almeno tre ingredienti: (1) decisioni <em>first-stage</em> \(x_1,x_2\), decise prima di conoscere \(D\); (2) un <em>recourse</em> \(Q(x,D)\) che rappresenta il costo operativo ottimo dato \(D\), risolvibile via Benders una volta fissato uno scenario di \(D\); (3) un <em>ambiguity set</em> attorno alla distribuzione empirica delle 50 osservazioni (ad esempio una palla di Wasserstein), che rende il problema robusto rispetto all'incertezza su come è distribuita davvero \(D\). Il problema finale è \(\min_{x_1,x_2} 5x_1+7x_2+\sup_{P\in\mathcal P}\mathbb E_P[Q(x,D)]\), risolvibile con una variante di Benders in cui il sottoproblema, per ogni proposta del master, deve a sua volta risolvere il problema interno di massimizzazione sulla distribuzione avversa.</p>
+      </details>
+    </div>
+  </section>
+
+  <section id="glossario">
+    <div class="sec-head"><p class="lvl">Strumenti</p><h2>Glossario essenziale</h2></div>
+    <dl class="gloss">
+      <dt>Ambiguity set</dt><dd>L'insieme delle distribuzioni di probabilità considerate plausibili, dato il campione di dati osservato.</dd>
+      <dt>Distanza di Wasserstein</dt><dd>Misura di quanto due distribuzioni differiscono, in termini di costo minimo di trasporto della massa di probabilità.</dd>
+      <dt>Distribuzione empirica</dt><dd>La distribuzione "costruita dai dati", che assegna probabilità uguale a ciascuna osservazione storica.</dd>
+      <dt>Optimizer's curse</dt><dd>Fenomeno per cui una soluzione ottima rispetto a dati stimati sfrutta gli errori di stima, e si comporta peggio fuori campione.</dd>
+      <dt>Chance constraint</dt><dd>Vincolo che deve valere solo con una probabilità minima prefissata, non necessariamente sempre.</dd>
+      <dt>Newsvendor problem</dt><dd>Problema classico di gestione delle scorte: quanto ordinare prima di conoscere la domanda, bilanciando sovrastoccaggio e stockout.</dd>
+      <dt>Critical ratio</dt><dd>Il rapporto \(p/(p+h)\) che determina il quantile ottimo di ordine nel newsvendor problem classico.</dd>
+      <dt>Robust optimization</dt><dd>Approccio che si protegge dal peggior scenario possibile all'interno di un insieme di incertezza, senza coinvolgere distribuzioni di probabilità.</dd>
+      <dt>Recourse</dt><dd>La decisione operativa presa dopo aver osservato lo scenario incerto, in un problema a due stadi (concetto ripreso dal documento sulla Decomposizione di Benders).</dd>
+    </dl>
+  </section>
+
+  <section id="riferimenti">
+    <div class="sec-head"><p class="lvl">Strumenti</p><h2>Riferimenti</h2></div>
+    <ol class="refs">
+      <li>H. Scarf — <i>A Min-Max Solution of an Inventory Problem</i>
+        <span class="cite-meta">in Studies in the Mathematical Theory of Inventory and Production, Stanford University Press, 1958 — il newsvendor robusto</span></li>
+      <li>A. Ben-Tal, L. El Ghaoui, A. Nemirovski — <i>Robust Optimization</i>
+        <span class="cite-meta">Princeton University Press, 2009</span></li>
+      <li>D. Bertsimas, M. Sim — <i>The Price of Robustness</i>
+        <span class="cite-meta">Operations Research, 52(1), 35–53, 2004</span></li>
+      <li>E. Delage, Y. Ye — <i>Distributionally Robust Optimization Under Moment Uncertainty with Application to Data-Driven Problems</i>
+        <span class="cite-meta">Operations Research, 58(3), 595–612, 2010</span></li>
+      <li>P. Mohajerin Esfahani, D. Kuhn — <i>Data-driven Distributionally Robust Optimization Using the Wasserstein Metric: Performance Guarantees and Tractable Reformulations</i>
+        <span class="cite-meta">Mathematical Programming, 171(1), 115–166, 2018 · <a href="https://arxiv.org/abs/1505.05116">arXiv:1505.05116</a></span></li>
+      <li>H. Rahimian, S. Mehrotra — <i>Distributionally Robust Optimization: A Review</i>
+        <span class="cite-meta">arXiv preprint, 2019 · <a href="https://arxiv.org/abs/1908.05659">arXiv:1908.05659</a> — buon punto di partenza per approfondire</span></li>
+    </ol>
+    <p style="margin-top:16px;font-size:14.5px;color:var(--ink-soft)">Nota: la citazione di Scarf (1958) è riportata con i riferimenti bibliografici standard della letteratura di Ricerca Operativa; non dispone di una versione liberamente accessibile online.</p>
+  </section>
+
+  </main>
+
+  <aside class="side">
+    <p class="side-t">In questa pagina</p>
+    <ol>
+      <li><a href="#motivazione"><span class="grp">0 · Perché</span>Decidere con dati limitati</a></li>
+      <li><a href="#idea"><span class="grp">1 · Idea</span>Quando i dati non bastano</a></li>
+      <li><a href="#ambiguity-set"><span class="grp">2 · Ambiguity set</span>Wasserstein e momenti</a></li>
+      <li><a href="#esempio"><span class="grp">3 · Esempio</span>Il magazziniere prudente</a></li>
+      <li><a href="#vincoli"><span class="grp">4 · Vincoli</span>Vincoli probabilistici</a></li>
+      <li><a href="#legame"><span class="grp">5 · Sintesi</span>Legame con la decomposizione</a></li>
+      <li class="divider"></li>
+      <li><a href="#esercizi"><span class="grp">Esercizi</span>Mettiti alla prova</a></li>
+      <li><a href="#glossario"><span class="grp">Strumenti</span>Glossario</a></li>
+      <li><a href="#riferimenti"><span class="grp">Strumenti</span>Riferimenti</a></li>
+    </ol>
+    <div class="companion-link">Documento complementare:<br><a href="benders-decomposition.html">Decomposizione di Benders →</a></div>
+  </aside>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="ribbon"><span class="b"></span><span class="b"></span><span class="g"></span><span class="d"></span><span class="d"></span></div>
+    <p>Materiale didattico indipendente, pensato come approfondimento per un corso introduttivo di Ricerca Operativa per Ingegneria. Le formule seguono la formulazione classica di Benders (1962) e la letteratura DRO basata su Wasserstein (Mohajerin Esfahani &amp; Kuhn, 2018, e successivi). Gli esempi numerici sono illustrativi e semplificati a scopo didattico. Richiede connessione internet per il rendering delle formule (MathJax).</p>
+  </div>
+</footer>
+
+</body>
+</html>

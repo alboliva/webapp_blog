@@ -58,6 +58,7 @@ a:hover{color:var(--warn)}
 .ribbon .d{background:var(--dro)}
 
 header.hero{padding:56px 0 34px;border-bottom:1px solid var(--line)}
+header.hero .wrap{max-width:880px}
 .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px}
 .hero h1{font-size:clamp(28px,4.2vw,46px);font-weight:700;max-width:24ch}
 .hero h1 em{font-style:normal;color:var(--dro)}
@@ -161,10 +162,10 @@ footer{padding:36px 0 56px;color:var(--ink-soft);font-size:14px}
 
 <header class="hero">
   <div class="wrap">
-    <p class="eyebrow">Appunti guidati · Ricerca Operativa avanzata · per Ingegneria</p>
+    <p class="eyebrow">Appunti guidati · Ricerca Operativa avanzata</p>
     <h1>Dubitare per non sbagliare: <em>Distributionally Robust Optimization</em></h1>
     <p class="sub">Come decidere bene quando non conosciamo con certezza il futuro — la domanda di un cliente, il rendimento di un investimento, i tempi di consegna — ma disponiamo solo di un campione limitato di osservazioni passate.</p>
-    <p class="companion">Questo documento è il secondo di due testi indipendenti. Il primo, dedicato alla <a href="benders-decomposition.html">Decomposizione di Benders</a>, affronta il tema complementare: come risolvere in modo efficiente problemi di ottimizzazione enormi e strutturati, separando decisioni strategiche e decisioni operative.</p>
+    <p class="companion">Questo documento è il secondo di due testi indipendenti. Il primo, dedicato alla <a href="https://reporter.streamlit.app/?article=ric%20operativa/20260826_benders-decomposition.html">Decomposizione di Benders</a>, affronta il tema complementare: come risolvere in modo efficiente problemi di ottimizzazione enormi e strutturati, separando decisioni strategiche e decisioni operative.</p>
     <div class="info-card">
       <div><b>Argomento</b>Distributionally Robust Optimization · Ambiguity set · Newsvendor robusto</div>
       <div><b>Prerequisiti</b>Nozioni di probabilità, ottimizzazione di base</div>
@@ -392,7 +393,7 @@ footer{padding:36px 0 56px;color:var(--ink-soft);font-size:14px}
     </div>
     <div class="keybox">
       <p class="kb-t">Per approfondire la parte computazionale</p>
-      <p>Se non hai ancora letto il documento su come si risolvono problemi di ottimizzazione enormi e strutturati, puoi trovarlo qui: <a href="benders-decomposition.html">Decomposizione di Benders — appunti guidati</a>. Riprende esattamente il concetto di recourse \(Q(x,\xi)\) usato in questa sezione, con esempi numerici passo passo.</p>
+      <p>Se non hai ancora letto il documento su come si risolvono problemi di ottimizzazione enormi e strutturati, puoi trovarlo qui: <a href="https://reporter.streamlit.app/?article=ric%20operativa/20260826_benders-decomposition.html">Decomposizione di Benders — appunti guidati</a>. Riprende esattamente il concetto di recourse \(Q(x,\xi)\) usato in questa sezione, con esempi numerici passo passo.</p>
     </div>
   </section>
 
@@ -471,14 +472,14 @@ footer{padding:36px 0 56px;color:var(--ink-soft);font-size:14px}
       <li><a href="#glossario"><span class="grp">Strumenti</span>Glossario</a></li>
       <li><a href="#riferimenti"><span class="grp">Strumenti</span>Riferimenti</a></li>
     </ol>
-    <div class="companion-link">Documento complementare:<br><a href="benders-decomposition.html">Decomposizione di Benders →</a></div>
+    <div class="companion-link">Documento complementare:<br><a href="https://reporter.streamlit.app/?article=ric%20operativa/20260826_benders-decomposition.html">Decomposizione di Benders →</a></div>
   </aside>
 </div>
 
 <footer>
   <div class="wrap">
     <div class="ribbon"><span class="b"></span><span class="b"></span><span class="g"></span><span class="d"></span><span class="d"></span></div>
-    <p>Materiale didattico indipendente, pensato come approfondimento per un corso introduttivo di Ricerca Operativa per Ingegneria. Le formule seguono la formulazione classica di Benders (1962) e la letteratura DRO basata su Wasserstein (Mohajerin Esfahani &amp; Kuhn, 2018, e successivi). Gli esempi numerici sono illustrativi e semplificati a scopo didattico. Richiede connessione internet per il rendering delle formule (MathJax).</p>
+    <p>Materiale didattico indipendente, pensato come approfondimento per un corso introduttivo di Ricerca Operativa. Gli esempi numerici sono illustrativi e semplificati a scopo didattico. Richiede connessione internet per il rendering delle formule (MathJax).</p>
   </div>
 </footer>
 

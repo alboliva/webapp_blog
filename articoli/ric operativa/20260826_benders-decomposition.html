@@ -58,6 +58,7 @@ a:hover{color:var(--warn)}
 .ribbon .d{background:var(--dro)}
 
 header.hero{padding:56px 0 34px;border-bottom:1px solid var(--line)}
+header.hero .wrap{max-width:880px}
 .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px}
 .hero h1{font-size:clamp(28px,4.2vw,46px);font-weight:700;max-width:24ch}
 .hero h1 em{font-style:normal;color:var(--bend)}
@@ -165,10 +166,10 @@ footer{padding:36px 0 56px;color:var(--ink-soft);font-size:14px}
 
 <header class="hero">
   <div class="wrap">
-    <p class="eyebrow">Appunti guidati · Ricerca Operativa avanzata · per Ingegneria</p>
+    <p class="eyebrow">Appunti guidati · Ricerca Operativa avanzata</p>
     <h1>Separare per decidere: la <em>Decomposizione di Benders</em></h1>
     <p class="sub">Come risolvere in modo efficiente un problema di ottimizzazione troppo grande per essere affrontato in un colpo solo, sfruttando una struttura che ricorre in moltissime decisioni industriali: poche scelte strategiche, difficili da cambiare, seguite da moltissime decisioni operative conseguenti.</p>
-    <p class="companion">Questo documento è il primo di due testi indipendenti. Il secondo, dedicato alla <a href="distributionally-robust-optimization.html">Distributionally Robust Optimization</a>, affronta il tema complementare: come decidere bene quando la distribuzione di probabilità del futuro non è nota con certezza, ma solo stimata da un campione di dati.</p>
+    <p class="companion">Questo documento è il primo di due testi indipendenti. Il secondo, dedicato alla <a href="https://reporter.streamlit.app/?article=ric%20operativa/20260826_distributionally-robust-optimization.html">Distributionally Robust Optimization</a>, affronta il tema complementare: come decidere bene quando la distribuzione di probabilità del futuro non è nota con certezza, ma solo stimata da un campione di dati.</p>
     <div class="info-card">
       <div><b>Argomento</b>Decomposizione di Benders · Programmazione stocastica a due stadi</div>
       <div><b>Prerequisiti</b>Programmazione lineare, dualità LP</div>
@@ -450,7 +451,7 @@ footer{padding:36px 0 56px;color:var(--ink-soft);font-size:14px}
     </div>
     <div class="keybox dro">
       <p class="kb-t">Continua con il documento complementare</p>
-      <p><a href="distributionally-robust-optimization.html">Distributionally Robust Optimization — appunti guidati</a> riprende esattamente da qui: introduce l'ambiguity set, la distanza di Wasserstein, l'esempio del newsvendor prudente, e mostra infine dove Benders e DRO si incontrano nei problemi di grande scala.</p>
+      <p><a href="https://reporter.streamlit.app/?article=ric%20operativa/20260826_distributionally-robust-optimization.html">Distributionally Robust Optimization — appunti guidati</a> riprende esattamente da qui: introduce l'ambiguity set, la distanza di Wasserstein, l'esempio del newsvendor prudente, e mostra infine dove Benders e DRO si incontrano nei problemi di grande scala.</p>
     </div>
   </section>
 
@@ -544,14 +545,14 @@ footer{padding:36px 0 56px;color:var(--ink-soft);font-size:14px}
       <li><a href="#glossario"><span class="grp">Strumenti</span>Glossario</a></li>
       <li><a href="#riferimenti"><span class="grp">Strumenti</span>Riferimenti</a></li>
     </ol>
-    <div class="companion-link">Documento complementare:<br><a href="distributionally-robust-optimization.html">Distributionally Robust Optimization →</a></div>
+    <div class="companion-link">Documento complementare:<br><a href="https://reporter.streamlit.app/?article=ric%20operativa/20260826_distributionally-robust-optimization.html">Distributionally Robust Optimization →</a></div>
   </aside>
 </div>
 
 <footer>
   <div class="wrap">
     <div class="ribbon"><span class="b"></span><span class="b"></span><span class="g"></span><span class="d"></span><span class="d"></span></div>
-    <p>Materiale didattico indipendente, pensato come approfondimento per un corso introduttivo di Ricerca Operativa per Ingegneria. Le formule seguono la formulazione classica di Benders (1962) e la letteratura DRO basata su Wasserstein (Mohajerin Esfahani &amp; Kuhn, 2018, e successivi). Gli esempi numerici sono illustrativi e semplificati a scopo didattico. Richiede connessione internet per il rendering delle formule (MathJax).</p>
+    <p>Materiale didattico indipendente, pensato come approfondimento per un corso introduttivo di Ricerca Operativa. Gli esempi numerici sono illustrativi e semplificati a scopo didattico. Richiede connessione internet per il rendering delle formule (MathJax).</p>
   </div>
 </footer>
 
